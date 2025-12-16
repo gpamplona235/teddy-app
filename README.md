@@ -23,7 +23,7 @@ O **TeddyApp** é uma aplicação Desktop focada em estudantes que precisam orga
 ## ✨ Funcionalidades Principais
 
 * **🃏 Criação de Flashcards:** Crie perguntas e respostas para revisar ativamente.
-* **🧠 Repetição Espaçada:** O algoritmo inteligente define quando você deve revisar cada card (Fácil, Médio, Difícil).
+* **🧠 Repetição Espaçada:** O algoritmo inteligente define quando você deve revisar cada card (Leve 1x, Moderada 1.5x, Intensa 2x).
 * **🍅 Pomodoro Timer:** Foco total com cronômetro integrado e sons de alarme.
 * **📊 Dashboard de Estatísticas:** Acompanhe seu progresso visualmente.
 * **💾 Backup e Restauração:** Seus dados são seus. Exporte e importe tudo via JSON.
