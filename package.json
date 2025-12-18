@@ -1,6 +1,6 @@
 {
   "name": "teddyapp",
-  "version": "0.6.1-beta",
+  "version": "0.6.4-beta",
   "description": "Teddy Software Windows e Linux",
   "main": "main.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "build": {
     "appId": "com.seu.teddyapp",
-    "productName": "TeddyApp Beta",
+    "productName": "Teddy",
     "directories": {
       "output": "dist"
     },

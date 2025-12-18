@@ -2388,7 +2388,7 @@
     <div id="auth-wrapper">
         <div class="auth-card">
             <div class="auth-logo"><i class="fas fa-paw"></i></div>
-            <h2 class="auth-title">TeddyApp</h2>
+            <h2 class="auth-title">Teddy</h2>
             <p class="auth-subtitle">Organize, estude e evolua.</p>
 
             <div id="auth-error-msg" class="error-message"></div>
@@ -2466,7 +2466,7 @@
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.62</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.64</div>
         </div>
 
     </nav>
@@ -4023,7 +4023,7 @@
             }
         }
 
-        function saveEditais() { localStorage.setItem('ted_editais', JSON.stringify(editais)); }
+        function saveEditais() { salvarDados('ted_editais', editais); }
 
         function openGenericModal(title, initialValue, isTextarea = false, callback) {
             document.getElementById('generic-modal-title').innerText = title;
@@ -4069,7 +4069,7 @@
             const s = pomoTimeLeft % 60;
             const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
             document.getElementById('timer-display').innerText = timeStr;
-            document.title = `TeddyApp (BETA)`;
+            document.title = `Teddy`;
             
             // Update Floating Widget
             document.getElementById('float-time-display').innerText = timeStr;
@@ -4188,7 +4188,7 @@
             
             if(f > 0 && s > 0 && l > 0) {
                 pomoSettings = { focus: f, short: s, long: l };
-                localStorage.setItem('ted_pomo_settings', JSON.stringify(pomoSettings));
+                salvarDados('ted_pomo_settings', pomoSettings);
                 document.getElementById('pomo-settings-modal').classList.add('hidden');
                 // Reset current timer to reflect changes
                 resetTimer();
@@ -4198,7 +4198,7 @@
         }
 
         function savePomoHistory() {
-            localStorage.setItem('ted_pomo_history', JSON.stringify(pomoHistory));
+            salvarDados('ted_pomo_history', pomoHistory);
         }
 
                 function renderPomoHistory() {
@@ -4207,7 +4207,7 @@
             
             // Pega o histórico atualizado
             // IMPORTANTE: Garantir que usamos a variável pomoHistory se ela for global, ou ler do localStorage
-            let currentHistory = JSON.parse(localStorage.getItem('ted_pomo_history') || '[]');
+            let currentHistory = pomoHistory || []; 
             
             // Verifica se tem itens visíveis (não ocultos)
             const visibleItems = currentHistory.filter(item => !item.hidden);
@@ -4945,7 +4945,7 @@ async function saveNotesData() {
             }
         }
         
-        function saveSchedule() { localStorage.setItem('ted_schedule', JSON.stringify(scheduleData)); localStorage.setItem('ted_tasks', JSON.stringify(tasks)); }
+        function saveSchedule() { salvarDados('ted_schedule', scheduleData); localStorage.setItem('ted_tasks', JSON.stringify(tasks)); }
         window.createSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=''; document.getElementById('btn-delete-block').classList.add('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
         window.editSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=scheduleData[k].title; selectedColor=scheduleData[k].color; document.getElementById('btn-delete-block').classList.remove('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
         function saveScheduleBlock() { if(!document.getElementById('schedule-block-title').value) return; scheduleData[editingScheduleBlock]={title:document.getElementById('schedule-block-title').value, color:selectedColor}; saveSchedule(); document.getElementById('schedule-modal').classList.add('hidden'); renderSchedule(); }
@@ -5437,7 +5437,7 @@ async function saveNotesData() {
             }
             
             if(studyMode !== 'simulation') {
-                 performanceData.push({date:new Date().toISOString().split('T')[0], correct:isCor, category:currentCard.category||'Geral'}); localStorage.setItem('ted_performance', JSON.stringify(performanceData));
+                 performanceData.push({date:new Date().toISOString().split('T')[0], correct:isCor, category:currentCard.category||'Geral'}); salvarDados('ted_performance', performanceData);
             }
         }
 
@@ -5586,7 +5586,7 @@ async function saveNotesData() {
                 log: currentSimulationLog
             };
             simulationHistory.unshift(simRecord);
-            localStorage.setItem('ted_simulation_history', JSON.stringify(simulationHistory));
+            salvarDados('ted_simulation_history', simulationHistory);
             
             alert('Simulado salvo no histórico!');
             // Reload performance view in background
@@ -5660,22 +5660,20 @@ async function saveNotesData() {
         function hidePomoSessionById(id) {
             if(!confirm("Deseja ocultar esta sessão da lista? Ela continuará contando no Tempo Total de Estudo.")) return;
 
-            let history = JSON.parse(localStorage.getItem('ted_pomo_history') || '[]');
-            
-            // Encontra o item pelo ID
-            const itemIndex = history.findIndex(i => i.id === id);
-            
-            if (itemIndex !== -1) {
-                history[itemIndex].hidden = true; // Marca como oculto
-                localStorage.setItem('ted_pomo_history', JSON.stringify(history));
-                
-                // Se a variável global pomoHistory existir, atualize-a também para evitar bugs visuais imediatos
-                if (typeof pomoHistory !== 'undefined') {
-                    pomoHistory = history;
-                }
+            // Usa a variável global direto
+const itemIndex = pomoHistory.findIndex(i => i.id === id);
 
-                renderPomoHistory(); // Atualiza a tela
-            }
+if (itemIndex !== -1) {
+    pomoHistory[itemIndex].hidden = true; // Marca como oculto
+    
+    // Salva usando a nova função
+    salvarDados('ted_pomo_history', pomoHistory);
+    
+    // Atualiza a tela
+    renderPomoHistory();
+    showAlert("Sucesso", "Item removido da lista.");
+}
+
         }
 
         // MODIFIED: Performance View Reformulated (Horizontal & Banner Buttons)
@@ -5873,7 +5871,7 @@ async function saveNotesData() {
                         // --- CÁLCULO DE TEMPO DE ESTUDO (INTEGRADO À DATA) ---
             try {
                 // 1. Pega o histórico do Pomodoro
-                const ph = JSON.parse(localStorage.getItem('ted_pomo_history') || '[]');
+                const ph = pomoHistory || [];
                 let pTotal = 0;
 
                 // 2. Percorre o histórico e soma se estiver DENTRO DO INTERVALO ATUAL
