@@ -1,15 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TeddyApp - BETA</title>
+    <title>Teddy</title>
     
     <meta name="theme-color" content="#ed8432">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* PERMITE REDIMENSIONAR O EDITOR */
+#editor-container {
+    resize: vertical; /* Permite puxar para baixo/cima */
+    overflow: auto;   /* Necessário para o resize funcionar */
+    min-height: 200px; /* Altura mínima para não sumir */
+    max-height: 800px; /* (Opcional) Altura máxima */
+}
+        /* Aumenta a fonte padrão do editor Quill */
+#editor-container .ql-editor {
+    font-size: 18px; /* O padrão costuma ser 13px ou 14px */
+    line-height: 1.6; /* Melhora a leitura também */
+}
         :root {
             /* CORES ORIGINAIS */
             --primary: #ed8432;
@@ -2354,6 +2371,15 @@
             .floating-timer { bottom: 92px; right: 90px; }
             .sim-table-row { grid-template-columns: 1fr 1fr 0.5fr; } /* Hide score details on small mobile maybe */
         }
+        /* FORÇA A BARRA DO QUILL A SER VISÍVEL NO MODO DARK */
+.ql-toolbar {
+    background-color: #f0f0f0 !important; /* Fundo cinza claro */
+    border-radius: 8px 8px 0 0; /* Arredonda o topo */
+}
+
+/* Se quiser inverter os ícones para branco no modo dark, use este (Opcional) */
+/* Mas a solução acima (fundo claro) é mais garantida e simples */
+
     
 </style>
 </head>
@@ -2440,7 +2466,7 @@
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.52</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.62</div>
         </div>
 
     </nav>
@@ -3020,15 +3046,9 @@
             </div>
             
             <input type="text" id="note-title" placeholder="Título da Anotação" style="font-size: 1.8rem; font-weight: 800; border: none; background: transparent; padding: 0; margin-bottom: 20px; color: var(--text-main);">
-            
-            <div class="editor-toolbar">
-                <button class="btn-outline btn-sm" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
-                <button class="btn-outline btn-sm" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
-                <button class="btn-outline btn-sm" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-                <button class="btn-outline btn-sm" onclick="formatText('formatBlock', '<h3>')"><i class="fas fa-heading"></i></button>
-            </div>
-            
-            <div id="note-content" contenteditable="true" style="min-height: 500px; outline: none; line-height: 1.8; font-size: 1.15rem; color: var(--text-main); padding:20px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border);" placeholder="Comece a escrever..."></div>
+            <!-- O Quill vai nascer aqui dentro -->
+          <div id="editor-container" style="height: 400px; background: white; color: black; border-radius: 0 0 8px 8px;"></div>
+
         </section>
 
         <section id="card-detail-view" class="view-section hidden">
@@ -3603,31 +3623,35 @@
         return null; // Retorna nulo para simular que o prompt foi cancelado
     };
     // -----------------------------------------------------------------
-        // --- ESTADO GLOBAL ---
-        let cards = JSON.parse(localStorage.getItem('ted_flashcards')) || [];
-        let folders = JSON.parse(localStorage.getItem('ted_folders')) || [];
-        let notes = JSON.parse(localStorage.getItem('ted_notes')) || [];
-        let scheduleData = JSON.parse(localStorage.getItem('ted_schedule')) || {};
-        let tasks = JSON.parse(localStorage.getItem('ted_tasks')) || [];
-        let performanceData = JSON.parse(localStorage.getItem('ted_performance')) || [];
-        let editais = JSON.parse(localStorage.getItem('ted_editais')) || []; 
-        let simulationHistory = JSON.parse(localStorage.getItem('ted_simulation_history')) || [];
+                // --- ESTADO GLOBAL (DECLARAÇÃO) ---
+        // Agora declaramos tudo vazio ou null primeiro. 
+        // Os dados reais virão da função 'iniciarApp' logo abaixo.
+        
+        let cards = [];
+        let folders = [];
+        let notes = [];
+        let scheduleData = {};
+        let tasks = [];
+        let performanceData = [];
+        let editais = [];
+        let simulationHistory = [];
         
         // Templates State
-        let taskTemplates = JSON.parse(localStorage.getItem('ted_task_templates')) || [];
-        let scheduleTemplates = JSON.parse(localStorage.getItem('ted_schedule_templates')) || [];
+        let taskTemplates = [];
+        let scheduleTemplates = [];
 
-        // Updated userData with revisionLevel
-        let userData = JSON.parse(localStorage.getItem('ted_userdata')) || { streak: 0, lastStudyDate: null, theme: 'light', revisionLevel: 'moderate' };
+        // Updated userData (Valores padrão iniciais)
+        let userData = { streak: 0, lastStudyDate: null, theme: 'light', revisionLevel: 'moderate' };
         
-        // --- POMODORO STATE ---
-        let pomoSettings = JSON.parse(localStorage.getItem('ted_pomo_settings')) || { focus: 25, short: 5, long: 15 };
-        let pomoHistory = JSON.parse(localStorage.getItem('ted_pomo_history')) || [];
+        // --- POMODORO STATE (Padrões iniciais) ---
+        let pomoSettings = { focus: 25, short: 5, long: 15 };
+        let pomoHistory = [];
         let pomoTimer = null;
-        let pomoTimeLeft = pomoSettings.focus * 60;
-        let pomoCurrentMode = 'focus'; // focus, short, long
+        let pomoTimeLeft = 25 * 60; // Calculado temporariamente
+        let pomoCurrentMode = 'focus'; 
         let pomoIsRunning = false;
 
+        // Variáveis de Controle (Estas não precisam salvar no banco)
         let currentFolderId = null;
         let editingNoteId = null;
         let sessionQueue = [];
@@ -3635,9 +3659,8 @@
         let currentCard = null;
         let editingId = null; 
         
-        // NEW NAVIGATION STATE
         let currentCardIndex = 0;
-        let sessionAnswers = {}; // { cardId: { selected: string, correct: boolean } }
+        let sessionAnswers = {}; 
 
         let currentEditalId = null;
         
@@ -3647,9 +3670,8 @@
         let studyMode = 'standard'; 
         let simulationQueue = [];
         let simulationResults = { correct: 0, wrong: 0, total: 0 };
-        let currentSimulationLog = []; // Stores detailed answers for the current sim
+        let currentSimulationLog = []; 
         
-        // Study Progress State
         let currentSessionTotal = 0;
         let cardsDoneCount = 0;
 
@@ -3666,11 +3688,60 @@
         
         let linkingTopicData = null; 
         
-        // Linking state variables
         let selectedLinkCategory = null;
         let selectedLinkNoteId = null;
 
         let confirmCallback = null;
+
+        // --- FUNÇÃO DE INICIALIZAÇÃO (A Nova "Chave de Ignição") ---
+        async function iniciarApp() {
+            try {
+                // Aqui carregamos do banco de dados grande (localForage)
+                // O 'await' faz o código esperar o dado chegar antes de continuar
+                
+                cards = await carregarDados('ted_flashcards', []);
+                folders = await carregarDados('ted_folders', []);
+                notes = await carregarDados('ted_notes', []);
+                scheduleData = await carregarDados('ted_schedule', {});
+                tasks = await carregarDados('ted_tasks', []);
+                performanceData = await carregarDados('ted_performance', []);
+                editais = await carregarDados('ted_editais', []);
+                simulationHistory = await carregarDados('ted_simulation_history', []);
+                
+                taskTemplates = await carregarDados('ted_task_templates', []);
+                scheduleTemplates = await carregarDados('ted_schedule_templates', []);
+                
+                userData = await carregarDados('ted_userdata', { streak: 0, lastStudyDate: null, theme: 'light', revisionLevel: 'moderate' });
+                
+                pomoSettings = await carregarDados('ted_pomo_settings', { focus: 25, short: 5, long: 15 });
+                pomoHistory = await carregarDados('ted_pomo_history', []);
+                
+                // Recalcula o tempo do Pomodoro com base no que carregou
+                pomoTimeLeft = pomoSettings.focus * 60;
+
+                console.log("Banco de dados carregado com sucesso!");
+                
+                // --- AQUI COMEÇA O RESTO DO SEU APP ---
+                // Se você tiver uma função que desenha a tela inicial (ex: renderDashboard ou updateUI),
+                // chame ela aqui dentro!
+                // Exemplo:
+                if (typeof renderDashboard === "function") renderDashboard();
+                if (typeof updateTheme === "function") updateTheme(); 
+                if (typeof checkDailyStreak === "function") checkDailyStreak();
+
+            } catch (erro) {
+                console.error("Erro fatal ao iniciar banco de dados:", erro);
+            }
+        }
+
+        // --- SUBSTITUIÇÃO DO WINDOW.ONLOAD ---
+        // Em vez de window.onload = function() { ... }, use isto:
+        
+        window.addEventListener('load', function() {
+            // Dispara o carregamento do banco assim que a página abre
+            iniciarApp();
+        });
+
 
         window.onload = function() {
             if (userData.theme === 'dark') document.body.classList.add('dark-mode');
@@ -3840,7 +3911,8 @@
                 });
                 
                 localStorage.setItem('ted_userdata', JSON.stringify(userData));
-                localStorage.setItem('ted_flashcards', JSON.stringify(cards));
+                salvarDados('ted_flashcards', cards);
+
                 
                 showAlert("Sucesso", "Nível de revisão atualizado e cards resetados.");
                 
@@ -4719,7 +4791,7 @@
             editingNoteId = id; 
             const n = notes.find(x=>x.id===id); 
             document.getElementById('note-title').value = n?n.title:''; 
-            document.getElementById('note-content').innerHTML = n?n.content:''; 
+            quill.clipboard.dangerouslyPasteHTML(n ? n.content : "");
             
             // Populate folder dropdown
             const folderSelect = document.getElementById('note-folder-select');
@@ -4738,7 +4810,7 @@
         }
         function saveNote() { 
             const t = document.getElementById('note-title').value; 
-            const c = document.getElementById('note-content').innerHTML; 
+            const c = quill.root.innerHTML; 
             let fId = document.getElementById('note-folder-select').value;
             if(fId === 'null') fId = null;
             
@@ -4760,7 +4832,29 @@
             switchTab('notes'); 
         }
         function deleteNote(id) { if(confirm("Apagar nota?")) { notes=notes.filter(n=>n.id!==id); saveNotesData(); renderCurrentFolder(); } }
-        function saveNotesData() { localStorage.setItem('ted_folders', JSON.stringify(folders)); localStorage.setItem('ted_notes', JSON.stringify(notes)); }
+        // --- NOVA FUNÇÃO DE SALVAR NOTAS (Adaptada para Quill) ---
+async function saveNotesData() {
+    if (!editingNoteId) return;
+
+    // Encontra a nota que estamos editando na lista
+    const noteIndex = notes.findIndex(n => n.id === editingNoteId);
+    
+    if (noteIndex !== -1) {
+        // Pega o conteúdo HTML de dentro do editor Quill
+        // 'quill.root.innerHTML' é o jeito certo de pegar o texto formatado
+        const conteudoNovo = quill.root.innerHTML;
+
+        // Atualiza na memória
+        notes[noteIndex].content = conteudoNovo;
+        notes[noteIndex].updatedAt = new Date().toISOString();
+
+        // Salva no banco de dados (Lembra do salvarDados?)
+        await salvarDados('ted_notes', notes);
+        
+        console.log("Nota salva com sucesso via Quill!");
+    }
+}
+
         function formatText(cmd, arg=null) { document.getElementById('note-content').focus(); document.execCommand(cmd, false, arg); }
         function closeNoteEditor() { switchTab('notes'); }
 
@@ -5033,7 +5127,8 @@
                 editingId = null;
             } else { cards.push(newCard); }
 
-            localStorage.setItem('ted_flashcards', JSON.stringify(cards));
+            salvarDados('ted_flashcards', cards);
+
             resetForm();
             // Switch to Library view after save
             switchStudyTab('library');
@@ -5114,7 +5209,7 @@
 
         function editCurrentCard() { if(currentCard) editCard(currentCard.id); }
         function deleteCurrentCard() { if(currentCard) deleteCard(currentCard.id); }
-        function deleteCard(id) { if(confirm('Excluir?')) { cards=cards.filter(c=>c.id!==id); localStorage.setItem('ted_flashcards', JSON.stringify(cards)); renderManageList(); switchTab('study'); switchStudyTab('library'); } }
+        function deleteCard(id) { if(confirm('Excluir?')) { cards=cards.filter(c=>c.id!==id); salvarDados('ted_flashcards', cards); renderManageList(); switchTab('study'); switchStudyTab('library'); } }
 
         function loadStudySession() { 
             studyMode = 'standard';
@@ -5249,7 +5344,7 @@
             const index = cards.findIndex(c => c.id === currentCard.id);
             if(index !== -1) {
                 cards[index].comment = newComment;
-                localStorage.setItem('ted_flashcards', JSON.stringify(cards));
+                salvarDados('ted_flashcards', cards);
             }
             
             // Reset UI
@@ -5337,7 +5432,7 @@
                         cards[idx].nextReview = Date.now(); 
                     } 
                     
-                    localStorage.setItem('ted_flashcards', JSON.stringify(cards)); 
+                    salvarDados('ted_flashcards', cards);
                 }
             }
             
@@ -5502,8 +5597,53 @@
 
         function updateCategoryDropdowns() { const l = document.getElementById('category-list-suggestions'); const s = document.getElementById('filter-category'); const c = [...new Set(cards.map(x=>x.category||'Geral'))]; if(l)l.innerHTML=c.map(x=>`<option value="${x}">`).join(''); if(s)s.innerHTML='<option value="all">Todas</option>'+c.map(x=>`<option value="${x}">${x}</option>`).join(''); }
         function exportAllData() { const d = { cards, performanceData, folders, notes, scheduleData, tasks, userData, editais, pomoSettings, pomoHistory, simulationHistory, taskTemplates, scheduleTemplates }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'})); a.download = `Teddy_Backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
-        function importAllData(i) { const r = new FileReader(); r.onload = e => { try { const d = JSON.parse(e.target.result); cards = d.cards || []; performanceData = d.performanceData || []; folders = d.folders || []; notes = d.notes || []; scheduleData = d.scheduleData || {}; tasks = d.tasks || []; editais = d.editais || []; if(d.userData) userData = d.userData; if(d.pomoSettings) pomoSettings = d.pomoSettings; if(d.pomoHistory) pomoHistory = d.pomoHistory; if(d.simulationHistory) simulationHistory = d.simulationHistory; if(d.taskTemplates) taskTemplates = d.taskTemplates; if(d.scheduleTemplates) scheduleTemplates = d.scheduleTemplates; localStorage.setItem('ted_flashcards', JSON.stringify(cards)); localStorage.setItem('ted_performance', JSON.stringify(performanceData)); localStorage.setItem('ted_editais', JSON.stringify(editais)); localStorage.setItem('ted_pomo_settings', JSON.stringify(pomoSettings)); localStorage.setItem('ted_pomo_history', JSON.stringify(pomoHistory)); localStorage.setItem('ted_simulation_history', JSON.stringify(simulationHistory)); localStorage.setItem('ted_task_templates', JSON.stringify(taskTemplates)); localStorage.setItem('ted_schedule_templates', JSON.stringify(scheduleTemplates)); saveNotesData(); saveSchedule(); localStorage.setItem('ted_userdata', JSON.stringify(userData)); alert('Backup restaurado com sucesso!'); location.reload(); } catch (err) { alert('Erro ao ler o arquivo. Verifique se é um backup válido.'); } }; r.readAsText(i.files[0]); }
-        function clearAllData() { if(confirm("Certeza? Isso apagará TUDO permanentemente.")) { localStorage.clear(); location.reload(); } }
+        function importAllData(i) {
+    if (i.files.length === 0) return;
+    const r = new FileReader();
+    r.onload = async (e) => {
+        try {
+            const d = JSON.parse(e.target.result);
+            
+            if(!confirm("Isso apagará seus dados atuais. Continuar?")) return;
+
+            // Salvando tudo no banco ilimitado
+            await salvarDados('ted_flashcards', d.cards || []);
+            await salvarDados('ted_performance', d.performanceData || []);
+            await salvarDados('ted_folders', d.folders || []);
+            await salvarDados('ted_notes', d.notes || []);
+            await salvarDados('ted_schedule', d.scheduleData || {});
+            await salvarDados('ted_tasks', d.tasks || []);
+            await salvarDados('ted_editais', d.editais || []);
+            
+            if(d.userData) await salvarDados('ted_userdata', d.userData);
+            if(d.pomoSettings) await salvarDados('ted_pomo_settings', d.pomoSettings);
+            if(d.pomoHistory) await salvarDados('ted_pomo_history', d.pomoHistory);
+            if(d.simulationHistory) await salvarDados('ted_simulation_history', d.simulationHistory);
+            if(d.taskTemplates) await salvarDados('ted_task_templates', d.taskTemplates);
+            if(d.scheduleTemplates) await salvarDados('ted_schedule_templates', d.scheduleTemplates);
+
+            alert('Backup restaurado com sucesso!');
+            location.reload();
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao ler backup.');
+        }
+    };
+    r.readAsText(i.files[0]);
+}
+
+        async function clearAllData() { 
+    if(confirm("Certeza? Isso apagará TUDO permanentemente.")) { 
+        // Limpa o banco de dados GRANDE
+        await localforage.clear();
+        
+        // Limpa o pequeno também, só por garantia
+        localStorage.clear(); 
+        
+        location.reload(); 
+    } 
+}
+
         function goBackTo(t) { switchTab(t); }
         function formatQuestionText(c) { document.getElementById('input-question').focus(); document.execCommand(c, false, null); }
 
@@ -5843,5 +5983,72 @@
         </div>
     </div>
 </div>
+<!-- BIBLIOTECA LOCALFORAGE -->
+<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+
+<!-- NOSSAS NOVAS FUNÇÕES (COPIE E COLE ISSO EXATAMENTE ASSIM) -->
+<script>
+    // Configura o banco de dados para aceitar arquivos grandes
+    localforage.config({
+        name: 'AppEstudosConcurso',
+        storeName: 'meus_dados_v1'
+    });
+
+    // Função AUXILIAR para salvar (substitui o setItem)
+    async function salvarDados(chave, valor) {
+        try {
+            await localforage.setItem(chave, valor);
+            // Mantemos no localStorage APENAS coisas pequenas se precisar,
+            // mas para o seu backup grande, o localforage resolve.
+        } catch (erro) {
+            console.error("Erro ao salvar:", erro);
+        }
+    }
+
+    // Função AUXILIAR para carregar (substitui o getItem)
+    async function carregarDados(chave, valorPadrao) {
+        try {
+            const valor = await localforage.getItem(chave);
+            // Se valor for null (não existe), retorna o valorPadrao
+            return valor !== null ? valor : valorPadrao;
+        } catch (erro) {
+            console.error("Erro ao carregar:", erro);
+            return valorPadrao;
+        }
+    }
+</script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<!-- BIBLIOTECA QUILL (Copie e cole isso) -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+    // Inicializa o Editor
+    var quill = new Quill('#editor-container', {
+      modules: {
+        toolbar: [
+  [{ 'size': ['small', false, 'large', 'huge'] }], // <--- LINHA NOVA (Tamanho)
+  ['bold', 'italic', 'underline'],                 // Mantém negrito, itálico...
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }],    // Mantém listas
+  [{ 'indent': '-1'}, { 'indent': '+1' }],         // Mantém recuo
+  [{ 'color': [] }, { 'background': [] }],         // Mantém cores
+  ['formula']                                      // Mantém matemática
+]
+      },
+      placeholder: 'Digite sua anotação aqui...',
+      theme: 'snow'
+    });
+
+    // TRUQUE: Conecta o Quill com seu sistema antigo de salvar notas
+    // Quando você digitar, ele joga o texto pro lugar onde seu app espera encontrar
+    quill.on('text-change', function() {
+        // Se houver alguma variável global ou input escondido, atualize aqui
+        // Exemplo: se seu app lia o innerHTML do 'note-content' antigo
+    });
+</script>
+
+
 </body>
 </html>
