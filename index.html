@@ -2466,7 +2466,7 @@
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.64</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.6.8</div>
         </div>
 
     </nav>
@@ -3923,6 +3923,9 @@
 
         // --- NAVEGAÇÃO ---
         function switchTab(tab) {
+          if (tab !== 'note-editor') {
+        persistCurrentNote();
+    }
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById(tab + '-view');
             if(target) target.classList.remove('hidden');
@@ -4808,29 +4811,52 @@
 
             switchTab('note-editor'); 
         }
-        function saveNote() { 
-            const t = document.getElementById('note-title').value; 
-            const c = quill.root.innerHTML; 
-            let fId = document.getElementById('note-folder-select').value;
-            if(fId === 'null') fId = null;
-            
-            // BUG FIX: Prevent ghost notes by checking if folder actually exists
-            if (fId && !folders.find(f => f.id === fId)) {
-                alert("A pasta selecionada não existe mais. A nota será salva no Início.");
-                fId = null;
-            }
+        // --- NOVA FUNÇÃO DE SALVAMENTO AUTOMÁTICO ---
+function persistCurrentNote() {
+    // Verifica se o editor está aberto
+    const editorView = document.getElementById('note-editor-view');
+    if (!editorView || editorView.classList.contains('hidden')) return;
 
-            if(editingNoteId) { 
-                const i = notes.findIndex(x=>x.id===editingNoteId); 
-                notes[i] = {...notes[i], title:t, content:c, folderId:fId}; 
-            } else { 
-                notes.push({id:'n_'+Date.now(), title:t||'Nova Nota', content:c, folderId:fId}); 
-            } 
-            saveNotesData(); 
-            // Update currentFolderId to where we saved it to prevent confusion on return
-            currentFolderId = fId;
-            switchTab('notes'); 
-        }
+    const t = document.getElementById('note-title').value;
+    // Pega o texto do editor (verifica se o Quill existe)
+    if (typeof quill === 'undefined') return;
+    const c = quill.root.innerHTML;
+    
+    // Se não tiver título nem conteúdo, não salva nada
+    if (!t && (c === '<p><br></p>' || c === '')) return;
+
+    let fId = document.getElementById('note-folder-select').value;
+    if(fId === 'null') fId = null;
+
+    // Garante que a pasta existe
+    if (fId && typeof folders !== 'undefined' && !folders.find(f => f.id === fId)) {
+        fId = null; 
+    }
+
+    if(editingNoteId) { 
+        // Atualiza nota existente
+        const i = notes.findIndex(x => x.id === editingNoteId); 
+        if(i > -1) notes[i] = {...notes[i], title:t, content:c, folderId:fId}; 
+    } else { 
+        // Cria nova nota e define o ID para continuar editando ela
+        const newId = 'n_' + Date.now();
+        notes.push({id:newId, title:t||'Nova Nota', content:c, folderId:fId}); 
+        editingNoteId = newId;
+    } 
+    saveNotesData(); 
+    console.log('Salvamento automático realizado!');
+}
+
+function saveNote() { 
+    persistCurrentNote(); 
+    // Atualiza para a pasta onde salvamos, para não perder o usuário
+    let fId = document.getElementById('note-folder-select').value;
+    if(fId === 'null') fId = null;
+    currentFolderId = fId;
+    switchTab('notes'); 
+}
+// ------------------------------------------------
+
         function deleteNote(id) { if(confirm("Apagar nota?")) { notes=notes.filter(n=>n.id!==id); saveNotesData(); renderCurrentFolder(); } }
         // --- NOVA FUNÇÃO DE SALVAR NOTAS (Adaptada para Quill) ---
 async function saveNotesData() {
@@ -6045,6 +6071,152 @@ if (itemIndex !== -1) {
         // Se houver alguma variável global ou input escondido, atualize aqui
         // Exemplo: se seu app lia o innerHTML do 'note-content' antigo
     });
+
+    // --- VERSÃO FINAL: DESIGN CORRIGIDO (TEXTO VISÍVEL) ---
+    const { ipcRenderer } = require('electron');
+
+    ipcRenderer.on('app-close-attempt', () => {
+        showBackupModal();
+    });
+
+    function showBackupModal() {
+        const existing = document.getElementById('backup-exit-modal');
+        if (existing) existing.remove();
+
+        const modalHtml = `
+            <div id="backup-exit-modal" style="
+                position: fixed; top: 0; left: 0; 
+                width: 100%; height: 100%; 
+                background: rgba(0, 0, 0, 0.85); 
+                z-index: 99999; 
+                display: flex; justify-content: center; align-items: center;
+                backdrop-filter: blur(5px);
+                font-family: inherit; /* Usa a mesma fonte do app */
+            ">
+                <div style="
+                    background-color: #202020; /* Fundo escuro sólido */
+                    color: #ffffff; 
+                    padding: 32px; 
+                    border-radius: 16px; 
+                    width: 360px; 
+                    text-align: center; 
+                    border: 1px solid #333; 
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+                ">
+                    <!-- TÍTULO BRANCO PURO -->
+                    <h2 style="
+                        margin: 0 0 12px 0; 
+                        color: #ffffff !important; 
+                        font-size: 1.5rem; 
+                        font-weight: 700;
+                    ">Sair do Teddy?</h2>
+                    
+                    <p style="
+                        margin-bottom: 30px; 
+                        color: #cccccc !important; 
+                        font-size: 1rem; 
+                        line-height: 1.5;
+                    ">
+                        Não perca seu progresso de hoje.<br>Deseja fazer um backup antes de ir?
+                    </p>
+                    
+                    <div style="display: flex; gap: 12px; flex-direction: column;">
+                        <!-- Botão Principal (Usa variável ou Laranja padrão se falhar) -->
+                        <button onclick="realizarBackupEFechar()" style="
+                            background: var(--primary, #D97706); 
+                            color: white; 
+                            padding: 14px; 
+                            border-radius: 10px; 
+                            border: none; 
+                            cursor: pointer; 
+                            font-weight: 600; 
+                            font-size: 1rem;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        ">
+                            Fazer Backup e Sair
+                        </button>
+
+                        <!-- Botão Secundário -->
+                        <button onclick="fecharDireto()" style="
+                            background: transparent; 
+                            border: 2px solid #444; 
+                            color: #dddddd; 
+                            padding: 12px; 
+                            border-radius: 10px; 
+                            cursor: pointer; 
+                            font-weight: 500;
+                            font-size: 0.95rem;
+                            margin-top: 5px;
+                        ">
+                            Sair sem salvar
+                        </button>
+                        
+                        <!-- Botão Cancelar -->
+                        <button onclick="cancelarSaida()" style="
+                            background: transparent; 
+                            border: none; 
+                            color: #888888; 
+                            padding: 8px; 
+                            cursor: pointer; 
+                            font-size: 0.85rem; 
+                            margin-top: 5px;
+                            text-decoration: underline;
+                        ">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    function realizarBackupEFechar() {
+        if (typeof exportAllData === 'function') {
+            exportAllData(); 
+        }
+
+        const modal = document.getElementById('backup-exit-modal');
+        if(modal) {
+            modal.innerHTML = `
+                <div style="
+                    background:#202020; color:#fff; padding:32px; 
+                    border-radius:16px; width:360px; text-align:center; 
+                    border:1px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+                    font-family: inherit;
+                ">
+                    <h2 style="margin:0 0 15px 0; color:var(--primary, #D97706); font-size: 1.4rem;">Salvando...</h2>
+                    <p style="color:#cccccc; font-size:1rem; margin-bottom: 30px; line-height: 1.5;">
+                        Escolha onde salvar o arquivo.<br>
+                        Depois clique abaixo para fechar.
+                    </p>
+                    
+                    <button onclick="fecharDireto()" style="
+                        background: #333; 
+                        color: #ffffff; 
+                        padding: 14px 40px; 
+                        border-radius: 10px; 
+                        border: 1px solid #555; 
+                        cursor: pointer; 
+                        font-weight: bold; 
+                        font-size: 1rem;
+                    ">
+                        Fechar Agora
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    function fecharDireto() {
+        ipcRenderer.send('app-quit-confirmed');
+    }
+
+    function cancelarSaida() {
+        const modal = document.getElementById('backup-exit-modal');
+        if(modal) modal.remove();
+    }
+
 </script>
 
 

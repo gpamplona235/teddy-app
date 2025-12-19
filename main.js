@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron'); // ADICIONADO: ipcMain
 const path = require('path');
 
 // -------------------------------------------------------------------------
@@ -6,6 +6,9 @@ const path = require('path');
 // Impede a reutilização de processos para estabilizar a renderização e inputs
 // -------------------------------------------------------------------------
 app.allowRendererProcessReuse = false;
+
+// Variável para controlar se pode fechar o app
+let forceQuit = false; 
 
 // -------------------------------------------------------------------------
 // IGNORAR DIÁLOGOS NATIVOS: Bloqueia as caixas de aviso (alert/confirm) do Windows
@@ -16,7 +19,6 @@ app.on('ready', () => {
         console.log(`Error Ignored: ${title} - ${content}`);
     };
 });
-
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -33,7 +35,22 @@ function createWindow() {
     });
 
     win.loadFile('index.html');
+
+    // --- NOVA LÓGICA DE FECHAMENTO ---
+    win.on('close', (e) => {
+        if (!forceQuit) {
+            e.preventDefault(); // Impede o fechamento imediato
+            // Manda aviso para o index.html exibir o popup
+            win.webContents.send('app-close-attempt'); 
+        }
+    });
 }
+
+// Recebe o sinal do index.html dizendo que agora pode fechar mesmo
+ipcMain.on('app-quit-confirmed', () => {
+    forceQuit = true;
+    app.quit();
+});
 
 app.whenReady().then(() => {
     createWindow();
