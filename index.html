@@ -2466,7 +2466,7 @@
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.6.8</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.7.1</div>
         </div>
 
     </nav>
@@ -4753,41 +4753,61 @@
         function navigateToFolder(id) { currentFolderId = id; document.getElementById('search-notes').value = ''; renderCurrentFolder(); }
         
         function promptNewFolder() { 
-            openGenericModal('Nova Pasta', '', false, (name) => {
-                if(name && name.trim() !== '') {
-                    folders.push({id:'f_'+Date.now(), name: name.trim(), parentId:currentFolderId}); 
-                    saveNotesData(); 
-                    renderCurrentFolder();
-                }
+    openGenericModal('Nova Pasta', '', false, (name) => {
+        if(name && name.trim() !== '') {
+            folders.push({id:'f_'+Date.now(), name: name.trim(), parentId:currentFolderId}); 
+            
+            // CORREÇÃO: Agora chama a função de salvar pastas
+            saveFoldersData(); 
+            
+            renderCurrentFolder();
+        }
+    });
+}
+
+        
+        function renameFolder(id) { 
+    const f = folders.find(x => x.id === id); 
+    if(!f) return; 
+    const newName = prompt("Novo nome:", f.name); 
+    if(newName) { 
+        f.name = newName; 
+        
+        // CORREÇÃO: Salva a alteração do nome
+        saveFoldersData(); 
+        
+        renderCurrentFolder(); 
+    } 
+}
+
+// Cole isto logo abaixo da função renameFolder
+function deleteFolder(id) {
+    if(confirm("Apagar pasta e todo o seu conteúdo?")) {
+        let folderIdsToDelete = [id];
+        
+        // Coleta todas as subpastas
+        const collectSubfolderIds = (parentId) => {
+            const subs = folders.filter(f => f.parentId === parentId);
+            subs.forEach(sub => {
+                folderIdsToDelete.push(sub.id);
+                collectSubfolderIds(sub.id);
             });
-        }
+        };
+        collectSubfolderIds(id);
         
-        function renameFolder(id) { const f = folders.find(x => x.id === id); if(!f) return; const newName = prompt("Novo nome:", f.name); if(newName) { f.name = newName; saveNotesData(); renderCurrentFolder(); } }
+        // Remove notas e pastas da memória
+        notes = notes.filter(n => !folderIdsToDelete.includes(n.folderId));
+        folders = folders.filter(f => !folderIdsToDelete.includes(f.id));
         
-        function deleteFolder(id) {
-            if(confirm("Apagar pasta e todo o seu conteúdo?")) {
-                // Collect IDs to delete
-                let folderIdsToDelete = [id];
-                
-                const collectSubfolderIds = (parentId) => {
-                    const subs = folders.filter(f => f.parentId === parentId);
-                    subs.forEach(sub => {
-                        folderIdsToDelete.push(sub.id);
-                        collectSubfolderIds(sub.id);
-                    });
-                };
-                collectSubfolderIds(id);
-                
-                // Delete notes in these folders
-                notes = notes.filter(n => !folderIdsToDelete.includes(n.folderId));
-                
-                // Delete the folders
-                folders = folders.filter(f => !folderIdsToDelete.includes(f.id));
-                
-                saveNotesData(); 
-                renderCurrentFolder();
-            }
-        }
+        // SALVA TUDO
+        saveNotesData(); 
+        saveFoldersData();
+        
+        renderCurrentFolder();
+    }
+}
+
+
         
         function createNewNote() { editingNoteId = null; openNoteEditor(null); }
         function openNoteEditor(id) { 
@@ -4855,29 +4875,51 @@ function saveNote() {
     currentFolderId = fId;
     switchTab('notes'); 
 }
+
+// --- COLE ISTO LOGO ABAIXO DE saveNote() ---
+function deleteNote(id) { 
+    if(confirm("Apagar nota?")) { 
+        notes = notes.filter(n => n.id !== id); 
+        
+        // Garante que a exclusão seja salva no banco
+        saveNotesData(); 
+        
+        renderCurrentFolder(); 
+    } 
+}
+
 // ------------------------------------------------
 
-        function deleteNote(id) { if(confirm("Apagar nota?")) { notes=notes.filter(n=>n.id!==id); saveNotesData(); renderCurrentFolder(); } }
-        // --- NOVA FUNÇÃO DE SALVAR NOTAS (Adaptada para Quill) ---
+        // --- NOVA FUNÇÃO PARA SALVAR PASTAS (Isso faltava antes) ---
+async function saveFoldersData() {
+    try {
+        await salvarDados('ted_folders', folders);
+        console.log("Pastas salvas com sucesso!");
+    } catch (e) {
+        console.error("Erro ao salvar pastas:", e);
+    }
+}
+
+// --- FUNÇÃO DE SALVAR NOTAS CORRIGIDA (Substitui a antiga) ---
 async function saveNotesData() {
-    if (!editingNoteId) return;
-
-    // Encontra a nota que estamos editando na lista
-    const noteIndex = notes.findIndex(n => n.id === editingNoteId);
-    
-    if (noteIndex !== -1) {
-        // Pega o conteúdo HTML de dentro do editor Quill
-        // 'quill.root.innerHTML' é o jeito certo de pegar o texto formatado
-        const conteudoNovo = quill.root.innerHTML;
-
-        // Atualiza na memória
-        notes[noteIndex].content = conteudoNovo;
-        notes[noteIndex].updatedAt = new Date().toISOString();
-
-        // Salva no banco de dados (Lembra do salvarDados?)
-        await salvarDados('ted_notes', notes);
+    // 1. Se estiver com o editor aberto, pega o texto mais recente antes de salvar
+    if (editingNoteId && typeof quill !== 'undefined') {
+        const noteIndex = notes.findIndex(n => n.id === editingNoteId);
         
-        console.log("Nota salva com sucesso via Quill!");
+        // Só atualiza se encontrar a nota e o editor tiver conteúdo válido
+        if (noteIndex !== -1 && quill.root) {
+            const conteudoNovo = quill.root.innerHTML;
+            notes[noteIndex].content = conteudoNovo;
+            notes[noteIndex].updatedAt = new Date().toISOString();
+        }
+    }
+
+    // 2. Salva TUDO no banco de dados (A correção principal é que isso roda SEMPRE)
+    try {
+        await salvarDados('ted_notes', notes);
+        console.log("Todas as notas foram salvas no banco.");
+    } catch (e) {
+        console.error("Erro ao salvar notas:", e);
     }
 }
 
