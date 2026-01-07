@@ -1295,11 +1295,394 @@
 .auth-link-bold { color: var(--primary); font-weight: 700; cursor: pointer; }
 
 /* Lado Direito (Imagem) */
-.auth-right { flex: 1.3; position: relative; background-color: #f1f5f9; height: 100%; }
-.auth-right::before {
-    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('assets/login_image.png'); background-size: cover; background-position: center;
+/* =========================
+   LOGIN - LADO DIREITO (SHOWCASE)
+   ========================= */
+
+.auth-right{
+  flex: 1.3;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+
+  /* Fundo suave e moderno */
+  background:
+    radial-gradient(1200px 700px at 18% 20%, rgba(237, 132, 50, 0.16), transparent 55%),
+    radial-gradient(900px 600px at 82% 30%, rgba(59, 130, 246, 0.16), transparent 55%),
+    linear-gradient(135deg, #f8fafc 0%, #eff6ff 55%, #f1f5f9 100%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* Remove a “foto” antiga que era aplicada via pseudo-elemento */
+.auth-right:before{
+  content: none !important;
+}
+
+/* Container geral do showcase (Compactado) */
+.auth-showcase {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  padding: 20px; /* Padding menor */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centraliza ao invés de space-between para juntar */
+  gap: 10px; /* Gap pequeno para aproximar os blocos */
+  height: 100%;
+}
+
+/* Cabeçalho */
+.auth-showcase-header {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  max-width: 700px;
+  margin-top: 0;
+  margin-bottom: 5px; /* Margem mínima */
+}
+
+.auth-showcase-title {
+  font-size: 2.8rem; /* Aumentado para destaque (era 2.2rem) */
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -1.5px;
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+
+.auth-showcase-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  font-weight: 600;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.4;
+}
+
+/* Canvas dos Cards (Altura reduzida para puxar o footer) */
+.auth-showcase-canvas {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 480px; /* Reduzi de 500px para 420px para juntar as pontas */
+  z-index: 2;
+  margin: 10px 0; /* Espaçamento controlado */
+}
+
+/* Rodapé */
+.auth-showcase-footer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  margin-bottom: 0; /* Sem margem extra no fundo */
+}
+
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-badge {
+  background: #f59e0b;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.info-text {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-download-win {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1e293b;
+  color: white;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-download-win:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(237, 132, 50, 0.3);
+  color: white;
+}
+
+.coming-soon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+
+/* Card base */
+.feature-card{
+  position: absolute;
+  width: 290px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(255,255,255,0.60);
+  box-shadow: 0 22px 55px -16px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.feature-card:hover{
+  transform: translateY(-6px) scale(1.03) !important;
+  z-index: 10;
+  border-color: rgba(237, 132, 50, 0.35);
+  box-shadow: 0 26px 70px -18px rgba(15, 23, 42, 0.22);
+}
+
+/* Topo do card */
+.fc-top{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fc-icon{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(148,163,184,0.35);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  font-size: 1.25rem;
+}
+
+.fc-title{
+  font-size: 1.06rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+}
+
+/* Linhas “skeleton” */
+.fc-line{
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148,163,184,0.35);
+  margin-bottom: 10px;
+}
+.fc-line.w-90{ width: 90%; }
+.fc-line.w-85{ width: 85%; }
+.fc-line.w-75{ width: 75%; }
+.fc-line.w-70{ width: 70%; }
+.fc-line.w-60{ width: 60%; }
+.fc-line.w-55{ width: 55%; }
+
+/* Chip */
+.fc-chip{
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #0f172a;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.22);
+}
+.fc-chip.alt{
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.22);
+}
+
+/* Pomodoro ring */
+.pomo-ring{
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  margin: 10px auto 14px;
+  background: conic-gradient(var(--primary) 0 72%, rgba(148,163,184,0.35) 72% 100%);
+  display: grid;
+  place-items: center;
+  animation: ringPulse 2.8s ease-in-out infinite;
+}
+@keyframes ringPulse{
+  0%, 100% { transform: scale(1); filter: saturate(1); }
+  50% { transform: scale(1.03); filter: saturate(1.12); }
+}
+.pomo-ring-inner{
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(148,163,184,0.35);
+  box-shadow: inset 0 2px 12px rgba(15,23,42,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.pomo-time{
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  color: #0f172a;
+}
+.pomo-label{
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+/* Agenda (linhas tipo checklist) */
+.agenda-rows{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0 10px;
+}
+.agenda-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.agenda-check{
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(148,163,184,0.55);
+  background: transparent;
+}
+.agenda-check.active{
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.agenda-line{
+  height: 8px;
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(148,163,184,0.30);
+}
+.agenda-line.short{ width: 62%; }
+
+/* Performance (barras visíveis) */
+.stat-bars{
+  height: 90px;
+  margin: 10px 0 12px;
+  padding: 0 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.stat-bar{
+  width: 14px;
+  border-radius: 8px;
+  background: rgba(148,163,184,0.45);
+  transform-origin: bottom;
+  animation: growBar 1.3s ease-out both;
+}
+@keyframes growBar{
+  from { transform: scaleY(0.12); opacity: 0.75; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+.stat-bar.h-40{ height: 40%; }
+.stat-bar.h-55{ height: 55%; }
+.stat-bar.h-60{ height: 60%; }
+.stat-bar.h-70{ height: 70%; }
+.stat-bar.h-85{ height: 85%; }
+.stat-bar.active{
+  background: linear-gradient(to top, var(--primary), #fbbf24);
+  box-shadow: 0 10px 22px rgba(237, 132, 50, 0.18);
+}
+
+/* Posições dos cards */
+.feature-card.fc-1{ top: 10px; left: 10px; transform: rotate(-3deg); animation: floatA 6s ease-in-out infinite; }
+.feature-card.fc-2{ top: 35px; right: 10px; transform: rotate(2deg);  animation: floatB 7.2s ease-in-out infinite; z-index: 3; }
+.feature-card.fc-3{ bottom: 45px; left: 35px; transform: rotate(2deg); animation: floatB 7.8s ease-in-out infinite reverse; }
+.feature-card.fc-4{ bottom: 15px; right: 5px; transform: rotate(-2deg); animation: floatA 6.6s ease-in-out infinite reverse; z-index: 4; }
+
+@keyframes floatA{
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(-2deg); }
+}
+@keyframes floatB{
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-14px) rotate(3deg); }
+}
+
+/* Orbs de brilho */
+.glow-orb{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: 0.7;
+  z-index: 1;
+  pointer-events: none;
+}
+.glow-orb.o1{
+  width: 320px;
+  height: 320px;
+  left: -70px;
+  top: 160px;
+  background: rgba(237, 132, 50, 0.26);
+  animation: orbMove 7.6s ease-in-out infinite;
+}
+.glow-orb.o2{
+  width: 360px;
+  height: 360px;
+  right: -120px;
+  top: 30px;
+  background: rgba(59, 130, 246, 0.24);
+  animation: orbMove 9s ease-in-out infinite reverse;
+}
+@keyframes orbMove{
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(18px, -14px); }
+}
+
+/* Mantém o comportamento mobile do seu arquivo (imagem some) */
+@media (max-width: 900px){
+  .auth-right{ display: none !important; }
+}
+
 
 /* RESPONSIVIDADE (Mobile) - Imagem some, form ocupa tudo */
 @media (max-width: 900px) {
@@ -2717,6 +3100,89 @@ select.lib-control {
     filter: invert(1);
 }
 
+/* Wrapper para manter o botão e o painel juntos */
+.quick-access-wrapper {
+    width: 100%;
+}
+
+/* Ajuste do Ícone do Sino */
+#btn-quick-notes i {
+    filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); /* Brilho estático suave */
+    transition: transform 0.2s;
+}
+
+#btn-quick-notes:hover i {
+    transform: scale(1.1);
+}
+
+/* Painel de Anotações (Popover) */
+.quick-notes-panel {
+    display: none;
+    position: absolute;
+    left: 70px; /* Ao lado da sidebar */
+    top: 0; /* Alinhado ao topo do botão */
+    width: 280px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 2000;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.quick-notes-panel.active {
+    display: flex;
+}
+
+.quick-notes-header {
+    background: var(--primary-dim);
+    padding: 12px;
+    font-weight: bold;
+    color: var(--primary-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.quick-notes-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.quick-note-item {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quick-note-item:last-child { border-bottom: none; }
+.quick-note-item:hover { background: var(--bg-body); }
+
+.quick-note-title {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Esconde o botão de histórico por padrão */
+#btn-quick-notes {
+    display: none;
+}
+
+/* Classe para mostrar o botão quando tiver conteúdo */
+#btn-quick-notes.visible {
+    display: flex !important; /* O !important garante que sobrescreva o none */
+}
+
+
 
 </style>
 </head>
@@ -2801,11 +3267,109 @@ select.lib-control {
       </div>
     </div>
 
-    <!-- Lado Direito: Imagem -->
-    <div class="auth-right"></div>
+   <!-- Lado Direito (Vitrine) -->
+<div class="auth-right">
+  <div class="auth-showcase">
+    <div class="auth-showcase-header">
+      <!-- Título atualizado -->
+      <div class="auth-showcase-title">Estude no piloto automático</div>
+      <div class="auth-showcase-subtitle" style="max-width: 500px; margin: 0 auto; line-height: 1.5;">
+        Você adiciona o material, nós avisamos a hora de revisar.
+      </div>
+    </div>
+
+    <div class="auth-showcase-canvas">
+      <!-- Card 1: Flashcards -->
+      <div class="feature-card fc-1">
+        <div class="fc-top">
+          <span class="fc-icon">🧠</span>
+          <span class="fc-title">Flashcards</span>
+        </div>
+        <div class="fc-line w-90"></div>
+        <div class="fc-line w-70"></div>
+        <div class="fc-line w-55"></div>
+        <div class="fc-chip">Revisão rápida</div>
+      </div>
+
+      <!-- Card 2: Pomodoro -->
+      <div class="feature-card fc-2">
+        <div class="fc-top">
+          <span class="fc-icon">⏱️</span>
+          <span class="fc-title">Pomodoro</span>
+        </div>
+        <div class="pomo-ring">
+          <div class="pomo-ring-inner">
+            <div class="pomo-time">25:00</div>
+            <div class="pomo-label">Foco</div>
+          </div>
+        </div>
+        <div class="fc-chip alt">Pausas inteligentes</div>
+      </div>
+
+      <!-- Card 3: Agenda -->
+      <div class="feature-card fc-3">
+        <div class="fc-top">
+          <span class="fc-icon">📅</span>
+          <span class="fc-title">Agenda</span>
+        </div>
+        <div class="agenda-rows">
+          <div class="agenda-row">
+            <div class="agenda-check"></div>
+            <div class="agenda-line"></div>
+          </div>
+          <div class="agenda-row">
+            <div class="agenda-check"></div>
+            <div class="agenda-line short"></div>
+          </div>
+          <div class="agenda-row">
+            <div class="agenda-check active"></div>
+            <div class="agenda-line"></div>
+          </div>
+        </div>
+        <div class="fc-chip">Organização</div>
+      </div>
+
+      <!-- Card 4: Performance -->
+      <div class="feature-card fc-4">
+        <div class="fc-top">
+          <span class="fc-icon">📊</span>
+          <span class="fc-title">Performance</span>
+        </div>
+        <div class="stat-bars">
+          <div class="stat-bar h-40"></div>
+          <div class="stat-bar h-60"></div>
+          <div class="stat-bar h-85 active"></div>
+          <div class="stat-bar h-55"></div>
+          <div class="stat-bar h-70"></div>
+        </div>
+        <div class="fc-chip alt">Evolução</div>
+      </div>
+
+      <!-- Elementos de brilho -->
+      <div class="glow-orb o1"></div>
+      <div class="glow-orb o2"></div>
+    </div>
+
+    <!-- NOVO RODAPÉ INSERIDO AQUI -->
+    <div class="auth-showcase-footer">
+      <div class="footer-info">
+        <span class="info-badge">BETA WEB</span>
+        <span class="info-text">Versão online para testes.</span>
+      </div>
+
+      <div class="footer-actions">
+        <a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" class="btn-download-win">
+          <i class="fab fa-windows"></i> Baixar para Windows
+        </a>
+        <span class="coming-soon">
+          <i class="fab fa-android"></i> <i class="fab fa-linux"></i> Em breve
+        </span>
+      </div>
+    </div>
+    
   </div>
 </div>
-<!-- FIM NOVA TELA DE LOGIN -->
+
 
 
     
@@ -2824,7 +3388,26 @@ select.lib-control {
             <button class="nav-item" onclick="switchTab('schedule')" title="Cronograma"><i class="fas fa-calendar-alt"></i> <span>Cronograma</span></button>
             <button class="nav-item" onclick="switchTab('performance')" title="Dados"><i class="fas fa-chart-pie"></i> <span>Dados</span></button>
             <button class="nav-item" onclick="switchTab('settings')" title="Configurações"><i class="fas fa-cog"></i> <span>Configurações</span></button>
+           <div class="quick-access-wrapper" style="position: relative;">
+                <button class="nav-item" id="btn-quick-notes" onclick="toggleQuickNotes()" title="Histórico Recente">
+    <i class="fas fa-history" style="color: var(--warning);"></i> 
+    <span>Histórico</span>
+</button>
+
+
+                <div class="quick-notes-panel" id="quick-notes-panel">
+                    <div class="quick-notes-header">
+                        <span>Historico de Anotações</span>
+                        <i class="fas fa-times" onclick="toggleQuickNotes()" style="cursor: pointer;"></i>
+                    </div>
+                    <div class="quick-notes-list" id="quick-notes-list">
+                        <!-- Lista via JS -->
+                    </div>
+                </div>
+            </div>
         </div>
+
+    
                 <!-- TAG DE VERSÃO BETA (Retangular - Alinhado à Esquerda) -->
         <div class="version-tag" style="
             position: absolute;
@@ -2842,7 +3425,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.0</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.2</div>
         </div>
 
     </nav>
@@ -2893,9 +3476,10 @@ select.lib-control {
                     <div class="stat-info"><h4>Cards para Hoje</h4><strong id="dash-due-count">0</strong></div>
                 </div>
                 <div class="card-box stat-widget">
-                    <div class="stat-icon" style="background: #fef3c7; color: var(--warning);"><i class="fas fa-fire"></i></div>
-                    <div class="stat-info"><h4>Ofensiva</h4><strong id="dash-streak">0 dias</strong></div>
-                </div>
+    <div class="stat-icon" style="background: #e0e7ff; color: var(--primary);"><i class="fas fa-layer-group"></i></div>
+    <div class="stat-info"><h4>Cards Criados</h4><strong id="dash-total-cards">0</strong></div>
+</div>
+
                 <div class="card-box stat-widget">
                     <div class="stat-icon" style="background: #e0f2fe; color: var(--info);"><i class="fas fa-clock"></i></div>
                     <div class="stat-info"><h4>Próxima Atividade</h4><div id="dash-next-task" style="font-weight:700">Nenhuma</div></div>
@@ -3185,9 +3769,11 @@ select.lib-control {
                         
                         <!-- Finish Button (shown only at end) -->
                         <div style="text-align:center; margin-top:16px;">
-                            <button id="finish-review-btn" class="action-btn btn-danger hidden" onclick="finishRandomReview()" style="width:auto; margin:0 auto;">
-                                Encerrar Sessão
-                            </button>
+                            <!-- Botão sempre visível agora -->
+<button id="finish-review-btn" class="action-btn btn-danger" onclick="finishRandomReview()" style="width:auto; margin:0 auto;">
+    Encerrar Sessão
+</button>
+
                         </div>
                     </div>
                 </div>
@@ -3789,56 +4375,70 @@ select.lib-control {
             <!-- FIM DO BANNER -->
 
 
-          <!-- === SISTEMA ANTI-DISTRAÇÃO (PADRONIZADO E COMPACTO) === -->
+ <!-- === SISTEMA ANTI-DISTRAÇÃO (CORRIGIDO) === -->
 <div class="card-box">
     <!-- Título Principal -->
     <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Sistema Anti-Distração (Pomodoro)</h3>
     
-    <!-- Texto Base (Padrão para todas as descrições) -->
-    <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.4;">
+    <!-- Texto Base -->
+    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.95rem; line-height: 1.4;">
         Configure o comportamento inteligente do pomodoro para manter seu foco.
     </p>
 
-    <!-- ITEM 1 -->
-    <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <!-- Título do Item (Mesmo tamanho do H3 acima: 1.1rem) -->
-            <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                Pausa por Foco
-            </label>
-            <input type="number" id="mouseOutTime" class="input-modern" style="width: 70px; text-align: center;" value="30">
-        </div>
-        <!-- Descrição do Item (Mesmo tamanho do texto base: 0.95rem) -->
-        <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-            Pausa o timer se o mouse sair da janela por mais de <b>X segundos</b>.
-        </p>
+    <!-- Botão de Ativar/Desativar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
+        <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
+            Ativar Sistema
+        </label>
+        <label class="switch-container">
+            <input type="checkbox" id="antiDistractionToggle">
+            <span class="slider round"></span>
+        </label>
     </div>
 
-    <!-- ITEM 2 -->
-    <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                Aviso de Inatividade
-            </label>
-            <input type="number" id="inactivityTime" class="input-modern" style="width: 70px; text-align: center;" value="5">
+    <!-- CONTAINER QUE ESCONDE AS OPÇÕES (Início) -->
+    <div id="antiDistractionOptions" style="display: none;">
+        
+        <!-- ITEM 1: Pausa por Foco -->
+        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
+                    Pausa por Foco
+                </label>
+                <input type="number" id="mouseOutTime" class="input-modern" style="width: 70px; text-align: center;" value="30">
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
+                Pausa o timer se o mouse sair da janela por mais de <b>segundos</b>.
+            </p>
         </div>
-        <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-            Pergunta "Você ainda está aí?" após <b>X minutos</b> sem mexer no PC.
-        </p>
-    </div>
 
-    <!-- ITEM 3 -->
-    <div style="margin-bottom: 25px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                Retomada Automática
-            </label>
-            <input type="number" id="resumeCountdown" class="input-modern" style="width: 70px; text-align: center;" value="10">
+        <!-- ITEM 2: Aviso de Inatividade -->
+        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
+                    Aviso de Inatividade
+                </label>
+                <input type="number" id="inactivityTime" class="input-modern" style="width: 70px; text-align: center;" value="5">
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
+                Pergunta "Você ainda está aí?" após <b>minutos</b> sem mexer no PC.
+            </p>
         </div>
-        <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-            Contagem de <b>X segundos</b> para retomar ao voltar a atividade.
-        </p>
-    </div>
+
+        <!-- ITEM 3: Retomada Automática -->
+        <div style="margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
+                    Retomada Automática
+                </label>
+                <input type="number" id="resumeCountdown" class="input-modern" style="width: 70px; text-align: center;" value="10">
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
+                Contagem de <b>segundos</b> para retomar ao voltar a atividade.
+            </p>
+        </div>
+
+    </div> <!-- FIM DO CONTAINER QUE ESCONDE AS OPÇÕES (Adicionei este fechamento aqui!) -->
 
     <button onclick="saveAntiDistractionConfig()" class="action-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 10px;">
         Salvar Alterações
@@ -3846,6 +4446,7 @@ select.lib-control {
     
     <div id="configStatus" style="text-align: center; margin-top: 8px; height: 15px; font-size: 0.9rem; font-weight: bold;"></div>
 </div>
+
 
 
 
@@ -4473,6 +5074,168 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
                 saveNotesData();
             }
         }
+
+
+
+function addToQuickHistory(note) {
+    if (!note || !note.title) return;
+
+    try {
+        let history = JSON.parse(sessionStorage.getItem('ted_quick_history') || '[]');
+        
+        history = history.filter(h => h.id !== note.id);
+        
+        history.unshift({
+            id: note.id,
+            title: note.title,
+            folderName: note.folderName || 'Anotações',
+            timestamp: Date.now()
+        });
+        
+        if (history.length > 10) history.pop();
+        
+        sessionStorage.setItem('ted_quick_history', JSON.stringify(history));
+
+        // --- NOVO TRECHO: Atualiza a visibilidade do botão ---
+        checkHistoryVisibility(); 
+        // ----------------------------------------------------
+        
+    } catch (e) {
+        console.error("Erro ao salvar histórico", e);
+    }
+}
+
+
+function checkHistoryVisibility() {
+    const history = JSON.parse(sessionStorage.getItem('ted_quick_history') || '[]');
+    const btn = document.getElementById('btn-quick-notes');
+    
+    if (btn) {
+        if (history.length > 0) {
+            btn.classList.add('visible'); // Mostra se tiver itens
+        } else {
+            btn.classList.remove('visible'); // Esconde se estiver vazio
+        }
+    }
+}
+
+// Executa a checagem assim que a página carrega
+document.addEventListener('DOMContentLoaded', checkHistoryVisibility);
+
+
+
+// 2. Interceptor Global (Tenta detectar cliques em notas automaticamente)
+document.addEventListener('click', function(e) {
+    // Tenta achar o elemento da nota clicado na lista lateral ou cards
+    const noteEl = e.target.closest('.note-item, .card-note-link'); 
+    if (noteEl) {
+        // Pega o título visualmente se não tivermos acesso aos dados brutos
+        const title = noteEl.innerText || noteEl.textContent;
+        // Salva um histórico provisório visual
+        addToQuickHistory({
+            id: Date.now(), // ID temporário
+            title: title.split('\n')[0], // Pega só a primeira linha
+            folderName: 'Aberto Recentemente'
+        });
+    }
+});
+
+
+// 3. Função de Exibir (Lê do histórico que acabamos de criar)
+function toggleQuickNotes() {
+    const panel = document.getElementById('quick-notes-panel');
+    if (!panel) return;
+    
+    // Toggle Visual
+    if (panel.style.display === 'flex') {
+        panel.style.display = 'none';
+        return;
+    }
+    
+    // Atualiza Lista
+    const list = document.getElementById('quick-notes-list');
+    list.innerHTML = '';
+    
+    const history = JSON.parse(sessionStorage.getItem('ted_quick_history') || '[]');
+
+    
+    if (history.length === 0) {
+        list.innerHTML = '<div style="padding:15px;text-align:center;color:#888">Nenhuma nota aberta recentemente.</div>';
+    } else {
+        history.forEach(h => {
+            const item = document.createElement('div');
+            item.className = 'quick-note-item';
+            
+            // Limpa título
+            let cleanTitle = h.title.replace(/<[^>]*>/g, '').trim() || "Nota sem nome";
+            
+            item.innerHTML = `
+                <div style="flex:1">
+                    <div style="font-weight:500;color:var(--text-main)">${cleanTitle}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">${new Date(h.timestamp).toLocaleTimeString()}</div>
+                </div>
+            `;
+            
+            // --- CORREÇÃO AQUI ---
+            item.onclick = () => {
+                panel.style.display = 'none'; // Fecha o painel primeiro
+                
+                // Vai para a aba de listagem de notas
+                switchTab('notes');
+                
+                // Pequeno delay para garantir que a transição de aba ocorreu
+                setTimeout(() => {
+                    // Tenta encontrar a nota na lista global 'notes' pelo ID
+                    // Se não achar em 'notes', procura dentro das pastas 'folders'
+                    let targetNote = notes.find(n => n.id === h.id);
+                    
+                    if (!targetNote && typeof folders !== 'undefined') {
+                        // Varre pastas se não achou na raiz
+                        for (const f of folders) {
+                            if (f.notes) {
+                                const found = f.notes.find(n => n.id === h.id);
+                                if (found) {
+                                    targetNote = found;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (targetNote && typeof openNoteEditor === 'function') {
+                        // Passa APENAS o ID, pois sua função openNoteEditor(id) espera isso
+                        openNoteEditor(h.id); 
+                    } else {
+                        // Se não achar a nota (foi deletada?), remove do histórico para não confundir
+                        alert('Esta anotação não foi encontrada (pode ter sido excluída).');
+                        // Opcional: remover do histórico visualmente
+                        // let newHistory = history.filter(x => x.id !== h.id);
+                        // localStorage.setItem('ted_quick_history', JSON.stringify(newHistory));
+                    }
+                }, 50);
+            };
+            // ---------------------
+            
+            list.appendChild(item);
+        });
+    }
+
+    // Posiciona e mostra
+    panel.style.display = 'flex';
+    const btn = document.getElementById('btn-quick-notes');
+    if(btn) {
+        const rect = btn.getBoundingClientRect();
+        panel.style.position = 'fixed';
+        panel.style.left = (rect.right + 10) + 'px';
+        panel.style.top = Math.max(10, rect.top - 50) + 'px';
+    }
+}
+
+
+
+
+       
+
 
         function showAlert(title, msg) {
             document.getElementById('custom-alert-title').innerText = title;
@@ -5584,10 +6347,19 @@ function deleteFolder(id) {
 
         
         function createNewNote() { editingNoteId = null; openNoteEditor(null); }
-        function openNoteEditor(id) { 
+                function openNoteEditor(id) { 
             editingNoteId = id; 
-            const n = notes.find(x=>x.id===id); 
-            document.getElementById('note-title').value = n?n.title:''; 
+            
+            // 1. Encontra a nota
+            const n = notes.find(x => x.id === id); 
+            
+            // [NOVO] 2. Salva no Histórico Recente se a nota existir
+            if (n) {
+                addToQuickHistory(n);
+            }
+
+            // 3. Preenche o Editor
+            document.getElementById('note-title').value = n ? n.title : ''; 
             quill.clipboard.dangerouslyPasteHTML(n ? n.content : "");
             
             // Populate folder dropdown
@@ -5600,11 +6372,13 @@ function deleteFolder(id) {
             sortedFolders.forEach(f => {
                 folderSelect.innerHTML += `<option value="${f.id}" ${n ? (n.folderId === f.id ? 'selected' : '') : (currentFolderId === f.id ? 'selected' : '')}>${f.name}</option>`;
             });
+            
             if(n && n.folderId === null) folderSelect.value = "null";
             if(!n && currentFolderId === null) folderSelect.value = "null";
 
             switchTab('note-editor'); 
         }
+
         // --- NOVA FUNÇÃO DE SALVAMENTO AUTOMÁTICO ---
 function persistCurrentNote() {
     // Verifica se o editor está aberto
@@ -5933,29 +6707,45 @@ async function saveNotesData() {
         function closeNoteEditor() { switchTab('notes'); }
 
         function renderDashboard() {
-            const now = Date.now();
-            const due = cards.filter(c => c.nextReview <= now).length;
-            document.getElementById('dash-due-count').innerText = due;
-            document.getElementById('dash-streak').innerText = `${userData.streak} dias`;
-            const nextTaskEl = document.getElementById('dash-next-task');
-            if(cards.length > 0) {
-                const nextCard = [...cards].sort((a,b) => a.nextReview - b.nextReview)[0];
-                const dateStr = new Date(nextCard.nextReview).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-                nextTaskEl.innerHTML = `<div style="font-size:0.9rem">${dateStr}</div><div style="font-size:0.8rem; color:var(--primary); font-weight:600;">${nextCard.category || 'Geral'}</div>`;
-            } else { nextTaskEl.innerText = "Nenhuma"; }
-            const chart = document.getElementById('dash-mini-chart'); chart.innerHTML = '';
-            for(let i=6; i>=0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                const count = performanceData.filter(p => p.date === d.toISOString().split('T')[0]).length;
-                const h = Math.min(count * 5, 80);
-                chart.innerHTML += `<div class="chart-col"><div class="chart-bar-container"><div class="chart-bar" style="height:${Math.max(4, h)}px;background:${count>0?'var(--primary)':'var(--border)'};"></div></div><div class="chart-label">${d.toLocaleDateString('pt-BR', {weekday:'short'}).slice(0,3)}</div></div>`;
-            }
-            const tasksPreview = document.getElementById('dash-tasks-preview'); tasksPreview.innerHTML = '';
-            const pendingTasks = tasks.filter(t => !t.done); const doneTasks = tasks.filter(t => t.done);
-            if (pendingTasks.length === 0 && doneTasks.length === 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); font-style:italic;">Nenhuma meta definida.</div>';
-            else if (pendingTasks.length === 0 && doneTasks.length > 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--success); font-weight:bold;"><i class="fas fa-check-circle"></i> Tudo concluído!</div>';
-            else { pendingTasks.slice(0, 3).forEach(t => { tasksPreview.innerHTML += `<div style="display:flex; gap:10px; align-items:center; background:var(--bg-body); padding:8px; border-radius:6px; font-size:0.9rem;"><div class="task-check" onclick="toggleTask(${t.id}); renderDashboard();" style="width:16px; height:16px; min-width:16px;"></div><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.text}</span></div>`; }); if (pendingTasks.length > 3) tasksPreview.innerHTML += `<div style="font-size:0.8rem; color:var(--text-muted); text-align:center;">+ ${pendingTasks.length - 3} metas</div>`; }
+    const now = Date.now();
+    const due = cards.filter(c => c.nextReview <= now).length;
+    document.getElementById('dash-due-count').innerText = due;
+    
+    // --- ALTERAÇÃO: Mostra total de cards em vez de ofensiva ---
+    const totalEl = document.getElementById('dash-total-cards');
+    if(totalEl) totalEl.innerText = cards.length; 
+    // -----------------------------------------------------------
+
+    const nextTaskEl = document.getElementById('dash-next-task');
+    if(cards.length > 0) {
+        const nextCard = [...cards].sort((a,b) => a.nextReview - b.nextReview)[0];
+        const dateStr = new Date(nextCard.nextReview).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+        nextTaskEl.innerHTML = `<div style="font-size:0.9rem">${dateStr}</div><div style="font-size:0.8rem; color:var(--primary); font-weight:600;">${nextCard.category || 'Geral'}</div>`;
+    } else { nextTaskEl.innerText = "Nenhuma"; }
+    
+    // Gráfico mini
+    const chart = document.getElementById('dash-mini-chart'); 
+    if(chart) {
+        chart.innerHTML = '';
+        for(let i=6; i>=0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            const count = performanceData.filter(p => p.date === d.toISOString().split('T')[0]).length;
+            const h = Math.min(count * 5, 80);
+            chart.innerHTML += `<div class="chart-col"><div class="chart-bar-container"><div class="chart-bar" style="height:${Math.max(4, h)}px;background:${count>0?'var(--primary)':'var(--border)'};"></div></div><div class="chart-label">${d.toLocaleDateString('pt-BR', {weekday:'short'}).slice(0,3)}</div></div>`;
         }
+    }
+
+    // Tarefas
+    const tasksPreview = document.getElementById('dash-tasks-preview'); 
+    if(tasksPreview) {
+        tasksPreview.innerHTML = '';
+        const pendingTasks = tasks.filter(t => !t.done); const doneTasks = tasks.filter(t => t.done);
+        if (pendingTasks.length === 0 && doneTasks.length === 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); font-style:italic;">Nenhuma meta definida.</div>';
+        else if (pendingTasks.length === 0 && doneTasks.length > 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--success); font-weight:bold;"><i class="fas fa-check-circle"></i> Tudo concluído!</div>';
+        else { pendingTasks.slice(0, 3).forEach(t => { tasksPreview.innerHTML += `<div style="display:flex; gap:10px; align-items:center; background:var(--bg-body); padding:8px; border-radius:6px; font-size:0.9rem;"><div class="task-check" onclick="toggleTask(${t.id}); renderDashboard();" style="width:16px; height:16px; min-width:16px;"></div><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.text}</span></div>`; }); if (pendingTasks.length > 3) tasksPreview.innerHTML += `<div style="font-size:0.8rem; color:var(--text-muted); text-align:center;">+ ${pendingTasks.length - 3} metas</div>`; }
+    }
+}
+
 
         function renderTasks() { const c = document.getElementById('tasks-container'); c.innerHTML = ''; tasks.forEach(t => c.innerHTML += `<div class="task-item ${t.done?'completed':''}"><div class="task-check" onclick="toggleTask(${t.id})">${t.done?'<i class="fas fa-check"></i>':''}</div><span style="flex:1;">${t.text}</span><i class="fas fa-trash" onclick="deleteTask(${t.id})" style="color:var(--text-muted);cursor:pointer;"></i></div>`); }
         function addTask() { const v = document.getElementById('new-task-input').value; if(v) { tasks.push({id:Date.now(), text:v, done:false}); document.getElementById('new-task-input').value=''; saveSchedule(); renderTasks(); renderDashboard(); } }
@@ -6701,89 +7491,81 @@ if (c.source && c.source.trim() !== '') {
         }
 
         function confirmAnswer() {
-            if(!currentSelectedOption) return alert("Por favor, selecione uma alternativa.");
-            const isCor = currentSelectedOption === currentCard.correctText;
-                // --- CÓDIGO NOVO: SALVAR HISTÓRICO NO CARD ---
-    if (!currentCard.history) currentCard.history = []; // Cria se não existir
+    if(!currentSelectedOption) return alert("Por favor, selecione uma alternativa.");
+    const isCor = currentSelectedOption === currentCard.correctText;
     
-    // Define a qualidade (nota) para o histórico
-    // 4 = Fácil (Acertou), 1 = Errou
-    // Se quiser refinar depois com botões de "Difícil/Bom", podemos ajustar.
-    // Por enquanto: Acertou = 4, Errou = 1.
+    // --- CÓDIGO NOVO: SALVAR HISTÓRICO NO CARD ---
+    if (!currentCard.history) currentCard.history = []; 
     const qualityScore = isCor ? 4 : 1;
-    
     currentCard.history.push({
         date: Date.now(),
         quality: qualityScore,
         interval: currentCard.interval || 0
     });
     // ---------------------------------------------
+    
+    // Save state
+    sessionAnswers[currentCard.id] = { selected: currentSelectedOption, correct: isCor };
+    
+    // Update UI
+    currentSelectedBtn.classList.remove('selected');
+    currentSelectedBtn.classList.add(isCor ? 'correct' : 'wrong');
+    
+    if(!isCor) { 
+        document.querySelectorAll('.option-btn').forEach(b => { 
+            if(b.dataset.val === currentCard.correctText) { b.classList.add('correct'); } 
+        }); 
+    }
+    
+    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+    
+    // Change buttons
+    renderAnsweredState();
+    
+    if(studyMode === 'simulation') {
+        if(isCor) simulationResults.correct++;
+        else simulationResults.wrong++;
+        
+        currentSimulationLog.push({
+            question: currentCard.question,
+            userAnswer: currentSelectedOption,
+            correctAnswer: currentCard.correctText,
+            isCorrect: isCor,
+            category: currentCard.category || 'Geral'
+        });
+        
+    } else {
+        updateStreakOnStudy();
+        // REMOVIDO: Linha que atualizava 'dash-streak' foi apagada para evitar erro
+        
+        if(studyMode === 'standard') { 
+            const idx = cards.findIndex(x=>x.id===currentCard.id); 
+            
+            if(isCor) {
+                // Apply intensity logic
+                let multiplier = 2; 
+                const level = userData.revisionLevel || 'moderate';
+                if (level === 'light') multiplier = 3; 
+                if (level === 'intense') multiplier = 1.5; 
 
-            
-            // Save state
-            sessionAnswers[currentCard.id] = {
-                selected: currentSelectedOption,
-                correct: isCor
-            };
-            
-            // Update UI
-            currentSelectedBtn.classList.remove('selected');
-            currentSelectedBtn.classList.add(isCor ? 'correct' : 'wrong');
-            
-            if(!isCor) { 
-                document.querySelectorAll('.option-btn').forEach(b => { 
-                    if(b.dataset.val === currentCard.correctText) { b.classList.add('correct'); } 
-                }); 
-            }
-            
-            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-            
-            // Change buttons
-            renderAnsweredState();
-            
-            if(studyMode === 'simulation') {
-                if(isCor) simulationResults.correct++;
-                else simulationResults.wrong++;
-                
-                // Add to detailed log
-                currentSimulationLog.push({
-                    question: currentCard.question,
-                    userAnswer: currentSelectedOption,
-                    correctAnswer: currentCard.correctText,
-                    isCorrect: isCor,
-                    category: currentCard.category || 'Geral'
-                });
-                
+                const MAX_INTERVAL = 45; 
+                let calculatedInterval = cards[idx].interval === 0 ? 1 : Math.ceil(cards[idx].interval * multiplier);
+                cards[idx].interval = Math.min(calculatedInterval, MAX_INTERVAL);
+                cards[idx].nextReview = Date.now() + (cards[idx].interval * 86400000);
             } else {
-                updateStreakOnStudy();
-                document.getElementById('dash-streak').innerText = `${userData.streak} dias`;
-                
-                if(studyMode === 'standard') { 
-                    const idx = cards.findIndex(x=>x.id===currentCard.id); 
-                    
-                    if(isCor) {
-                        // Apply intensity logic
-                        let multiplier = 2; // Moderate (Standard)
-                        const level = userData.revisionLevel || 'moderate';
-                        
-                        if (level === 'light') multiplier = 3; // Increases interval faster (less frequent)
-                        if (level === 'intense') multiplier = 1.5; // Increases interval slower (more frequent)
-                        
-                        cards[idx].interval = cards[idx].interval === 0 ? 1 : Math.ceil(cards[idx].interval * multiplier);
-                        cards[idx].nextReview = Date.now() + (cards[idx].interval * 86400000); 
-                    } else { 
-                        cards[idx].interval = 0; 
-                        cards[idx].nextReview = Date.now(); 
-                    } 
-                    
-                    salvarDados('ted_flashcards', cards);
-                }
+                cards[idx].interval = 0;
+                cards[idx].nextReview = Date.now();
             }
-            
-            if(studyMode !== 'simulation') {
-                 performanceData.push({date:new Date().toISOString().split('T')[0], correct:isCor, category:currentCard.category||'Geral'}); salvarDados('ted_performance', performanceData);
-            }
+            salvarDados('ted_flashcards', cards);
         }
+    }
+    
+    if(studyMode !== 'simulation') {
+            performanceData.push({date:new Date().toISOString().split('T')[0], correct:isCor, category:currentCard.category||'Geral'}); 
+            salvarDados('ted_performance', performanceData);
+    }
+}
+
 
         // --- NEW NAV FUNCTIONS ---
         function prevCard() {
@@ -7732,7 +8514,7 @@ function renderPerformanceView() {
 
 <script>
 (function() {
-    let Config = { mouseOut: 30, inactivity: 5, resume: 10 };
+    let Config = { enabled: false, mouseOut: 30, inactivity: 5, resume: 10 };
     
     let state = { 
         pausedBySystem: false, 
@@ -7741,30 +8523,56 @@ function renderPerformanceView() {
         resumeTimer: null 
     };
 
-    function loadConfig() {
+        function loadConfig() {
         try {
             const saved = localStorage.getItem('ad_settings');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 Config = { ...Config, ...parsed };
             }
+            
             const iMouse = document.getElementById('mouseOutTime');
             const iInact = document.getElementById('inactivityTime');
             const iResume = document.getElementById('resumeCountdown');
+            const iEnabled = document.getElementById('antiDistractionToggle'); // NOVO
+            const optionsDiv = document.getElementById('antiDistractionOptions'); // NOVO
+            
             if (iMouse) iMouse.value = Config.mouseOut;
             if (iInact) iInact.value = Config.inactivity;
             if (iResume) iResume.value = Config.resume;
-        } catch (e) {}
+            
+            // Lógica do botão de Ativar/Desativar
+            if (iEnabled) {
+                iEnabled.checked = Config.enabled; // Marca se estiver true
+                
+                // Mostra/Esconde as opções baseado na configuração salva
+                if (optionsDiv) {
+                    optionsDiv.style.display = Config.enabled ? 'block' : 'none';
+                }
+
+                // Adiciona o evento de clique para mostrar/esconder em tempo real
+                iEnabled.addEventListener('change', (e) => {
+                    if (optionsDiv) {
+                        optionsDiv.style.display = e.target.checked ? 'block' : 'none';
+                    }
+                });
+            }
+
+        } catch (e) { console.error(e); }
     }
 
-    window.saveAntiDistractionConfig = function() {
+
+        window.saveAntiDistractionConfig = function() {
         const newConfig = {
+            // NOVO: Salva o estado do botão (Ativado/Desativado)
+            enabled: document.getElementById('antiDistractionToggle').checked,
             mouseOut: parseInt(document.getElementById('mouseOutTime').value) || 30,
             inactivity: parseInt(document.getElementById('inactivityTime').value) || 5,
             resume: parseInt(document.getElementById('resumeCountdown').value) || 10
         };
         Config = newConfig;
         localStorage.setItem('ad_settings', JSON.stringify(Config));
+        
         const status = document.getElementById('configStatus');
         if(status) {
             status.innerHTML = '<i class="fas fa-check"></i> Salvo!';
@@ -7773,6 +8581,7 @@ function renderPerformanceView() {
         }
         state.lastActivity = Date.now();
     };
+
 
     function isTimerRunning() {
         const btn = document.getElementById('btn-toggle-timer');
@@ -7797,6 +8606,7 @@ function renderPerformanceView() {
 
     // Monitoramento
     document.addEventListener('mouseleave', () => {
+        if (!Config.enabled) return;
         if (isTimerRunning()) {
             state.mouseTimer = setTimeout(() => {
                 forcePause('Mouse saiu');
@@ -7810,6 +8620,7 @@ function renderPerformanceView() {
     });
 
     setInterval(() => {
+        if (!Config.enabled) return;
         const diff = (Date.now() - state.lastActivity) / 1000 / 60;
         if (diff >= Config.inactivity && isTimerRunning()) {
             forcePause('Inatividade');
@@ -8094,6 +8905,28 @@ function renderCreatedCardsChart(start, end) {
 }
 
 
+// --- FECHAR AO CLICAR FORA ---
+document.addEventListener('click', function(event) {
+    const panel = document.getElementById('quick-notes-panel');
+    const btn = document.getElementById('btn-quick-notes');
+
+    // Se o painel não existir ou estiver fechado, não faz nada
+    if (!panel || panel.style.display !== 'flex') return;
+
+    // Verifica se o clique foi FORA do painel E FORA do botão
+    // (O .contains verifica se o elemento clicado está dentro deles)
+    if (!panel.contains(event.target) && !btn.contains(event.target)) {
+        panel.style.display = 'none';
+    }
+});
+
+
+try {
+    localStorage.removeItem('ted_quick_history'); // Remove o histórico antigo travado
+    sessionStorage.removeItem('ted_quick_history'); // Reseta a sessão atual
+    console.log("Histórico limpo com sucesso!");
+    alert("Histórico resetado! Agora o sistema novo deve funcionar.");
+} catch(e) { console.error(e); }
 
 
 </script>
