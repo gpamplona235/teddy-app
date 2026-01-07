@@ -1808,7 +1808,6 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
         .view-section { max-width: 1000px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hidden { display: none !important; }
 
         .card-box {
             background: var(--bg-card); border-radius: var(--radius-lg);
@@ -3369,8 +3368,11 @@ select.lib-control {
       </div>
     </div>
     
-  </div>
-</div>
+  </div> <!-- Fim auth-showcase -->
+</div> <!-- Fim auth-right -->
+
+</div> <!-- Fim auth-split -->
+</div> <!-- Fim auth-wrapper -->
 
 
 
@@ -4828,19 +4830,55 @@ select.lib-control {
         });
 
         // Auth State Listener
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Logged In
-                authWrapper.style.display = 'none';
-                appContent.classList.remove('hidden');
-                // Trigger dashboard render if needed
-                if(window.renderDashboard) window.renderDashboard();
-            } else {
-                // Logged Out
-                authWrapper.style.display = 'flex';
-                appContent.classList.add('hidden');
+       // Auth State Listener (Versão de Diagnóstico)
+onAuthStateChanged(auth, async (user) => {
+    console.log("1. Estado de autenticação mudou. Usuário:", user ? "Logado" : "Deslogado");
+    
+    if (user) {
+        // Logged In
+        console.log("2. Escondendo tela de login...");
+        authWrapper.style.display = 'none';
+
+        if (typeof cards === 'undefined' || !cards) {
+            console.log("3. Banco de dados vazio. Iniciando carga...");
+            try {
+                await iniciarApp();
+                console.log("4. Banco carregado com sucesso!");
+            } catch (e) {
+                console.error("ERRO CRÍTICO ao carregar banco:", e);
+                alert("Erro ao carregar seus dados. Veja o console.");
             }
-        });
+        } else {
+            console.log("3. Banco já estava carregado.");
+        }
+
+        console.log("5. Removendo classe hidden do appContent...");
+        appContent.classList.remove('hidden');
+        
+        // Verifica se o elemento está realmente visível no DOM
+        console.log("   appContent classes:", appContent.className);
+        console.log("   appContent display style:", appContent.style.display);
+
+        if(window.renderDashboard) {
+            console.log("6. Chamando renderDashboard()...");
+            try {
+                window.renderDashboard();
+                console.log("7. renderDashboard finalizou sem erros.");
+            } catch (renderError) {
+                console.error("ERRO ao renderizar dashboard:", renderError);
+            }
+        } else {
+            console.warn("AVISO: Função renderDashboard não encontrada!");
+        }
+        
+    } else {
+        // Logged Out
+        console.log("Usuário saiu. Mostrando login.");
+        authWrapper.style.display = 'flex';
+        appContent.classList.add('hidden');
+    }
+});
+
 
         // LOGOUT COM MODAL CUSTOMIZADO
     window.logout = () => {
