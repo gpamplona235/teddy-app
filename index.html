@@ -3272,6 +3272,72 @@ select.lib-control {
     }
 }
 
+/* Container do ícone */
+.info-icon-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: help;
+    color: #999;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.info-icon-container:hover {
+    opacity: 1;
+    color: var(--primary); /* Fica colorido ao passar o mouse */
+}
+
+/* O Bloco Preto (Texto) */
+.custom-tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #222; /* Fundo Preto Quase Total */
+    color: #fff; /* Texto Branco */
+    
+    text-align: left; /* CORRIGIDO: Alinhado à esquerda */
+    
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    
+    /* Posicionamento */
+    position: absolute;
+    z-index: 101;
+    top: 130%; /* Fica logo abaixo do ícone */
+    right: 0;   /* Alinhado à direita */
+    
+    /* Efeitinho de aparecer suave */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* A setinha preta apontando para cima */
+.custom-tooltip-text::after {
+    content: "";
+    position: absolute;
+    bottom: 100%; /* No topo do tooltip */
+    right: 8px;   /* Alinhado com o ícone */
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #222 transparent; /* Triângulo preto */
+}
+
+/* Mostrar quando passar o mouse */
+.info-icon-container:hover .custom-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
 
 
 </style>
@@ -3518,7 +3584,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.4</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.41</div>
         </div>
 
     </nav>
@@ -3564,10 +3630,33 @@ select.lib-control {
             </div>
             
             <div class="dashboard-grid">
-                <div class="card-box stat-widget">
-                    <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);"><i class="fas fa-layer-group"></i></div>
-                    <div class="stat-info"><h4>Cards para Hoje</h4><strong id="dash-due-count">0</strong></div>
-                </div>
+                <div class="card-box stat-widget" style="cursor: pointer; position: relative;" onclick="goToStudyPractice()">
+    
+    <!-- Ícone com Tooltip Personalizado -->
+    <div class="info-icon-container" onclick="event.stopPropagation();">
+        <i class="fas fa-exclamation-circle"></i>
+        
+        <!-- O Bloco Preto (Tooltip) -->
+        <span class="custom-tooltip-text">
+            Aqui estarão os cards disponíveis para revisão.
+        </span>
+    </div>
+
+    <!-- Conteúdo Original -->
+    <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);">
+        <i class="fas fa-layer-group"></i>
+    </div>
+    <div class="stat-info">
+        <h4>Cards para Hoje</h4>
+        <strong id="dash-due-count">0</strong>
+    </div>
+</div>
+
+
+
+
+
+
                 <div class="card-box stat-widget">
     <div class="stat-icon" style="background: #e0e7ff; color: var(--primary);"><i class="fas fa-layer-group"></i></div>
     <div class="stat-info"><h4>Cards Criados</h4><strong id="dash-total-cards">0</strong></div>
@@ -3608,7 +3697,16 @@ select.lib-control {
 <!-- Banners de Subtópicos da Semana -->
 <div class="stats-banners-grid">
     <!-- Banner: Mais Revisados -->
-    <div class="stat-banner-card hot">
+    <div class="stat-banner-card hot" style="position: relative;">
+        
+        <!-- Ícone de Informação (Mais Revisados) -->
+        <div class="info-icon-container">
+            <i class="fas fa-exclamation-circle"></i>
+            <span class="custom-tooltip-text">
+                Esses são os assuntos mais estudados na semana.
+            </span>
+        </div>
+
         <div class="stat-content">
             <h4>Mais Revisados (7d)</h4>
             <ul id="list-top-reviewed" class="stat-list">
@@ -3617,8 +3715,18 @@ select.lib-control {
         </div>
     </div>
 
+
     <!-- Banner: Menos Revisados -->
-    <div class="stat-banner-card cold">
+    <div class="stat-banner-card cold" style="position: relative;">
+        
+        <!-- Ícone de Informação (Menos Revisados) -->
+        <div class="info-icon-container">
+            <i class="fas fa-exclamation-circle"></i>
+            <span class="custom-tooltip-text" style="width: 240px;">
+                Esses são os assuntos menos estudados, fundo do poço. Recomenda-se criar novos cards para os respectivos assuntos.
+            </span>
+        </div>
+
         <div class="stat-content">
             <h4>Menos Revisados (7d)</h4>
             <ul id="list-least-reviewed" class="stat-list">
@@ -3627,6 +3735,7 @@ select.lib-control {
         </div>
     </div>
 </div>
+
 
 
                         <!-- BANNER DE DOAÇÕES (TELA INICIAL) -->
@@ -4585,8 +4694,20 @@ select.lib-control {
                     </select>
                 </div>
                 <div style="background: var(--bg-body); padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
-                    <i class="fas fa-info-circle"></i> <strong>Atenção:</strong> Alterar esta opção reiniciará o agendamento de todos os cards para hoje, adaptando-se à nova intensidade.
-                </div>
+    <i class="fas fa-info-circle"></i> <strong>Nota:</strong> A nova intensidade será aplicada nas suas próximas revisões.
+    <ul style="margin: 12px 0 0 20px; padding: 0; color: var(--text-color);">
+        <li style="margin-bottom: 10px;">
+            <strong>Leve (x2.2):</strong> Intervalos longos. Menos revisões, ideal para revisão rápida.
+        </li>
+        <li style="margin-bottom: 10px;">
+            <strong>Moderada (x1.8):</strong> Equilibrado. Ritmo constante para fixação segura.
+        </li>
+        <li style="margin-bottom: 0;">
+            <strong>Intensa (x1.4):</strong> Intervalos curtos. Muitas repetições, foco total em não esquecer.
+        </li>
+    </ul>
+</div>
+
             </div>
 
             <div class="card-box">
@@ -5180,10 +5301,15 @@ localforage.getItem('ted_task_templates').then(function(savedTasks) {
 }).catch(console.error);
             if (userData.theme === 'dark') document.body.classList.add('dark-mode');
             
-            // Set Revision Level dropdown
-            if(document.getElementById('revision-level-select')) {
-                document.getElementById('revision-level-select').value = userData.revisionLevel || 'moderate';
-            }
+           if (document.getElementById('revision-level-select')) {
+    // Pega o valor salvo OU usa 'moderate' se não tiver nada
+    const savedLevel = userData.revisionLevel || 'moderate';
+    
+    // Força o select visual a marcar a opção certa
+    document.getElementById('revision-level-select').value = savedLevel;
+    
+    console.log("Intensidade carregada:", savedLevel);
+}
 
             checkStreakIntegrity(); 
             checkDataIntegrity(); // Fix ghost folders
@@ -5531,31 +5657,22 @@ function toggleQuickNotes() {
 }
 
         
-        // --- NEW: Change Revision Level Logic ---
-        function changeRevisionLevel(newLevel) {
-            showConfirm("Alterar Intensidade?", "Mudar o nível de revisão resetará o agendamento de TODOS os cards para hoje, para aplicar o novo ritmo. Deseja continuar?", () => {
-                userData.revisionLevel = newLevel;
-                
-                // Reset interval and nextReview for all cards
-                cards.forEach(c => {
-                    c.interval = 0;
-                    c.nextReview = Date.now();
-                });
-                
-               localforage.setItem('ted_userdata', userData).catch(function(err) {
-    console.error('Erro ao salvar no localForage:', err);
-});
+  function changeRevisionLevel(newLevel) {
+    // 1. Salva no objeto global (para uso imediato)
+    if(typeof userData !== 'undefined') userData.revisionLevel = newLevel;
 
-                salvarDados('ted_flashcards', cards);
-
-                
-                showAlert("Sucesso", "Nível de revisão atualizado e cards resetados.");
-                
-                // Refresh dashboard if active to show new due count
-                if (!document.getElementById('dashboard-view').classList.contains('hidden')) renderDashboard();
-            });
-        }
-
+    // 2. Salva numa chave EXCLUSIVA e SEGURA
+    localforage.setItem('ted_config_intensity', newLevel).then(() => {
+        console.log("Intensidade salva na chave segura:", newLevel);
+        
+        // Feedback visual simples
+        const msg = document.createElement('div');
+        msg.innerText = "Salvo!";
+        msg.style.cssText = "position:fixed; bottom:20px; right:20px; background:green; color:white; padding:10px; z-index:9999; border-radius:5px;";
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 2000);
+    });
+}
         // --- NAVEGAÇÃO ---
         function switchTab(tab) {
           if (tab !== 'note-editor') {
@@ -7731,25 +7848,30 @@ if (c.source && c.source.trim() !== '') {
         // REMOVIDO: Linha que atualizava 'dash-streak' foi apagada para evitar erro
         
         if(studyMode === 'standard') { 
-            const idx = cards.findIndex(x=>x.id===currentCard.id); 
-            
-            if(isCor) {
-                // Apply intensity logic
-                let multiplier = 2; 
-                const level = userData.revisionLevel || 'moderate';
-                if (level === 'light') multiplier = 3; 
-                if (level === 'intense') multiplier = 1.5; 
+    const idx = cards.findIndex(x=>x.id===currentCard.id); 
+    
+    if(isCor) {
+        // Apply intensity logic
+        let multiplier = 1.8; 
+        const level = userData.revisionLevel || 'moderate';
+        if (level === 'light') multiplier = 2.2; 
+        if (level === 'intense') multiplier = 1.4; 
 
-                const MAX_INTERVAL = 45; 
-                let calculatedInterval = cards[idx].interval === 0 ? 1 : Math.ceil(cards[idx].interval * multiplier);
-                cards[idx].interval = Math.min(calculatedInterval, MAX_INTERVAL);
-                cards[idx].nextReview = Date.now() + (cards[idx].interval * 86400000);
-            } else {
-                cards[idx].interval = 0;
-                cards[idx].nextReview = Date.now();
-            }
-            salvarDados('ted_flashcards', cards);
-        }
+        const MAX_INTERVAL = 45; 
+        let calculatedInterval = cards[idx].interval === 0 ? 1 : Math.ceil(cards[idx].interval * multiplier);
+        cards[idx].interval = Math.min(calculatedInterval, MAX_INTERVAL);
+        cards[idx].nextReview = Date.now() + (cards[idx].interval * 86400000);
+    } else {
+        cards[idx].interval = 0;
+        cards[idx].nextReview = Date.now();
+    }
+    
+    // CORREÇÃO: Usando .then() para evitar erro se a função pai não for async
+    salvarDados('ted_flashcards', cards).then(() => {
+        // Salvamento concluído
+    }).catch(err => console.error("Erro ao salvar:", err));
+}
+
     }
     
     if(studyMode !== 'simulation') {
@@ -8382,6 +8504,25 @@ function renderPerformanceView() {
             
             document.getElementById('sim-detail-modal').classList.remove('hidden');
         }
+
+
+        // FORÇAR CARREGAMENTO DA INTENSIDADE
+// Coloque isso no final do script
+setTimeout(() => {
+    localforage.getItem('ted_config_intensity').then(savedLevel => {
+        if (savedLevel) {
+            console.log("Restaurando intensidade da chave segura:", savedLevel);
+            
+            // Atualiza o objeto global
+            if(typeof userData !== 'undefined') userData.revisionLevel = savedLevel;
+            
+            // Atualiza o seletor visual
+            const select = document.getElementById('revision-level-select');
+            if (select) select.value = savedLevel;
+        }
+    }).catch(err => console.error("Erro ao ler chave segura:", err));
+}, 1000); // Espera 1 segundo para garantir que a tela já carregou
+
      
     </script>
 
@@ -9246,6 +9387,19 @@ function atualizarBannersSubtopicos() {
 
 // Chame esta função sempre que carregar o dashboard ou salvar uma revisão
 // Exemplo: adicione 'atualizarBannersSubtopicos();' dentro da função 'renderDashboard()'
+
+function goToStudyPractice() {
+    // Pega o número atual do contador
+    const dueCount = parseInt(document.getElementById('dash-due-count').innerText);
+    
+    // Só redireciona se o número for maior que 0
+    if (dueCount > 0) {
+        switchTab('study');     // Muda para a aba Estudar
+        switchStudyTab('practice'); // Muda para a sub-aba Praticar
+    }
+}
+
+
 
 </script>
 
