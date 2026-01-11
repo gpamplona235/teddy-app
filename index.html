@@ -9,6 +9,7 @@
     <style>
         :root {
             --primary: #ed8432;
+            --primary-hover: #d97326;
             --dark: #0f172a;
             --gray: #64748b;
             --bg: #ffffff;
@@ -30,7 +31,7 @@
             position: relative;
         }
 
-        /* LADO ESQUERDO: CONTEÚDO (Texto) */
+        /* LADO ESQUERDO */
         .hero-content {
             width: 45%;
             padding: 60px 80px;
@@ -38,11 +39,11 @@
             flex-direction: column;
             justify-content: center;
             background: white;
-            z-index: 2; /* Fica por cima da imagem se precisar */
-            box-shadow: 20px 0 50px rgba(0,0,0,0.05); /* Sombra suave para separar */
+            z-index: 2; 
+            box-shadow: 20px 0 50px rgba(0,0,0,0.05); 
         }
 
-        /* LADO DIREITO: IMAGEM IMERSIVA */
+        /* LADO DIREITO */
         .hero-visual {
             width: 55%;
             position: relative;
@@ -50,26 +51,32 @@
             overflow: hidden;
         }
 
-        /* A Imagem de Fundo */
         .hero-bg-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: left center; /* Foca no começo do dashboard */
+            object-position: left center;
         }
 
-        /* A "Tarja" / Degradê de Integração */
         .overlay-gradient {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Faz a transição suave do Branco (esquerda) para Transparente */
             background: linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0) 20%);
         }
 
-        /* NAV DENTRO DO HERO */
+        /* HEADER */
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: auto; 
+            position: relative; 
+        }
+
         .nav-brand {
             font-weight: 800;
             font-size: 1.5rem;
@@ -80,6 +87,31 @@
             text-decoration: none;
         }
         .nav-brand i { color: var(--primary); }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-menu a:hover { color: var(--primary); }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 5px;
+        }
 
         /* TIPOGRAFIA */
         .badge {
@@ -96,14 +128,14 @@
         }
 
         h1 {
-            font-size: 3.5rem;
+            /* AUMENTADO DE 3.5rem PARA 4rem */
+            font-size: 4rem; 
             line-height: 1.1;
             font-weight: 800;
             margin-bottom: 24px;
             color: var(--dark);
         }
 
-        /* Cursor piscando para o efeito de digitação */
         .typing-cursor {
             display: inline-block;
             width: 4px;
@@ -123,56 +155,80 @@
             max-width: 480px;
         }
 
-        /* BOTÕES */
+        /* --- BOTÕES COMPACTOS --- */
         .btn-group {
             display: flex;
-            gap: 16px;
-            margin-bottom: 60px;
+            gap: 12px;
+            margin-bottom: 15px; 
+            align-items: center;
+            flex-wrap: wrap; 
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
-            padding: 16px 32px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            border-radius: 12px; 
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: transform 0.2s;
-            box-shadow: 0 10px 20px rgba(237, 132, 50, 0.2);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(237, 132, 50, 0.2);
+            border: 2px solid transparent; 
         }
-        .btn-primary:hover { transform: translateY(-3px); }
+        .btn-primary:hover { 
+            transform: translateY(-2px);
+            background: var(--primary-hover);
+            box-shadow: 0 8px 16px rgba(237, 132, 50, 0.3);
+        }
 
         .btn-outline {
             background: white;
             color: var(--dark);
-            border: 1px solid #e2e8f0;
-            padding: 16px 32px;
-            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
         }
-        .btn-outline:hover { background: #f8fafc; border-color: var(--dark); }
+        .btn-outline:hover { 
+            background: #f8fafc; 
+            border-color: var(--dark);
+            transform: translateY(-2px);
+        }
 
-        /* STATUS BAR (RODAPÉ DO MENU) */
+        /* AVISO DE COMPATIBILIDADE */
+        .os-notice {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .os-notice i { font-size: 1rem; }
+
+        /* STATUS BAR */
         .stats-row {
             border-top: 1px solid #e2e8f0;
             padding-top: 30px;
             display: flex;
             gap: 40px;
-            margin-top: auto; /* Empurra pro fundo */
+            margin-top: auto;
+            flex-wrap: wrap; 
         }
         
         .stat-item h4 { font-size: 1.5rem; font-weight: 700; color: var(--dark); }
         .stat-item span { font-size: 0.85rem; color: var(--gray); }
 
-        /* SEÇÃO DE FEATURES (ABAIXO DA DOBRA) */
         .features-strip {
             background: var(--dark);
             color: white;
@@ -191,47 +247,101 @@
         .feature p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
         .feature i { color: var(--primary); }
 
-        
-        /* --- NOVO: CABEÇALHO COM MENU --- */
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: auto; /* Substitui o margin-bottom do nav-brand antigo */
-        }
 
-        .nav-brand {
-            margin-bottom: 0; 
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 32px;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: var(--gray);
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        .nav-menu a:hover {
-            color: var(--primary);
-        }
-
-/* RESPONSIVO */
+        /* --- RESPONSIVO MOBILE --- */
         @media (max-width: 960px) {
-            .nav-menu { display: none; }
+            
+            .header-top {
+                justify-content: space-between;
+                margin-bottom: 30px;
+            }
+
+            .mobile-menu-btn { display: block; } 
+            
+            .nav-menu {
+                display: none; 
+                flex-direction: column;
+                position: absolute;
+                top: 100%; 
+                left: -20px; 
+                width: calc(100% + 40px); 
+                background: white;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                border-bottom: 1px solid #eee;
+                z-index: 10;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .nav-menu.active { display: flex; }
+
+            .nav-menu a { display: block; padding: 10px; font-size: 1.1rem; }
+            
             .hero-split { flex-direction: column; }
-            .hero-content { width: 100%; padding: 40px 5%; min-height: auto; }
-            .hero-visual { width: 100%; height: 50vh; order: -1; /* Imagem vai pro topo no mobile */ }
-            .overlay-gradient { background: linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0) 20%); }
-            .features-grid { grid-template-columns: 1fr 1fr; }
-            h1 { font-size: 2.5rem; }
+            
+            .hero-content { 
+                width: 100%; 
+                padding: 30px 20px 10px 20px; 
+                min-height: auto; 
+                box-shadow: none;
+                text-align: center; 
+                align-items: center; 
+            }
+            
+            .stats-row { display: none; }
+
+            p.lead {
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 30px;
+            }
+
+            h1 { 
+                /* AUMENTADO PROPORCIONALMENTE NO MOBILE TAMBÉM */
+                font-size: 3rem; 
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+                margin-bottom: 15px; 
+                gap: 12px;
+            }
+
+            .btn-primary, .btn-outline {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .os-notice {
+                justify-content: center; 
+                margin-bottom: 30px; 
+            }
+
+            .hero-visual { 
+                width: 100%; 
+                height: auto; 
+                order: 2; 
+                padding: 10px 20px 40px 20px;
+                background: white;
+                display: flex;
+                justify-content: center;
+            }
+
+            .hero-bg-img {
+                position: relative;
+                width: 100%;
+                max-width: 500px; 
+                height: auto;
+                object-fit: contain;
+                border-radius: 12px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                border: 4px solid white;
+            }
+
+            .overlay-gradient { display: none; }
+            .features-grid { grid-template-columns: 1fr; gap: 30px; }
         }
     </style>
 </head>
@@ -239,15 +349,19 @@
 
     <div class="hero-split">
         
-        <!-- LADO ESQUERDO: TEXTO E AÇÃO -->
         <div class="hero-content">
-            <!-- CABEÇALHO: LOGO + MENU -->
+            
+            <!-- HEADER -->
             <div class="header-top">
                 <a href="#" class="nav-brand">
                     <i class="fa-solid fa-paw"></i> TEDDY
                 </a>
 
-                <ul class="nav-menu">
+                <button class="mobile-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <ul class="nav-menu" id="main-menu">
                     <li><a href="#">Docs</a></li>
                     <li><a href="#">Novidades</a></li>
                     <li><a href="#">Blog</a></li>
@@ -255,7 +369,7 @@
                 </ul>
             </div>
 
-            <div style="margin-top: auto; margin-bottom: auto;">
+            <div style="margin-top: auto; margin-bottom: auto; width: 100%;">
                 <span class="badge">Versão Beta 1.0</span>
                 <h1>
                     O seu painel de <br>
@@ -267,18 +381,27 @@
                     Visual limpo para quem leva o estudo a sério.
                 </p>
 
+                <!-- BOTÕES -->
                 <div class="btn-group">
-    <!-- Mudei de "app/index.html" para apenas "app/" -->
-    <a href="app/" class="btn-primary">
-        <i class="fa-solid fa-rocket"></i> Acessar Web
-    </a>
-    
-    <a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" class="btn-outline">
-        <i class="fa-brands fa-windows"></i> Windows
-    </a>
-</div>
+                    <a href="app/" class="btn-primary">
+                        <i class="fa-solid fa-flask"></i> BETA WEB
+                    </a>
+                    
+                    <a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" class="btn-outline">
+                        <i class="fa-brands fa-windows"></i> Baixar para Windows
+                    </a>
+                </div>
+
+                <!-- AVISO DE SISTEMAS -->
+                <div class="os-notice">
+                    <i class="fa-brands fa-android"></i>
+                    <i class="fa-brands fa-linux"></i>
+                    <span>Android e Linux em breve.</span>
+                </div>
+
             </div>
 
+            <!-- LISTA DE STATS -->
             <div class="stats-row">
                 <div class="stat-item">
                     <h4>100%</h4>
@@ -288,19 +411,24 @@
                     <h4>Offline</h4>
                     <span>Local-First</span>
                 </div>
+                <div class="stat-item">
+                    <h4>Open Source</h4>
+                    <span>Código Aberto</span>
+                </div>
+                <div class="stat-item">
+                    <h4>Zero Ads</h4>
+                    <span>Sem Distrações</span>
+                </div>
             </div>
         </div>
 
-        <!-- LADO DIREITO: IMAGEM IMERSIVA -->
         <div class="hero-visual">
             <div class="overlay-gradient"></div>
-            <!-- Sua imagem vai cobrir tudo aqui -->
             <img src="assets/app_print.png" alt="Dashboard Teddy" class="hero-bg-img">
         </div>
 
     </div>
 
-    <!-- TARJA DE FEATURES ESCURA -->
     <section class="features-strip">
         <div class="features-grid">
             <div class="feature">
@@ -322,9 +450,21 @@
         </div>
     </section>
 
-    <!-- SCRIPT DE DIGITAÇÃO -->
+    <!-- SCRIPTS -->
     <script>
-        const words = ["foco absoluto.", "aprovação.", "alta performance.", "organização."];
+        function toggleMenu() {
+            const menu = document.getElementById('main-menu');
+            menu.classList.toggle('active');
+        }
+
+        // NOVAS PALAVRAS DA ANIMAÇÃO
+        const words = [
+            "estudos.",
+            "revisão ativa.",
+            "aprendizado interativo.",
+            "aprovação."
+        ];
+        
         let i = 0;
         let timer;
 
@@ -334,7 +474,7 @@
                 if (word.length > 0) {
                     document.getElementById('typing-text').innerHTML += word.shift();
                 } else {
-                    setTimeout(deletingEffect, 2000); // Espera antes de apagar
+                    setTimeout(deletingEffect, 2000); 
                     return false;
                 }
                 timer = setTimeout(loopTyping, 100); 
