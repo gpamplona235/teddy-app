@@ -3649,7 +3649,7 @@ select.lib-control {
         
         <!-- O Bloco Preto (Tooltip) -->
         <span class="custom-tooltip-text">
-            Aqui estarão os cards disponíveis para revisão.
+            Cards que precisam de revisão.
         </span>
     </div>
 
@@ -3926,18 +3926,6 @@ select.lib-control {
         font-weight: 500;
     "></span>
 
-    <!-- Botão de Editar Rápido (Opcional, no canto direito) -->
-    <button onclick="editCurrentCardStudy()" title="Editar este card" style="
-        margin-left: auto; 
-        background: none; 
-        border: none; 
-        cursor: pointer; 
-        color: var(--text-muted); 
-        font-size: 1.1rem;
-        transition: color 0.2s;
-    " onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
-        <i class="fas fa-pen"></i>
-    </button>
 </div>
 
 
@@ -3962,15 +3950,32 @@ select.lib-control {
     </div>
 </div>
 
-                            <div id="comment-edit-wrapper" class="hidden">
-                                <textarea id="comment-edit-area" rows="4" style="width:100%; margin-bottom:10px;"></textarea>
-                                <button class="btn-sm action-btn" onclick="saveCommentEdit()">Salvar</button>
-                            </div>
+                           <div id="comment-edit-wrapper" class="hidden">
+    <!-- BARRA DE FERRAMENTAS DA EDIÇÃO RÁPIDA -->
+    <div style="margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:0.9rem; font-weight:600; color:var(--text-muted)">Editando Explicação</span>
+        <div class="editor-toolbar" style="margin-bottom:0">
+            <button class="btn-outline btn-sm" onclick="formatCommentEditText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
+            <button class="btn-outline btn-sm" onclick="formatCommentEditText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
+            <button class="btn-outline btn-sm" onclick="formatCommentEditText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
+        </div>
+    </div>
+
+    <!-- ÁREA EDITÁVEL RICA (DIV em vez de TEXTAREA) -->
+    <div id="comment-edit-area" class="rich-editor" contenteditable="true" 
+         style="min-height: 120px; max-height: 300px; overflow-y: auto; resize: vertical; width: 100%; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--bg-body);">
+    </div>
+
+    <div style="text-align:right;">
+        <button class="btn-sm btn-outline" onclick="toggleCommentSection()" style="margin-right:8px">Cancelar</button>
+        <button class="btn-sm action-btn" onclick="saveCommentEdit()">Salvar</button>
+    </div>
+</div>
+
                         </div>
                         
                         <!-- NEW NAVIGATION AREA -->
                         <div class="study-controls-container">
-                   <!-- NAVEGAÇÃO COMPLETA: Anterior | Próximo | Histórico -->
 <div class="nav-buttons-row" style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
     
     <!-- Esquerda: Navegação Principal -->
@@ -4184,10 +4189,25 @@ select.lib-control {
     <input type="url" id="input-source" placeholder="Ex: https://youtube.com/..." style="margin-bottom:0;">
 </div>
 
-<div>
-    <label class="create-label">Explicação / Comentário (Opcional)</label>
-    <textarea id="input-comment" rows="2" placeholder="Explicação que aparece após responder..." style="margin-bottom:0;"></textarea>
+<div style="margin-bottom: 20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <label class="create-label" style="margin-bottom:0">Explicação / Comentário (Opcional)</label>
+        
+        <!-- Barra de Ferramentas -->
+        <div class="editor-toolbar" style="margin-bottom:0">
+            <button class="btn-outline btn-sm" onclick="formatCommentText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
+            <button class="btn-outline btn-sm" onclick="formatCommentText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
+            <button class="btn-outline btn-sm" onclick="formatCommentText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
+        </div>
+    </div>
+
+    <!-- Área de Edição Rica (substitui o textarea) -->
+    <div id="input-comment" class="rich-editor" contenteditable="true" 
+         placeholder="Explicação que aparece após responder..." 
+         style="min-height: 120px; max-height: 300px; overflow-y: auto; resize: vertical; width: 100%; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--bg-body);">
+    </div>
 </div>
+
 
 
                     <div style="display: flex; gap: 12px; padding-top:16px; border-top:1px solid var(--border);">
@@ -4356,7 +4376,10 @@ select.lib-control {
             <!-- ADICIONE ESTE CÓDIGO AQUI -->
 <div id="srs-review-banner" style="display:none; background: linear-gradient(135deg, #ff9800 0%, #ed6c02 100%); margin: 15px 0; padding: 15px; border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(237, 108, 2, 0.3);">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <h3 style="margin:0; font-size: 1.1rem; color: white;"><i class="fas fa-brain"></i> Revisões Pendentes</h3>
+        <h3 style="margin:0; font-size: 1.1rem; color: white;">
+    Revisões Pendentes
+</h3>
+
         <span id="srs-count-badge" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">0</span>
     </div>
     <div id="srs-list" style="max-height: 150px; overflow-y: auto;">
@@ -6005,7 +6028,7 @@ function toggleQuickNotes() {
 
             // Percorre o histórico INVERTIDO para mostrar os mais novos primeiro
             // Mas mantendo a referência correta para edição
-            currentHistory.slice().reverse().forEach(item => {
+            currentHistory.slice().forEach(item => {
                 // Se estiver oculto, pula
                 if (item.hidden) return;
 
@@ -6056,13 +6079,24 @@ function toggleQuickNotes() {
         }
         
         function clearPomoHistory() {
-            if(pomoHistory.length === 0) return;
-            showConfirm("Limpar Histórico", "Deseja apagar todas as sessões registradas?", () => {
-                pomoHistory = [];
-                savePomoHistory();
-                renderPomoHistory();
-            });
-        }
+    // Verifica se existe algum item visível para limpar
+    const visibleItems = pomoHistory.filter(item => !item.hidden);
+    
+    if (visibleItems.length === 0) {
+        alert("O histórico já está limpo!");
+        return;
+    }
+
+    showConfirm('Limpar Lista', 'Deseja limpar a lista de sessões? (Seus dados de tempo de estudo serão mantidos nas estatísticas)', () => {
+        // Em vez de apagar o array, apenas marcamos todos como ocultos
+        pomoHistory.forEach(item => {
+            item.hidden = true;
+        });
+        
+        savePomoHistory();   // Salva o estado oculto
+        renderPomoHistory(); // Atualiza a tela (vai sumir tudo visualmente)
+    });
+}
 
         function addPomoToSchedule(id) {
             const item = pomoHistory.find(i => i.id === id);
@@ -6527,10 +6561,6 @@ function toggleQuickNotes() {
                 <i class="fas fa-pen"></i>
             </div>
             
-            <!-- NOVO: Botão Mover -->
-            <div class="file-btn" onclick="moveFolder('${f.id}')" title="Mover">
-                <i class="fas fa-exchange-alt" style="color: var(--primary);"></i>
-            </div>
             
             <!-- Botão Excluir -->
             <div class="file-btn delete" onclick="deleteFolder('${f.id}')" title="Excluir">
@@ -6621,9 +6651,15 @@ if (confirmed) {
 
 
 
-// Cole isto logo abaixo da função renameFolder
 function deleteFolder(id) {
-    if(confirm("Apagar pasta e todo o seu conteúdo?")) {
+    // Pegamos o nome da pasta para personalizar a mensagem
+    const folder = folders.find(f => f.id === id);
+    const folderName = folder ? folder.name : 'esta pasta';
+
+    // showConfirm(Titulo, Mensagem, FuncaoConfirmacao)
+    showConfirm("Excluir Pasta", `Deseja apagar a pasta "${folderName}" e todo o seu conteúdo? Isso não poderá ser desfeito.`, () => {
+        
+        // --- LÓGICA ORIGINAL MANTIDA AQUI DENTRO ---
         let folderIdsToDelete = [id];
         
         // Coleta todas as subpastas
@@ -6641,12 +6677,13 @@ function deleteFolder(id) {
         folders = folders.filter(f => !folderIdsToDelete.includes(f.id));
         
         // SALVA TUDO
-        saveNotesData(); 
+        if (typeof saveNotesData === 'function') saveNotesData(); 
         saveFoldersData();
         
         renderCurrentFolder();
-    }
+    });
 }
+
 
 
         
@@ -6733,10 +6770,18 @@ function saveNote() {
 let tempSRSReset = false; // Variável para controlar o reset antes de salvar
 
 function openSRSSettings() {
+    // --- CORREÇÃO INICIADA ---
+    // Se não tiver ID (nota nova/não salva), tenta salvar automaticamente agora
     if (!editingNoteId) {
-        alert("Salve a nota primeiro antes de configurar a revisão.");
-        return;
+        persistCurrentNote(); // Tenta salvar o rascunho
+        
+        // Se ainda assim não tiver ID (ex: nota vazia sem título nem texto)
+        if (!editingNoteId) {
+            alert("Por favor, escreva algo na nota antes de configurar a revisão.");
+            return;
+        }
     }
+    // --- CORREÇÃO FINALIZADA ---
     
     const note = notes.find(n => n.id === editingNoteId);
     if (!note) return;
@@ -6782,6 +6827,7 @@ function openSRSSettings() {
 
     modal.classList.remove('hidden');
 }
+
 
 function resetSRS() {
     // Apenas marca que queremos resetar e atualiza o visual, não salva ainda
@@ -6961,15 +7007,21 @@ function openNoteFromBanner(id) {
 
 
 // --- COLE ISTO LOGO ABAIXO DE saveNote() ---
-function deleteNote(id) { 
-    if(confirm("Apagar nota?")) { 
-        notes = notes.filter(n => n.id !== id); 
+function deleteNote(id) {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+
+    showConfirm('Excluir Nota', `Tem certeza que deseja apagar a anotação "${note.title}"? Esta ação não pode ser desfeita.`, () => {
+        // Filtra a lista removendo a nota selecionada
+        notes = notes.filter(n => n.id !== id);
         
-        // Garante que a exclusão seja salva no banco
-        saveNotesData(); 
+        // Salva e atualiza a tela
+        saveFoldersData();
+        renderCurrentFolder();
         
-        renderCurrentFolder(); 
-    } 
+        // Feedback visual rápido (opcional)
+        // alert("Nota excluída com sucesso!"); 
+    });
 }
 
 // ------------------------------------------------
@@ -7288,45 +7340,65 @@ async function saveNotesData() {
             });
         }
 
-        // --- FLASHCARDS LOGIC ---
         function handleSave() {
     const q = document.getElementById('input-question').innerHTML; 
     const a = document.getElementById('input-opt-a').value;
-    const comment = document.getElementById('input-comment').value; 
+    const comment = document.getElementById('input-comment').innerHTML; 
     const cat = document.getElementById('input-category').value;
     const subcat = document.getElementById('input-subcategory').value; 
-    // Novo campo fonte
     const sourceLink = document.getElementById('input-source') ? document.getElementById('input-source').value : '';
     
     if(!q || !a) return alert('Preencha pergunta e resposta correta!');
 
-    // Coleta as opções, incluindo a nova 'input-opt-e' se existir valor nela
+    // Coleta as opções
     const opts = [
         a, 
         document.getElementById('input-opt-b').value, 
         document.getElementById('input-opt-c').value, 
         document.getElementById('input-opt-d').value,
-        document.getElementById('input-opt-e').value // Nova opção 4
+        document.getElementById('input-opt-e').value
     ].filter(Boolean); // Remove vazios
 
-    const newCard = {
-        id: editingId ? editingId : Date.now(),
-        question: q, 
-        correctText: a,
-        category: cat,
-        subcategory: subcat,
-        comment: comment,
-        source: sourceLink, // Salva o link
-        options: opts,
-        nextReview: editingId ? (cards.find(c=>c.id===editingId).nextReview) : Date.now(), 
-        interval: editingId ? (cards.find(c=>c.id===editingId).interval) : 0
-    };
-
-    if(editingId) {
+    if (editingId) {
+        // --- MODO EDIÇÃO ---
         const index = cards.findIndex(c => c.id === editingId);
-        cards[index] = newCard;
+        
+        if (index !== -1) {
+            // Copia o card original e sobrescreve apenas os campos de texto
+            // Mantém nextReview, interval, ease, reviewsCount, history, etc.
+            cards[index] = {
+                ...cards[index], // Mantém TUDO que já existia
+                question: q,
+                correctText: a,
+                category: cat,
+                subcategory: subcat,
+                comment: comment,
+                source: sourceLink,
+                options: opts
+                // id não muda, SRS não muda
+            };
+        }
         editingId = null;
-    } else { cards.push(newCard); }
+        
+    } else { 
+        // --- MODO CRIAÇÃO ---
+        const newCard = {
+            id: Date.now(),
+            question: q, 
+            correctText: a,
+            category: cat,
+            subcategory: subcat,
+            comment: comment,
+            source: sourceLink, 
+            options: opts,
+            // Dados iniciais de SRS padrão
+            nextReview: Date.now(), 
+            interval: 0,
+            ease: 2.5,          // Importante para o algoritmo
+            reviewsCount: 0     // Importante para estatísticas
+        };
+        cards.push(newCard); 
+    }
 
     salvarDados('ted_flashcards', cards);
 
@@ -7339,6 +7411,7 @@ async function saveNotesData() {
 }
 
 
+
         function updateSubcategorySuggestions() {
             const currentCat = document.getElementById('input-category').value;
             const subList = document.getElementById('subcategory-list-suggestions');
@@ -7349,12 +7422,16 @@ async function saveNotesData() {
         }
 
         function resetForm() {
-            document.querySelectorAll('#sub-view-creator input, #sub-view-creator textarea').forEach(i=>i.value=''); 
-            document.getElementById('input-question').innerHTML=''; 
-            document.getElementById('save-btn').innerHTML = '<i class="fas fa-save"></i> Salvar Card';
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
-            editingId = null;
-        }
+    document.querySelectorAll('#sub-view-creator input, #sub-view-creator textarea').forEach(i => i.value = '');
+    
+    document.getElementById('input-question').innerHTML = ''; 
+    document.getElementById('input-comment').innerHTML = ''; 
+
+    document.getElementById('save-btn').innerHTML = '<i class="fas fa-save"></i> Salvar Card';
+    document.getElementById('cancel-edit-btn').classList.add('hidden');
+    editingId = null;
+}
+
 
         function changeLibraryPage(direction) {
     const list = document.getElementById('cards-list-container');
@@ -7587,75 +7664,105 @@ function openCardHistory(id) {
 }
 
 
-
-
-        function viewCard(id) {
-            const c = cards.find(x => x.id === id);
-            currentCard = c; 
-            document.getElementById('detail-category').innerText = c.category || 'Geral';
-            document.getElementById('detail-question').innerHTML = c.question;
-            document.getElementById('detail-comment-text').innerText = c.comment || 'Sem explicação registrada.';
-            // LÓGICA PARA EXIBIR A FONTE NOS DETALHES
-const detailSourceDiv = document.getElementById('detail-source-wrapper');
-const detailSourceLink = document.getElementById('detail-source-link');
-if (c.source && c.source.trim() !== '') {
-    detailSourceDiv.classList.remove('hidden');
-    detailSourceLink.href = c.source;
-    detailSourceLink.innerText = c.source; // Mostra o link ou texto "Ver Link"
-} else {
-    detailSourceDiv.classList.add('hidden');
+// Função para aplicar negrito/itálico no comentário
+function formatCommentText(command) {
+    document.execCommand(command, false, null);
+    document.getElementById('input-comment').focus();
 }
 
-            const list = document.getElementById('detail-options-list');
-            list.innerHTML = '';
-            list.innerHTML += `<div class="option-btn correct" style="cursor:default;">${c.correctText} <i class="fas fa-check"></i></div>`;
-            c.options.forEach(o => { if(o !== c.correctText) list.innerHTML += `<div class="option-btn" style="cursor:default; opacity:0.7;">${o}</div>`; });
-            switchTab('card-detail');
-        }
+
+
 
         function editCard(id) {
-            const c = cards.find(x => x.id === id);
-            editingId = id;
-            document.getElementById('input-category').value = c.category || '';
-            document.getElementById('input-subcategory').value = c.subcategory || ''; 
-            document.getElementById('input-question').innerHTML = c.question;
-            document.getElementById('input-opt-a').value = c.correctText;
-            document.getElementById('input-comment').value = c.comment || '';
-            const wrongs = c.options.filter(o => o !== c.correctText);
-            if(wrongs[0]) document.getElementById('input-opt-b').value = wrongs[0];
-            if(wrongs[1]) document.getElementById('input-opt-c').value = wrongs[1];
-            if(wrongs[2]) document.getElementById('input-opt-d').value = wrongs[2];
-            document.getElementById('save-btn').innerHTML = '<i class="fas fa-pen"></i> Atualizar';
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            
-            // Switch to Create view inside Study tab
-            switchTab('study');
-            switchStudyTab('creator');
-        }
+    const c = cards.find(x => x.id === id);
+    if (!c) return;
 
-        function editCurrentCard() { if(currentCard) editCard(currentCard.id); }
-        function deleteCurrentCard() { if(currentCard) deleteCard(currentCard.id); }
-        function deleteCard(id) { if(confirm('Excluir?')) { cards=cards.filter(c=>c.id!==id); salvarDados('ted_flashcards', cards); renderManageList(); switchTab('study'); switchStudyTab('library'); } }
+    editingId = id;
 
-        function loadStudySession() { 
-            studyMode = 'standard';
-            document.getElementById('simulation-result').classList.add('hidden');
-            document.getElementById('study-content').classList.remove('hidden');
-            sessionQueue = cards.filter(c=>c.nextReview <= Date.now()); 
-            currentSessionTotal = sessionQueue.length;
-            currentSessionDone = 0;
-            
-            // RESET NAV STATE
-            currentCardIndex = 0;
-            sessionAnswers = {};
-            
-            document.getElementById('due-count').innerText=sessionQueue.length; 
-            if(sessionQueue.length) showCard(sessionQueue[0]); 
-            else { 
-                document.getElementById('study-content').classList.add('hidden'); 
-                document.getElementById('no-cards-msg').classList.remove('hidden'); 
-            } 
-        }
+    // Preenche campos de texto básicos
+    document.getElementById('input-category').value = c.category || '';
+    document.getElementById('input-subcategory').value = c.subcategory || ''; 
+    document.getElementById('input-question').innerHTML = c.question;
+    document.getElementById('input-opt-a').value = c.correctText;
+    
+    // --- ATUALIZAÇÃO: Comentário Rico (innerHTML) ---
+    document.getElementById('input-comment').innerHTML = c.comment || '';
+
+    // Carrega a Fonte
+    const sourceInput = document.getElementById('input-source');
+    if (sourceInput) sourceInput.value = c.source || '';
+
+    // Limpa campos de alternativas incorretas antes de preencher
+    document.getElementById('input-opt-b').value = '';
+    document.getElementById('input-opt-c').value = '';
+    document.getElementById('input-opt-d').value = '';
+    const optE = document.getElementById('input-opt-e');
+    if (optE) optE.value = '';
+
+    // Filtra e preenche as incorretas
+    const wrongs = c.options.filter(o => o !== c.correctText);
+    
+    if (wrongs[0]) document.getElementById('input-opt-b').value = wrongs[0];
+    if (wrongs[1]) document.getElementById('input-opt-c').value = wrongs[1];
+    if (wrongs[2]) document.getElementById('input-opt-d').value = wrongs[2];
+    if (wrongs[3] && optE) optE.value = wrongs[3]; // Suporte para 5ª opção
+
+    // Ajusta visual dos botões
+    document.getElementById('save-btn').innerHTML = '<i class="fas fa-pen"></i> Atualizar';
+    document.getElementById('cancel-edit-btn').classList.remove('hidden');
+    
+    // Troca para a aba de criação
+    switchTab('study');
+    switchStudyTab('creator');
+}
+
+
+// Wrappers simples
+function editCurrentCard() { if(currentCard) editCard(currentCard.id); }
+function deleteCurrentCard() { if(currentCard) deleteCard(currentCard.id); }
+
+function deleteCard(id) { 
+    // Uso do modal visual showConfirm em vez de confirm()
+    showConfirm('Excluir Card', 'Tem certeza que deseja excluir este card permanentemente?', () => {
+        cards = cards.filter(c => c.id !== id); 
+        salvarDados('ted_flashcards', cards); 
+        renderManageList(); 
+        switchTab('study'); 
+        switchStudyTab('library'); 
+    });
+}
+
+function loadStudySession() { 
+    studyMode = 'standard';
+    
+    // Garante que a UI está limpa
+    document.getElementById('simulation-result').classList.add('hidden');
+    document.getElementById('study-content').classList.remove('hidden');
+    
+    // Filtra cards vencidos (nextReview <= agora)
+    // Dica: Adicionei uma ordenação simples para priorizar os mais atrasados
+    sessionQueue = cards
+        .filter(c => c.nextReview <= Date.now())
+        .sort((a, b) => a.nextReview - b.nextReview); 
+
+    currentSessionTotal = sessionQueue.length;
+    currentSessionDone = 0;
+    
+    // RESET NAV STATE
+    currentCardIndex = 0;
+    sessionAnswers = {};
+    
+    const dueCountElement = document.getElementById('due-count');
+    if (dueCountElement) dueCountElement.innerText = sessionQueue.length; 
+    
+    if (sessionQueue.length > 0) {
+        showCard(sessionQueue[0]); 
+    } else { 
+        document.getElementById('study-content').classList.add('hidden'); 
+        document.getElementById('no-cards-msg').classList.remove('hidden'); 
+    } 
+}
+
         
         function showCard(c) { 
             currentCard = c; 
@@ -7724,81 +7831,93 @@ if (c.source && c.source.trim() !== '') {
         }
         
         function renderUnansweredState() {
-            document.getElementById('confirm-action-btn').classList.remove('hidden');
-            document.getElementById('view-comment-btn').classList.add('hidden');
-            // Allow skipping
-            document.getElementById('nav-next-btn').disabled = false;
+    document.getElementById('confirm-action-btn').classList.remove('hidden');
+    document.getElementById('view-comment-btn').classList.add('hidden');
+    // Allow skipping
+    document.getElementById('nav-next-btn').disabled = false;
+}
+
+function renderAnsweredState(answerData) {
+    document.getElementById('confirm-action-btn').classList.add('hidden');
+    document.getElementById('view-comment-btn').classList.remove('hidden');
+    document.getElementById('nav-next-btn').disabled = false;
+    
+    // Load comment content - CORREÇÃO: innerHTML
+    if(currentCard.comment && currentCard.comment.trim() !== "") {
+        document.getElementById('comment-text').innerHTML = currentCard.comment; 
+    } else {
+        document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
+        document.getElementById('comment-text').style.fontStyle = "italic";
+        document.getElementById('comment-text').style.color = "var(--text-muted)";
+    }
+}
+
+// --- NEW COMMENT EDITING FUNCTIONS ---
+function toggleCommentSection() {
+    const el = document.getElementById('comment-display');
+    if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        // Ensure correct state when opening - CORREÇÃO: innerHTML
+        if(currentCard.comment && currentCard.comment.trim() !== "") {
+            document.getElementById('comment-text').innerHTML = currentCard.comment;
+            document.getElementById('comment-text').style.fontStyle = "normal";
+            document.getElementById('comment-text').style.color = "var(--text-main)";
+        } else {
+            document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
+            document.getElementById('comment-text').style.fontStyle = "italic";
+            document.getElementById('comment-text').style.color = "var(--text-muted)";
         }
-        
-        function renderAnsweredState(answerData) {
-            document.getElementById('confirm-action-btn').classList.add('hidden');
-            document.getElementById('view-comment-btn').classList.remove('hidden');
-            document.getElementById('nav-next-btn').disabled = false;
-            
-            // Load comment content
-            if(currentCard.comment && currentCard.comment.trim() !== "") {
-                document.getElementById('comment-text').innerText = currentCard.comment;
-            } else {
-                document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
-                document.getElementById('comment-text').style.fontStyle = "italic";
-                document.getElementById('comment-text').style.color = "var(--text-muted)";
-            }
-        }
-        
-        // --- NEW COMMENT EDITING FUNCTIONS ---
-        function toggleCommentSection() {
-            const el = document.getElementById('comment-display');
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                // Ensure correct state when opening
-                if(currentCard.comment && currentCard.comment.trim() !== "") {
-                    document.getElementById('comment-text').innerText = currentCard.comment;
-                    document.getElementById('comment-text').style.fontStyle = "normal";
-                    document.getElementById('comment-text').style.color = "var(--text-main)";
-                } else {
-                    document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
-                    document.getElementById('comment-text').style.fontStyle = "italic";
-                    document.getElementById('comment-text').style.color = "var(--text-muted)";
-                }
-            } else {
-                el.classList.add('hidden');
-            }
-        }
-        
-        function enableCommentEdit() {
-            document.getElementById('comment-content-wrapper').classList.add('hidden');
-            document.getElementById('comment-edit-wrapper').classList.remove('hidden');
-            document.getElementById('comment-edit-area').value = currentCard.comment || "";
-            document.getElementById('comment-edit-area').focus();
-        }
-        
-        function saveCommentEdit() {
-            const newComment = document.getElementById('comment-edit-area').value;
-            
-            // Update current object
-            currentCard.comment = newComment;
-            
-            // Update main array
-            const index = cards.findIndex(c => c.id === currentCard.id);
-            if(index !== -1) {
-                cards[index].comment = newComment;
-                salvarDados('ted_flashcards', cards);
-            }
-            
-            // Reset UI
-            document.getElementById('comment-edit-wrapper').classList.add('hidden');
-            document.getElementById('comment-content-wrapper').classList.remove('hidden');
-            
-            if(newComment && newComment.trim() !== "") {
-                document.getElementById('comment-text').innerText = newComment;
-                document.getElementById('comment-text').style.fontStyle = "normal";
-                document.getElementById('comment-text').style.color = "var(--text-main)";
-            } else {
-                document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
-                document.getElementById('comment-text').style.fontStyle = "italic";
-                document.getElementById('comment-text').style.color = "var(--text-muted)";
-            }
-        }
+    } else {
+        el.classList.add('hidden');
+    }
+}
+
+
+function formatCommentEditText(command) {
+    document.execCommand(command, false, null);
+    document.getElementById('comment-edit-area').focus();
+}
+
+function enableCommentEdit() {
+    document.getElementById('comment-content-wrapper').classList.add('hidden');
+    document.getElementById('comment-edit-wrapper').classList.remove('hidden');
+    
+    // CORREÇÃO: Usa innerHTML (div editável)
+    document.getElementById('comment-edit-area').innerHTML = currentCard.comment || ""; 
+    document.getElementById('comment-edit-area').focus();
+}
+
+function saveCommentEdit() {
+    // CORREÇÃO: Pega o HTML formatado com innerHTML
+    const newComment = document.getElementById('comment-edit-area').innerHTML;
+    
+    // Update current object
+    currentCard.comment = newComment;
+    
+    // Update main array
+    const index = cards.findIndex(c => c.id === currentCard.id);
+    if(index !== -1) {
+        cards[index].comment = newComment;
+        salvarDados('ted_flashcards', cards);
+    }
+    
+    // Reset UI
+    document.getElementById('comment-edit-wrapper').classList.add('hidden');
+    document.getElementById('comment-content-wrapper').classList.remove('hidden');
+    
+    // Exibir formatado após salvar
+    if(newComment && newComment.trim() !== "") {
+        document.getElementById('comment-text').innerHTML = newComment;
+        document.getElementById('comment-text').style.fontStyle = "normal";
+        document.getElementById('comment-text').style.color = "var(--text-main)";
+    } else {
+        document.getElementById('comment-text').innerText = "Nenhuma explicação registrada.";
+        document.getElementById('comment-text').style.fontStyle = "italic";
+        document.getElementById('comment-text').style.color = "var(--text-muted)";
+    }
+}
+
+
 
         function selectAnswer(btn, text) {
             // If already answered, do nothing
@@ -7930,37 +8049,76 @@ performanceData.push({
             }
         }
 
-        function startRandomReview() { 
-            studyMode = 'random';
-            randomReviewQueue=[...cards].sort(()=>0.5-Math.random()).slice(0,10); 
-            currentSessionTotal = randomReviewQueue.length;
-            currentSessionDone = 0;
-            currentCardIndex = 0;
-            sessionAnswers = {};
-            
-            if(randomReviewQueue.length) showCard(randomReviewQueue[0]); 
-            else alert('Sem cards'); 
-            
-            document.getElementById('finish-review-btn').classList.remove('hidden');
-        }
+       function startRandomReview() {
+    // Verificação usando o POP-UP INTERNO
+    if (!cards || cards.length === 0) {
+        showAlert("Sem Cards", "Você precisa criar cards antes de iniciar uma revisão aleatória. Vá em 'Criar' para adicionar sua primeira pergunta.");
+        return;
+    }
+
+    studyMode = 'random';
+    
+    randomReviewQueue = [...cards].sort(() => 0.5 - Math.random()).slice(0, 10);
+        
+    currentSessionTotal = randomReviewQueue.length;
+    currentSessionDone = 0;
+    currentCardIndex = 0;
+    sessionAnswers = {};
+    
+    // Prepara a tela
+    document.getElementById('study-content').classList.remove('hidden');
+    document.getElementById('no-cards-msg').classList.add('hidden');
+    document.getElementById('simulation-result').classList.add('hidden');
+    
+    if (randomReviewQueue.length > 0) {
+        showCard(randomReviewQueue[0]);
+    } else {
+        showAlert("Erro", "Não foi possível carregar os cards.");
+    }
+}
+
+
+
+function showAlert(title, msg) {
+    document.getElementById('custom-alert-title').innerText = title;
+    document.getElementById('custom-alert-msg').innerText = msg;
+    document.getElementById('custom-alert-modal').classList.remove('hidden');
+}
+
+
         
         function finishRandomReview() { loadStudySession(); }
 
-        function openSimulationModal() {
-            if(cards.length === 0) return alert("Você precisa criar cards primeiro!");
-            const list = document.getElementById('sim-category-list');
-            list.innerHTML = '';
-            const categories = [...new Set(cards.map(c => c.category || 'Geral'))].sort();
-            categories.forEach(cat => {
-                const count = cards.filter(c => (c.category||'Geral') === cat).length;
-                const item = document.createElement('div');
-                item.className = 'sim-config-item';
-                item.innerHTML = `<label>${cat} (Disp: ${count})</label><input type="number" class="sim-cat-input" data-cat="${cat}" data-max="${count}" min="0" max="${count}" value="0" onchange="updateSimTotal()">`;
-                list.appendChild(item);
-            });
-            updateSimTotal();
-            document.getElementById('simulation-config-modal').classList.remove('hidden');
-        }
+       function openSimulationModal() {
+    // Verificação usando o POP-UP INTERNO
+    if (!cards || cards.length === 0) {
+        showAlert("Sem Cards", "Você precisa criar cards antes de iniciar um simulado. Vá em 'Criar' para adicionar sua primeira pergunta.");
+        return;
+    }
+
+    const list = document.getElementById('sim-category-list');
+    list.innerHTML = '';
+    
+    // Pega todas as categorias únicas
+    const categories = [...new Set(cards.map(c => c.category || 'Geral'))].sort();
+    
+    categories.forEach(cat => {
+        const count = cards.filter(c => (c.category || 'Geral') === cat).length;
+        
+        const item = document.createElement('div');
+        item.className = 'sim-config-item';
+        item.innerHTML = `
+            <label>${cat} <small>(Disp: ${count})</small></label>
+            <input type="number" class="sim-cat-input" data-cat="${cat}" data-max="${count}" min="0" max="${count}" value="0" onchange="updateSimTotal()">
+        `;
+        list.appendChild(item);
+    });
+    
+    updateSimTotal();
+    document.getElementById('simulation-config-modal').classList.remove('hidden');
+}
+
+
 
         function updateSimTotal() {
             let total = 0;
@@ -8767,15 +8925,17 @@ setTimeout(() => {
 </script>
 
 
-<!-- Modal de Configuração de Revisão (Design Novo) -->
 <div id="srs-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2000;display:flex;align-items:center;justify-content:center; backdrop-filter: blur(3px);">
     <div class="srs-modal-content">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-            <div style="background:var(--warning); width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white;">
-                <i class="fas fa-brain fa-lg"></i>
-            </div>
+        <!-- Cabeçalho (ícone removido e margem ajustada) -->
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
             <h3 style="margin:0; font-size:1.3rem;">Revisão Inteligente</h3>
         </div>
+
+        <!-- Texto Explicativo Adicionado -->
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
+            A revisão inteligente utiliza a curva de esquecimento para agendar automaticamente quando você deve rever esta anotação. Ative para receber lembretes periódicos e fixar o conteúdo.
+        </p>
         
         <div style="margin-bottom: 25px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:15px; border-radius:12px;">
             <span style="font-weight:600;">Ativar Revisão</span>
@@ -8808,6 +8968,7 @@ setTimeout(() => {
         </div>
     </div>
 </div>
+
 
 <!-- ======================================================= -->
 <!-- SISTEMA ANTI-DISTRAÇÃO (FINAL: CLEAN & RETORNANDO)      -->
