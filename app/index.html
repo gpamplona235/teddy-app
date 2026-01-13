@@ -3608,64 +3608,67 @@ select.lib-control {
 }
 
 
-/* --- CORREÇÃO MOBILE  --- */
+/* --- CORREÇÃO MOBILE DEFINITIVA (Teddy App) --- */
 @media (max-width: 768px) {
     
-    /* 1. TEXTO: Diminui a fonte geral para caber mais coisa */
+    /* 1. TEXTO BASE */
     html, body {
         font-size: 14px !important; 
     }
 
-    /* 2. BOTÕES QUE VAZAM: Faz eles ficarem um embaixo do outro */
-    .nav-buttons-row, .header-actions {
-        flex-direction: column;
+    /* 2. CABEÇALHO (Onde deu o erro) */
+    .header-actions {
+        flex-direction: row !important; /* FORÇA HORIZONTAL */
+        width: auto !important;         /* Não ocupa a tela toda */
+        gap: 6px !important;            /* Juntinhos */
+        margin-top: 0 !important;
+    }
+
+    /* Ícones do topo menores para caberem ao lado do título */
+    .header-btn-icon {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Título um pouco menor */
+    .page-title-display {
+        font-size: 1.3rem !important;
+    }
+
+    /* 3. BOTÕES GRANDES DE ESTUDO (Esses sim ficam empilhados) */
+    .nav-buttons-row {
+        flex-direction: column !important;
         width: 100%;
         gap: 10px;
     }
     
+    /* Botões gerais ocupando largura total para toque fácil */
     .action-btn, .btn-outline, .btn-study-rect {
-        width: 100% !important; /* Ocupa a largura total */
+        width: 100% !important; 
         justify-content: center;
         margin-bottom: 5px;
-        font-size: 14px !important; /* Texto do botão menor */
-        padding: 10px !important;
+        padding: 12px !important;
     }
 
-    /* 3. ÍCONES GIGANTES: Reduz o tamanho */
-    .file-icon {
-        font-size: 2.5rem !important; /* Era 3.5rem */
+    /* 4. ÍCONES GIGANTES (Correção visual) */
+    .file-icon { font-size: 2.5rem !important; }
+    .stat-big-item .value { font-size: 2rem !important; }
+    .stat-icon { width: 40px !important; height: 40px !important; font-size: 1.2rem !important; }
+
+    /* 5. ESPAÇAMENTO GERAL */
+    .card-box, .performance-card { padding: 16px !important; }
+    .main-content { 
+        padding: 15px !important; 
+        padding-bottom: 90px !important; /* Espaço para o menu inferior não cobrir */
     }
-    .stat-big-item .value {
-        font-size: 2rem !important; /* Era 2.8rem */
-    }
-    .stat-icon {
-        width: 40px !important;
-        height: 40px !important;
-        font-size: 1.2rem !important;
+        /* 7. REMOVE A ABA EXPLORAR NO MOBILE */
+    #sub-nav-explore {
+        display: none !important;
     }
 
-    /* 4. ESPAÇAMENTO: Ganha espaço na tela */
-    .card-box, .performance-card {
-        padding: 16px !important; /* Reduz borda interna (era 24px) */
-    }
-    
-    .main-content {
-        padding: 15px !important; /* Mais espaço nas bordas da tela */
-    }
-
-    /* 5. TITULOS */
-    h1, .page-title-display {
-        font-size: 1.4rem !important;
-    }
-    h2, .welcome-card h2 {
-        font-size: 1.3rem !important;
-    }
-
-    /* 6. GARANTE QUE O MENU DE BAIXO NÃO CUBRA O CONTEÚDO */
-    .main-content {
-        padding-bottom: 90px !important;
-    }
 }
+
 
 
 
@@ -3916,7 +3919,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.51</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.52</div>
         </div>
 
     </nav>
@@ -5105,7 +5108,7 @@ select.lib-control {
         <button class="bottom-nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-home"></i>Início</button>
         <button class="bottom-nav-item" onclick="switchTab('study')"><i class="fas fa-book-open"></i>Estudar</button>
         <button class="bottom-nav-item" onclick="switchTab('pomodoro')"><i class="fas fa-stopwatch"></i>Pomodoro</button> 
-        <button class="bottom-nav-item" onclick="switchTab('schedule')"><i class="fas fa-calendar-alt"></i>Agenda</button>
+        <button class="bottom-nav-item" onclick="switchTab('notes')"><i class="fas fa-sticky-note"></i>Caderno</button>
     </nav>
 
     <!-- MODIFIED: FAB Container with upward expansion -->

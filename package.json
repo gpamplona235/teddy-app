@@ -1,6 +1,6 @@
 {
   "name": "teddyapp",
-  "version": "0.9.51-beta",
+  "version": "0.9.52-beta",
   "description": "Teddy Software Windows e Linux",
   "main": "main.js",
   "scripts": {
