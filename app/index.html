@@ -202,7 +202,7 @@
             background: var(--primary-light);
         }
 
-        .view-section { max-width: 1000px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
+        .view-section { max-width: 1100px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .hidden { display: none !important; }
@@ -1816,7 +1816,7 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
             background: var(--primary-light);
         }
 
-        .view-section { max-width: 1000px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
+        .view-section { max-width: 1100px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 
@@ -3349,6 +3349,263 @@ select.lib-control {
     opacity: 1;
 }
 
+/* ESTILOS DA ÁRVORE - LIMPO, GRANDE & SEM RÓTULOS EXTRAS */
+.tree-item {
+    margin-bottom: 12px;
+}
+
+.tree-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tree-header:hover {
+    background: var(--bg-body);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.tree-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-main);
+}
+
+/* GRUPO DE DADOS À DIREITA */
+.tree-stats-group {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Espaço maior entre % e Cards */
+}
+
+/* PORCENTAGEM (Só o número grande) */
+.stat-percent-large {
+    font-size: 1.2rem; /* Bem grande */
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* BADGE DE CONTAGEM (Número + Texto "cards") */
+.tree-count-badge {
+    background: var(--bg-body);
+    color: var(--text-main);
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    
+    /* Alinha o número e o texto na mesma linha */
+    display: flex;
+    align-items: baseline; 
+    gap: 6px;
+    
+    font-size: 1.1rem; /* Número grande */
+    font-weight: 800;
+}
+
+/* O texto "cards" dentro do badge */
+.badge-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: lowercase;
+}
+
+/* SUBCATEGORIAS */
+.tree-children {
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 2px solid var(--border);
+    margin-top: 8px;
+    display: none;
+}
+
+.tree-children.open {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.tree-sub-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.tree-sub-item:last-child {
+    border-bottom: none;
+}
+
+.tree-toggle-icon {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+}
+
+.tree-header.expanded .tree-toggle-icon {
+    transform: rotate(90deg);
+    color: var(--primary);
+}
+
+/* BOTÃO DE OPÇÕES (ENGRENAGEM) */
+.tree-options-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted); /* Cor padrão discreta */
+    padding: 8px; /* Aumentei a área de clique */
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s;
+    font-size: 1rem;
+    opacity: 0.6; /* Sempre visível, mas suave */
+}
+
+.tree-options-btn:hover {
+    background: var(--bg-body);
+    color: var(--primary);
+    opacity: 1; /* Fica 100% visível ao passar o mouse */
+}
+
+/* MENU CONTEXTUAL FLUTUANTE */
+.tree-popover-menu {
+    position: absolute;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md); /* Borda arredondada igual ao app */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* Sombra elegante */
+    padding: 6px;
+    min-width: 180px;
+    z-index: 9999;
+    display: none; /* Escondido por padrão */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Animação de entrada */
+.tree-popover-menu.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Itens do Menu */
+.popover-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.popover-item:hover {
+    background: var(--bg-body);
+    color: var(--primary);
+}
+
+/* Ícone dentro do item (opcional, mas recomendado para alinhar) */
+.popover-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+
+
+
+/* --- Estilo da Porcentagem Elegante --- */
+.percent-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 45px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tree-sub-item {
+    padding: 10px 20px 10px 45px; /* Indentação para subtópicos */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+.tree-sub-item:last-child { border-bottom: none; }
+.tree-sub-item:hover { background: rgba(0,0,0,0.015); }
+
+/* Pequeno ajuste no botão de menu dos subitems */
+.tree-options-btn-sm {
+    background: transparent; border: none; color: #ccc; cursor: pointer; padding: 4px;
+}
+.tree-options-btn-sm:hover { color: var(--text-main); }
+
+/* --- Badges e Metadados --- */
+.card-count-pill {
+    background: rgba(0,0,0,0.06); /* Cinza sutil */
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.card-count-pill-sm {
+    background: rgba(0,0,0,0.04);
+    color: #888;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.meta-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 60px; /* Alinhamento fixo */
+}
+
+.meta-info-sm {
+    font-size: 0.75rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 40px;
+}
+
+/* Garante a fonte correta */
+.tree-header, .tree-sub-item {
+    font-family: inherit; /* Herda 'Inter' do body */
+}
 
 
 </style>
@@ -3595,7 +3852,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.41</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.48</div>
         </div>
 
     </nav>
@@ -3851,6 +4108,9 @@ select.lib-control {
                 <button class="study-nav-btn active" id="sub-nav-practice" onclick="switchStudyTab('practice')">
                     <i class="fas fa-book-reader"></i> Praticar
                 </button>
+                    <button class="study-nav-btn" id="sub-nav-explore" onclick="switchStudyTab('explore')">
+        <i class="fas fa-sitemap"></i> Explorar
+    </button>
                 <button class="study-nav-btn" id="sub-nav-library" onclick="switchStudyTab('library')">
                     <i class="fas fa-list"></i> Biblioteca
                 </button>
@@ -4062,6 +4322,18 @@ select.lib-control {
                     <button class="action-btn btn-prominent" onclick="switchStudyTab('creator')" style="width: auto;">Criar Novo Card <i class="fas fa-plus" style="margin-left:8px"></i></button>
                 </div>
             </div>
+
+
+<!-- NOVA VISÃO EXPLORAR (Sem Título) -->
+<div id="sub-view-explore" class="hidden">
+    <div class="card-box">
+        <!-- Título removido daqui -->
+        <div id="explore-tree-container"></div>
+    </div>
+</div>
+
+
+
 
             
             <!-- SUB VIEW: LIBRARY (Redesenhada) -->
@@ -4951,14 +5223,29 @@ select.lib-control {
                 </div>
             </div>
 
-            <div style="margin-bottom:20px;">
-                <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">2. Vincular Anotação</label>
-                <!-- NEW SEARCHABLE DROPDOWN FOR NOTES -->
-                <div class="search-container">
-                    <input type="text" id="link-note-search" placeholder="Buscar anotação..." onkeyup="filterLinkNotes()" onfocus="filterLinkNotes()" autocomplete="off">
-                    <div id="link-note-results" class="search-results-list"></div>
-                </div>
-            </div>
+          <div style="margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:16px;">
+    <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">2. Vincular Anotação</label>
+    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">
+        Selecione uma anotação do seu Caderno para associar a este tópico. Útil para resumos teóricos ou mapas mentais.
+    </p>
+    <!-- NEW SEARCHABLE DROPDOWN FOR NOTES -->
+    <div class="search-container">
+        <input type="text" id="link-note-search" placeholder="Buscar anotação..." onkeyup="filterLinkNotes()" onfocus="filterLinkNotes()" autocomplete="off">
+        <div id="link-note-results" class="search-results-list"></div>
+    </div>
+</div>
+
+            <!-- NOVA SEÇÃO: Vincular Link Externo -->
+<div style="margin-bottom:20px;">
+    <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">3. Vincular Link Externo</label>
+    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">
+        Cole o link para um caderno de questões externo (ex: QConcursos, TEC Concursos) ou qualquer outro material de estudo online relacionado a este tópico.
+    </p>
+    <div class="search-container">
+        <input type="text" id="link-url-input" placeholder="Cole o link aqui (https://...)" autocomplete="off">
+    </div>
+</div>
+
             
             <div style="display:flex;gap:10px;">
                 <button class="action-btn" id="link-topic-confirm-btn">Salvar Vínculos</button>
@@ -5768,11 +6055,437 @@ function toggleQuickNotes() {
             }
         }
 
-        function switchStudyTab(subTab) {
+// Variável global para controlar o fechamento ao clicar fora
+let isPopoverOpen = false;
+
+function showTreeMenu(event, type, catName, subName) {
+    event.stopPropagation(); // Impede que o clique feche/abra a árvore
+    
+    const menu = document.getElementById('tree-popover');
+    const renameBtn = document.getElementById('btn-popover-rename');
+    const clickedBtn = event.currentTarget; // O botão da engrenagem que foi clicado
+
+    // 1. Configurar a Ação do Botão Renomear
+    // Removemos event listeners antigos clonando o botão (truque simples)
+    const newRenameBtn = renameBtn.cloneNode(true);
+    renameBtn.parentNode.replaceChild(newRenameBtn, renameBtn);
+
+    newRenameBtn.onclick = () => {
+        closePopover();
+        if (type === 'category') {
+            openCategoryOptions(catName);
+        } else {
+            openSubcategoryOptions(catName, subName);
+        }
+    };
+
+    // 2. Calcular Posição (Ao lado ou abaixo do botão)
+    const rect = clickedBtn.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+    // Posiciona: Topo = fundo do botão + scroll, Esquerda = esquerda do botão + scroll - um ajuste para alinhar
+    menu.style.top = `${rect.bottom + scrollTop + 5}px`; 
+    menu.style.left = `${rect.left + scrollLeft - 140}px`; // -140px puxa para a esquerda para não sair da tela
+
+    // 3. Mostrar o Menu
+    menu.classList.add('visible');
+    
+    // Pequeno atraso para não registrar o clique atual como "clique fora"
+    setTimeout(() => {
+        isPopoverOpen = true;
+        document.addEventListener('click', closePopoverOnOutsideClick);
+    }, 50);
+}
+
+// Função auxiliar para fechar
+function closePopover() {
+    const menu = document.getElementById('tree-popover');
+    menu.classList.remove('visible');
+    isPopoverOpen = false;
+    document.removeEventListener('click', closePopoverOnOutsideClick);
+}
+
+// Detecta clique fora
+function closePopoverOnOutsideClick(e) {
+    const menu = document.getElementById('tree-popover');
+    // Se clicou fora do menu, fecha
+    if (isPopoverOpen && !menu.contains(e.target)) {
+        closePopover();
+    }
+}
+
+
+
+
+function renderExploreTree() {
+    const container = document.getElementById('explore-tree-container');
+    container.innerHTML = '';
+
+    // 1. Processar Dados (Agora contando revisões REAIS do histórico)
+    const statsMap = {};
+    const lastReviewMap = {}; 
+    const reviewsCountMap = {}; // Novo mapa para contar revisões por categoria
+
+    if (typeof performanceData !== 'undefined' && Array.isArray(performanceData)) {
+        performanceData.forEach(log => {
+            const cat = (log.category || 'Sem Categoria');
+            const sub = (log.subcategory || 'Geral');
+            
+            // Inicializa mapas se não existirem
+            if (!statsMap[cat]) statsMap[cat] = { subs: {}, correct: 0, total: 0 };
+            if (!statsMap[cat].subs[sub]) statsMap[cat].subs[sub] = { correct: 0, total: 0 };
+            
+            if (!reviewsCountMap[cat]) reviewsCountMap[cat] = { total: 0, subs: {} };
+            if (!reviewsCountMap[cat].subs[sub]) reviewsCountMap[cat].subs[sub] = 0;
+
+            // Contagem de Acertos (Percentual)
+            const isCorrect = log.correct ? 1 : 0;
+            statsMap[cat].subs[sub].total++;
+            statsMap[cat].subs[sub].correct += isCorrect;
+            statsMap[cat].total++;
+            statsMap[cat].correct += isCorrect;
+
+            // Contagem de REVISÕES (Aqui está a correção!)
+            // Cada entrada no log conta como uma revisão feita
+            reviewsCountMap[cat].total++;
+            reviewsCountMap[cat].subs[sub]++;
+
+            // Rastrear última data
+            if (!lastReviewMap[cat]) lastReviewMap[cat] = { lastDate: '', subs: {} };
+            if (!lastReviewMap[cat].subs[sub]) lastReviewMap[cat].subs[sub] = '';
+
+            if (log.date > lastReviewMap[cat].lastDate) lastReviewMap[cat].lastDate = log.date;
+            if (log.date > lastReviewMap[cat].subs[sub]) lastReviewMap[cat].subs[sub] = log.date;
+        });
+    }
+
+    const tree = {};
+    cards.forEach(c => {
+        const cat = c.category || 'Sem Categoria';
+        const sub = c.subcategory || 'Geral';
+        if (!tree[cat]) tree[cat] = { subs: new Set(), cardCount: 0 };
+        tree[cat].subs.add(sub);
+        tree[cat].cardCount++;
+    });
+
+    const sortedCategories = Object.keys(tree).sort();
+
+    if (sortedCategories.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted)">Nenhum card criado ainda.</div>';
+        return;
+    }
+
+    const getPercentColor = (pct) => {
+        if (pct >= 80) return 'var(--success)';
+        if (pct >= 50) return 'var(--warning)';
+        return 'var(--danger)';
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        const parts = dateStr.split('-');
+        return `${parts[2]}/${parts[1]}`;
+    };
+
+    // Renderizar
+    sortedCategories.forEach(cat => {
+        const catStats = statsMap[cat] || { correct: 0, total: 0 };
+        const catPercent = catStats.total === 0 ? 0 : Math.round((catStats.correct / catStats.total) * 100);
+        const percentColor = getPercentColor(catPercent);
+        
+        const lastRev = (lastReviewMap[cat] && lastReviewMap[cat].lastDate) ? formatDate(lastReviewMap[cat].lastDate) : '-';
+        
+        // CORREÇÃO: Pega o total do nosso novo mapa de contagem, ou 0 se não existir
+        const totalRevs = reviewsCountMap[cat] ? reviewsCountMap[cat].total : 0;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tree-item expanded'; 
+
+        const header = document.createElement('div');
+        header.className = 'tree-header';
+        
+        const percentBadge = catStats.total > 0 
+            ? `<div class="percent-pill" style="background-color:${percentColor};">${catPercent}%</div>`
+            : `<div class="percent-pill" style="background-color:#f0f0f0; color:#bbb;">-</div>`;
+
+        header.innerHTML = `
+            <div class="tree-content">
+                <i class="fas fa-chevron-right tree-toggle-icon fa-rotate-90"></i>
+                <span style="font-weight:600;">${cat}</span>
+            </div>
+            
+            <div class="tree-stats-group">
+                <div class="meta-info" title="Total de revisões feitas (Baseado no Histórico)">
+                    <i class="fas fa-history"></i> ${totalRevs}
+                </div>
+                <div class="meta-info" title="Última revisão">
+                    <i class="far fa-calendar-check"></i> ${lastRev}
+                </div>
+
+                <div class="card-count-pill">
+                    ${tree[cat].cardCount} cards
+                </div>
+
+                ${percentBadge}
+                
+                <button class="tree-options-btn" title="Opções" 
+                        onclick="event.stopPropagation(); showTreeMenu(event, 'category', '${cat}')">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        `;
+
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'tree-children';
+        childrenContainer.style.display = 'block'; 
+
+        const sortedSubs = Array.from(tree[cat].subs).sort();
+
+        sortedSubs.forEach(sub => {
+            let subStats = { correct: 0, total: 0 };
+            if (statsMap[cat] && statsMap[cat].subs[sub]) subStats = statsMap[cat].subs[sub];
+            const subPercent = subStats.total === 0 ? 0 : Math.round((subStats.correct / subStats.total) * 100);
+            const subColor = getPercentColor(subPercent);
+            
+            const subCards = cards.filter(c => (c.category === cat || (!c.category && cat==='Sem Categoria')) && (c.subcategory === sub || (!c.subcategory && sub==='Geral')));
+            const subCardCount = subCards.length;
+            
+            // CORREÇÃO: Pega contagem do subtópico do mapa
+            const subTotalRevs = (reviewsCountMap[cat] && reviewsCountMap[cat].subs[sub]) ? reviewsCountMap[cat].subs[sub] : 0;
+            const subLastRev = (lastReviewMap[cat] && lastReviewMap[cat].subs[sub]) ? formatDate(lastReviewMap[cat].subs[sub]) : '-';
+
+            const subDiv = document.createElement('div');
+            subDiv.className = 'tree-sub-item';
+            
+            const subBadge = subStats.total > 0
+                ? `<span style="font-weight:700; color:${subColor}; font-size:0.9rem;">${subPercent}%</span>`
+                : `<span style="color:#aaa; font-size:0.9rem;">-</span>`;
+
+            subDiv.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                    <i class="far fa-circle" style="font-size:0.4rem; color:var(--text-muted); opacity:0.6;"></i>
+                    <span>${sub}</span>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div class="meta-info-sm" title="Revisões">
+                        <i class="fas fa-history"></i> ${subTotalRevs}
+                    </div>
+                     <div class="meta-info-sm" title="Última data">
+                        <i class="far fa-calendar-check"></i> ${subLastRev}
+                    </div>
+
+                    <span class="card-count-pill-sm">${subCardCount} cards</span>
+                    
+                    <div style="width:40px; text-align:right;">${subBadge}</div>
+                    
+                    <button class="tree-options-btn-sm" title="Opções" 
+                            onclick="event.stopPropagation(); showTreeMenu(event, 'subcategory', '${cat}', '${sub}')">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            `;
+            childrenContainer.appendChild(subDiv);
+        });
+
+        header.onclick = () => {
+            const isExpanded = wrapper.classList.contains('expanded');
+            if (isExpanded) {
+                wrapper.classList.remove('expanded');
+                childrenContainer.style.display = 'none';
+                header.querySelector('.tree-toggle-icon').classList.remove('fa-rotate-90');
+            } else {
+                wrapper.classList.add('expanded');
+                childrenContainer.style.display = 'block';
+                header.querySelector('.tree-toggle-icon').classList.add('fa-rotate-90');
+            }
+        };
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(childrenContainer);
+        container.appendChild(wrapper);
+    });
+}
+
+
+
+
+
+
+
+
+// --- FUNÇÕES DE RENOMEAR CATEGORIAS/SUBCATEGORIAS ---
+
+function openCategoryOptions(oldName) {
+    // Reutiliza seu modal genérico existente
+    openGenericModal(
+        'Renomear Categoria',   // Título
+        oldName,                // Valor inicial (nome atual)
+        false,                  // É textarea? Não
+        (newName) => {          // Callback quando salvar
+            if (newName && newName.trim() !== "" && newName !== oldName) {
+                renameCategory(oldName, newName.trim());
+            }
+        }
+    );
+}
+
+function openSubcategoryOptions(category, oldSubName) {
+    openGenericModal(
+        'Renomear Tópico', 
+        oldSubName, 
+        false, 
+        (newSubName) => {
+            if (newSubName && newSubName.trim() !== "" && newSubName !== oldSubName) {
+                renameSubcategory(category, oldSubName, newSubName.trim());
+            }
+        }
+    );
+}
+
+function renameCategory(oldName, newName) {
+    let count = 0;
+    
+    // 1. Atualiza Cards
+    cards.forEach(c => {
+        if (c.category === oldName) {
+            c.category = newName;
+            count++;
+        }
+    });
+
+    // 2. Atualiza Histórico de Performance (opcional, mas recomendado para manter gráficos)
+    if (typeof performanceData !== 'undefined') {
+        performanceData.forEach(log => {
+            if (log.category === oldName) log.category = newName;
+        });
+        salvarDados('ted_performance', performanceData);
+    }
+
+    // 3. Atualiza Vínculos em Editais (se houver)
+    if (typeof editais !== 'undefined') {
+        editais.forEach(e => {
+            e.subjects.forEach(s => {
+                s.topics.forEach(t => {
+                    if (t.linkedCategory === oldName) t.linkedCategory = newName;
+                });
+            });
+        });
+        salvarDados('ted_editais', editais);
+    }
+
+    if (count > 0) {
+        salvarDados('ted_flashcards', cards);
+        renderExploreTree(); // Atualiza a tela
+        alert(`Categoria renomeada com sucesso! (${count} cards atualizados)`);
+        
+        // Atualiza dropdowns se necessário
+        updateCategoryDropdowns();
+    } else {
+        alert("Nenhum card encontrado para atualizar.");
+    }
+}
+
+function renameSubcategory(category, oldName, newName) {
+    let count = 0;
+    
+    // 1. Atualiza Cards (precisa bater categoria E subcategoria)
+    cards.forEach(c => {
+        if (c.category === category && c.subcategory === oldName) {
+            c.subcategory = newName;
+            count++;
+        }
+    });
+
+    // 2. Atualiza Performance
+    if (typeof performanceData !== 'undefined') {
+        performanceData.forEach(log => {
+            if (log.category === category && log.subcategory === oldName) {
+                log.subcategory = newName;
+            }
+        });
+        salvarDados('ted_performance', performanceData);
+    }
+
+    // 3. Atualiza Editais
+    if (typeof editais !== 'undefined') {
+        editais.forEach(e => {
+            e.subjects.forEach(s => {
+                s.topics.forEach(t => {
+                    if (t.linkedCategory === category && t.linkedSubcategory === oldName) {
+                        t.linkedSubcategory = newName;
+                    }
+                });
+            });
+        });
+        salvarDados('ted_editais', editais);
+    }
+
+    if (count > 0) {
+        salvarDados('ted_flashcards', cards);
+        renderExploreTree();
+        alert(`Tópico renomeado com sucesso! (${count} cards atualizados)`);
+    } else {
+        alert("Nenhum card encontrado para atualizar.");
+    }
+}
+
+
+   function viewCard(id) {
+    const c = cards.find(x => x.id === id);
+    if (!c) return;
+    
+    currentCard = c; 
+    
+    // Ajuste 1: Mostra Categoria > Subcategoria
+    const catDisplay = (c.category || 'Geral') + (c.subcategory ? ' > ' + c.subcategory : '');
+    document.getElementById('detail-category').innerText = catDisplay;
+    
+    document.getElementById('detail-question').innerHTML = c.question;
+    
+    // Ajuste 2: Usa innerHTML para manter formatação do comentário
+    document.getElementById('detail-comment-text').innerHTML = c.comment || 'Sem explicação registrada.';
+    
+    // LÓGICA PARA EXIBIR A FONTE NOS DETALHES
+    const detailSourceDiv = document.getElementById('detail-source-wrapper');
+    const detailSourceLink = document.getElementById('detail-source-link');
+    if (c.source && c.source.trim() !== '') {
+        detailSourceDiv.classList.remove('hidden');
+        detailSourceLink.href = c.source;
+        detailSourceLink.innerText = 'Ver Link Original'; // Fica mais limpo que mostrar a URL inteira
+    } else {
+        detailSourceDiv.classList.add('hidden');
+    }
+
+    const list = document.getElementById('detail-options-list');
+    list.innerHTML = '';
+    
+    // Opção Correta
+    list.innerHTML += `<div class="option-btn correct" style="cursor:default;">${c.correctText} <i class="fas fa-check"></i></div>`;
+    
+    // Outras opções
+    if (c.options) {
+        c.options.forEach(o => { 
+            if(o !== c.correctText) {
+                list.innerHTML += `<div class="option-btn" style="cursor:default; opacity:0.7;">${o}</div>`; 
+            }
+        });
+    }
+    
+    switchTab('card-detail');
+}
+
+
+
+       function switchStudyTab(subTab) {
     // Hide all sub-views
     document.getElementById('sub-view-practice').classList.add('hidden');
     document.getElementById('sub-view-library').classList.add('hidden');
     document.getElementById('sub-view-creator').classList.add('hidden');
+    
+    // LINHA NOVA 1: Esconde a nova aba também
+    document.getElementById('sub-view-explore').classList.add('hidden'); 
     
     // Deactivate nav buttons
     document.querySelectorAll('.study-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -5784,15 +6497,19 @@ function toggleQuickNotes() {
     // Load specific logic
     if (subTab === 'practice') loadStudyView();
     if (subTab === 'library') {
-        updateCategoryDropdowns(); // <--- LINHA ADICIONADA: Corrige o bug das categorias vazias
+        updateCategoryDropdowns(); 
         renderManageList();
     }
+    
+    // LINHA NOVA 2: Carrega a árvore quando clica na aba explore
+    if (subTab === 'explore') renderExploreTree(); 
+
     if (subTab === 'creator') {
         if (!editingId) resetForm();
-        // Opcional: atualizar aqui também para garantir que as sugestões estejam frescas
         updateCategoryDropdowns(); 
     }
 }
+
 
 
         // --- MODIFIED: FAB LOGIC with upward expansion ---
@@ -6122,28 +6839,32 @@ function toggleQuickNotes() {
         // --- POMODORO LOGIC END ---
 
         function openLinkTopicModal(subjectId, topicId) {
-            linkingTopicData = { subjectId, topicId };
-            const edital = editais.find(e => e.id === currentEditalId);
-            const subject = edital.subjects.find(s => s.id === subjectId);
-            const topic = subject.topics.find(t => t.id === topicId);
-            
-            // Setup Categories
-            selectedLinkCategory = topic.linkedCategory || null;
-            document.getElementById('link-category-search').value = selectedLinkCategory || '';
-            updateLinkSubcategories(topic.linkedSubcategory);
-            updateLinkPreview();
+    linkingTopicData = { subjectId, topicId };
+    const edital = editais.find(e => e.id === currentEditalId);
+    const subject = edital.subjects.find(s => s.id === subjectId);
+    const topic = subject.topics.find(t => t.id === topicId);
+    
+    // Setup Categories
+    selectedLinkCategory = topic.linkedCategory || null;
+    document.getElementById('link-category-search').value = selectedLinkCategory || '';
+    updateLinkSubcategories(topic.linkedSubcategory);
+    updateLinkPreview();
 
-            // Setup Notes
-            selectedLinkNoteId = topic.linkedNoteId || null;
-            if (selectedLinkNoteId) {
-                const note = notes.find(n => n.id === selectedLinkNoteId);
-                document.getElementById('link-note-search').value = note ? note.title : '';
-            } else {
-                document.getElementById('link-note-search').value = '';
-            }
+    // Setup Notes
+    selectedLinkNoteId = topic.linkedNoteId || null;
+    if (selectedLinkNoteId) {
+        const note = notes.find(n => n.id === selectedLinkNoteId);
+        document.getElementById('link-note-search').value = note ? note.title : '';
+    } else {
+        document.getElementById('link-note-search').value = '';
+    }
 
-            document.getElementById('link-topic-modal').classList.remove('hidden');
-        }
+    // Setup External Link (NOVO)
+    // Preenche o campo com a URL salva ou vazio
+    document.getElementById('link-url-input').value = topic.linkedUrl || '';
+
+    document.getElementById('link-topic-modal').classList.remove('hidden');
+}
 
         function filterLinkCategories() {
             const input = document.getElementById('link-category-search');
@@ -6239,28 +6960,48 @@ function toggleQuickNotes() {
         }
 
         function saveTopicLink() {
-            if (!linkingTopicData) return;
-            const { subjectId, topicId } = linkingTopicData;
-            
-            const category = selectedLinkCategory;
-            const subcategory = document.getElementById('link-subcategory-select').value || '';
-            const noteId = selectedLinkNoteId;
+    if (!linkingTopicData) return;
+    const { subjectId, topicId } = linkingTopicData;
 
-            const edital = editais.find(e => e.id === currentEditalId);
-            const subject = edital.subjects.find(s => s.id === subjectId);
-            const topic = subject.topics.find(t => t.id === topicId);
-            
-            // Update Card Links
-            topic.linkedCategory = category || null;
-            topic.linkedSubcategory = subcategory || null;
-            
-            // Update Note Link
-            topic.linkedNoteId = noteId;
+    const category = selectedLinkCategory;
+    const subcategory = document.getElementById('link-subcategory-select').value;
+    const noteId = selectedLinkNoteId;
+    
+    // --- NOVO: Pega o valor da URL ---
+    let url = document.getElementById('link-url-input').value.trim();
+    // Adiciona https:// se o usuário esqueceu, para evitar problemas
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
 
-            saveEditais();
-            document.getElementById('link-topic-modal').classList.add('hidden');
-            renderEditalDetail();
-        }
+    const edital = editais.find(e => e.id === currentEditalId);
+    const subject = edital.subjects.find(s => s.id === subjectId);
+    const topic = subject.topics.find(t => t.id === topicId);
+
+    // Update Card Links
+    topic.linkedCategory = category || null;
+    topic.linkedSubcategory = subcategory || null;
+
+    // Update Note Link
+    topic.linkedNoteId = noteId || null;
+    
+    // --- NOVO: Salva a URL ---
+    topic.linkedUrl = url || null;
+
+    saveEditais();
+    document.getElementById('link-topic-modal').classList.add('hidden');
+    renderEditalDetail();
+}
+
+
+function openExternalLink(url) {
+    if (!url) return;
+    // Tenta abrir em nova aba/janela do sistema
+    // No Electron, isso deve ser capturado pelo 'new-window' ou 'will-navigate' no main process
+    // para abrir no navegador padrão.
+    window.open(url, '_blank'); 
+}
+
 
         function openLinkedNote(noteId) {
             openNoteEditor(noteId);
@@ -6462,6 +7203,16 @@ function toggleQuickNotes() {
                     if (topic.linkedNoteId) {
                          linkButtons += `<button class="topic-card-count" style="background:var(--info);" onclick="openLinkedNote('${topic.linkedNoteId}')" title="Abrir anotação vinculada"><i class="fas fa-sticky-note" style="margin-right: 4px;"></i> Anotação</button>`;
                     }
+
+                    if (topic.linkedUrl) {
+    linkButtons += `
+        <button class="topic-card-count" style="background:var(--success); margin-left:4px;" 
+                onclick="openExternalLink('${topic.linkedUrl}')" 
+                title="Abrir Link Externo: ${topic.linkedUrl}">
+            <i class="fas fa-external-link-alt" style="margin-right: 4px;"></i> Link
+        </button>
+    `;
+}
 
                     topicsHtml += `<div class="topic-row ${topic.done ? 'done' : ''}"><div class="topic-check" onclick="toggleTopic(${sub.id}, ${topic.id})">${topic.done ? '<i class="fas fa-check" style="font-size:0.8rem"></i>' : ''}</div><span style="flex:1; font-size:0.95rem;">${topic.text}</span>${linkButtons}<div class="topic-controls"><button class="btn-icon" onclick="openLinkTopicModal(${sub.id}, ${topic.id})" title="Vincular conteúdo"><i class="fas fa-link"></i></button><button class="btn-icon" onclick="editTopic(${sub.id}, ${topic.id})" title="Editar"><i class="fas fa-pen"></i></button><button class="btn-icon" onclick="deleteTopic(${sub.id}, ${topic.id})" title="Excluir" style="color:var(--danger);"><i class="fas fa-trash"></i></button></div></div>`;
                 });
@@ -9609,6 +10360,17 @@ function goToStudyPractice() {
         </div>
     </div>
 </div>
+
+<!-- MENU POPOVER FLUTUANTE (Texto normal e sem ícone) -->
+<div id="tree-popover" class="tree-popover-menu">
+    <button id="btn-popover-rename" class="popover-item" style="justify-content: flex-start; padding-left: 15px; font-weight: 400;">
+        Renomear
+    </button>
+</div>
+
+
+
+
 
 
 
