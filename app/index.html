@@ -3919,7 +3919,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.52</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.62</div>
         </div>
 
     </nav>
@@ -4213,7 +4213,7 @@ select.lib-control {
                         <!-- Progress Counter -->
                         <div id="study-progress-display" class="card-progress-counter">0 / 0</div>
 
-                       <!-- CABEÇALHO DO CARD (REDESENHADO) -->
+
 <div style="
     display: flex; 
     align-items: center; 
@@ -4243,7 +4243,7 @@ select.lib-control {
         letter-spacing: 0.5px;
     ">GERAL</span>
     
-    <!-- Separador -->
+    <!-- Separador 1 -->
     <span style="color: var(--border); font-size: 1.2rem;">/</span>
 
     <!-- Subcategoria -->
@@ -4253,7 +4253,58 @@ select.lib-control {
         font-weight: 500;
     "></span>
 
+    <!-- Separador 2 (Só aparece se tiver sub-sub) -->
+    <span id="separator-subsub" style="display: none; color: var(--border); font-size: 1.2rem;">/</span>
+
+    <!-- Sub-subcategoria (Detalhe) -->
+    <span id="subsubcategory-display" style="
+        display: none;
+        color: var(--text-muted); 
+        font-size: 0.95rem; 
+        font-weight: 400;
+    "></span>
 </div>
+
+
+<!-- NOVOS DADOS (Banca / Ano / Cargo) -->
+<div id="meta-info-row" style="
+    display: flex; 
+    align-items: center; 
+    gap: 12px;           /* Aumentei levemente o espaço entre itens */
+    margin-top: -18px; 
+    margin-bottom: 25px; 
+    font-size: 0.9rem;   /* AUMENTADO (era 0.8rem) */
+    color: var(--text-muted); 
+    font-family: sans-serif;
+    opacity: 0.8;        /* Levemente mais visível */
+">
+    <!-- Banca -->
+    <div id="display-banca-container" style="display:none; align-items:center; gap:6px;">
+        <i class="fas fa-university" style="font-size: 0.8rem;"></i>
+        <span id="display-banca" style="font-weight: 600; letter-spacing: 0.5px;"></span>
+    </div>
+
+    <!-- Separador 1 -->
+    <span id="sep-banca-ano" style="display:none; color:var(--border);">|</span>
+
+    <!-- Ano -->
+    <div id="display-ano-container" style="display:none; align-items:center; gap:6px;">
+        <i class="fas fa-calendar-alt" style="font-size: 0.8rem;"></i>
+        <span id="display-ano"></span>
+    </div>
+
+    <!-- Separador 2 -->
+    <span id="sep-ano-cargo" style="display:none; color:var(--border);">|</span>
+
+    <!-- Cargo (ITÁLICO REMOVIDO) -->
+    <div id="display-cargo-container" style="display:none; align-items:center; gap:6px;">
+        <i class="fas fa-briefcase" style="font-size: 0.8rem;"></i>
+        <span id="display-cargo" style="font-weight: 500;"></span> <!-- Removi o italic e ajustei o peso -->
+    </div>
+</div>
+
+
+
 
 
                         <div id="question-display" class="question-text">Carregando pergunta...</div>
@@ -4464,99 +4515,172 @@ select.lib-control {
 </div>
 
 
-            <!-- SUB VIEW: CREATOR (Redesigned) -->
             <div id="sub-view-creator" class="hidden">
-                <div class="card-box create-container">
-                    
-                    <div class="create-grid">
-                        <div>
-                            <label class="create-label">Matéria / Categoria</label>
-                            <input type="text" id="input-category" list="category-list-suggestions" placeholder="Ex: História, Inglês..." onfocus="updateCategoryDropdowns()" oninput="updateSubcategorySuggestions()" style="margin-bottom:0;">
-                            <datalist id="category-list-suggestions"></datalist>
-                        </div>
-                        <div>
-                            <label class="create-label">Tópico / Subcategoria</label>
-                            <input type="text" id="input-subcategory" list="subcategory-list-suggestions" placeholder="Ex: Verbos, Revolução..." style="margin-bottom:0;">
-                            <datalist id="subcategory-list-suggestions"></datalist>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <label class="create-label" style="margin-bottom:0;">Pergunta</label>
-                            <div class="editor-toolbar" style="margin-bottom:0;">
-                                <button class="btn-outline btn-sm" onclick="formatQuestionText('bold')"><i class="fas fa-bold"></i></button>
-                                <button class="btn-outline btn-sm" onclick="formatQuestionText('italic')"><i class="fas fa-italic"></i></button>
-                                <button class="btn-outline btn-sm" onclick="formatQuestionText('underline')"><i class="fas fa-underline"></i></button>
-                            </div>
-                        </div>
-                        <div id="input-question" class="rich-editor" contenteditable="true" placeholder="Digite sua pergunta aqui..."></div>
-                    </div>
-
-                    <div class="answer-group">
-                        <label class="create-label">Alternativas</label>
-                        
-                        <div class="answer-block correct-answer">
-                            <i class="fas fa-check-circle answer-icon"></i>
-                            <input type="text" id="input-opt-a" placeholder="Digite a resposta correta aqui">
-                        </div>
-                        
-                        <div class="answer-block wrong-answer">
-                            <i class="far fa-circle answer-icon"></i>
-                            <input type="text" id="input-opt-b" placeholder="Alternativa incorreta 1">
-                        </div>
-                        
-                        <div class="answer-block wrong-answer">
-                            <i class="far fa-circle answer-icon"></i>
-                            <input type="text" id="input-opt-c" placeholder="Alternativa incorreta 2">
-                        </div>
-                        
-                        <div class="answer-block wrong-answer">
-                            <i class="far fa-circle answer-icon"></i>
-                            <input type="text" id="input-opt-d" placeholder="Alternativa incorreta 3">
-                        </div>
-                        <div class="answer-block wrong-answer">
-    <i class="far fa-circle answer-icon"></i>
-    <input type="text" id="input-opt-e" placeholder="Alternativa incorreta 4">
-</div>
-
-                    </div>
-
-                    <!-- CAMPO FONTE ADICIONADO -->
-<div style="margin-bottom: 12px;">
-    <label class="create-label">Fonte / Referência (Link)</label>
-    <input type="url" id="input-source" placeholder="Ex: https://youtube.com/..." style="margin-bottom:0;">
-</div>
-
-<div style="margin-bottom: 20px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <label class="create-label" style="margin-bottom:0">Explicação / Comentário (Opcional)</label>
+    <div class="card-box create-container">
         
-        <!-- Barra de Ferramentas -->
-        <div class="editor-toolbar" style="margin-bottom:0">
-            <button class="btn-outline btn-sm" onclick="formatCommentText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
-            <button class="btn-outline btn-sm" onclick="formatCommentText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
-            <button class="btn-outline btn-sm" onclick="formatCommentText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
+        <!-- GRID ALTERADO PARA 3 COLUNAS -->
+        <div class="create-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            
+            <!-- 1. Categoria -->
+            <div>
+                <label class="create-label">Matéria / Categoria</label>
+                <input type="text" id="input-category" list="category-list-suggestions" 
+                       placeholder="Ex: História" 
+                       onfocus="updateCategoryDropdowns()" 
+                       oninput="updateSubcategorySuggestions()" 
+                       style="margin-bottom:0; width: 100%;">
+                <datalist id="category-list-suggestions"></datalist>
+            </div>
+
+            <!-- 2. Subcategoria (Com gatilho para a 3ª hierarquia) -->
+            <div>
+                <label class="create-label">Tópico / Subcategoria</label>
+                <input type="text" id="input-subcategory" list="subcategory-list-suggestions" 
+                       placeholder="Ex: Revolução" 
+                       oninput="updateSubsubcategorySuggestions()" 
+                       style="margin-bottom:0; width: 100%;">
+                <datalist id="subcategory-list-suggestions"></datalist>
+            </div>
+
+            <!-- 3. NOVO: Sub-subcategoria -->
+            <div>
+                <label class="create-label">Detalhe / Sub-sub</label>
+                <input type="text" id="input-subsubcategory" list="subsubcategory-list-suggestions" 
+                       placeholder="Ex: Causas" 
+                       style="margin-bottom:0; width: 100%;">
+                <datalist id="subsubcategory-list-suggestions"></datalist>
+            </div>
+
         </div>
+
+<!-- 1. CONTAINER OCULTO (Cargo, Banca, Ano) -->
+<div id="extra-details-container" style="display: none; grid-template-columns: 3fr 2fr 1fr; gap: 12px; margin-bottom: 12px; animation: slideDown 0.2s ease-out;">
+    
+    <!-- Cargo -->
+    <div>
+        <label class="create-label" style="font-size: 0.8rem;">Cargo</label>
+        <input type="text" id="input-cargo" placeholder="Ex: Auditor" style="margin-bottom:0; width: 100%;">
     </div>
 
-    <!-- Área de Edição Rica (substitui o textarea) -->
-    <div id="input-comment" class="rich-editor" contenteditable="true" 
-         placeholder="Explicação que aparece após responder..." 
-         style="min-height: 120px; max-height: 300px; overflow-y: auto; resize: vertical; width: 100%; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--bg-body);">
+    <!-- Banca -->
+    <div>
+        <label class="create-label" style="font-size: 0.8rem;">Banca</label>
+        <input type="text" id="input-banca" placeholder="Ex: FGV" style="margin-bottom:0; width: 100%;">
     </div>
+
+    <!-- Ano -->
+    <div>
+        <label class="create-label" style="font-size: 0.8rem;">Ano</label>
+        <input type="number" id="input-ano" placeholder="2024" style="margin-bottom:0; width: 100%;">
+    </div>
+
 </div>
 
+<!-- 2. BOTÃO CENTRALIZADO (Versão Minimalista: Apenas Texto) -->
+<div style="display: flex; justify-content: center; margin-top: 4px; margin-bottom: 12px;">
+    <span id="details-trigger" onclick="toggleDetails()" style="
+        cursor: pointer;
+        color: var(--text-muted); /* Cor cinza suave */
+        font-size: 0.75rem;       /* Fonte pequena */
+        font-weight: 500;
+        letter-spacing: 0.5px;    /* Leve espaçamento nas letras */
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        user-select: none;        /* Impede seleção de texto ao clicar */
+    " onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+        <span>Mais Opções</span> <i class="fas fa-caret-down"></i>
+    </span>
+</div>
+
+<!-- Estilo da animação (mantido para garantir suavidade) -->
+<style>
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); margin-bottom: 0; }
+    to { opacity: 1; transform: translateY(0); margin-bottom: 12px; }
+}
+</style>
 
 
-                    <div style="display: flex; gap: 12px; padding-top:16px; border-top:1px solid var(--border);">
-                        <button id="save-btn" class="action-btn" onclick="handleSave()" style="flex:1;">
-                            <i class="fas fa-save"></i> Salvar Card
-                        </button>
-                        <button id="cancel-edit-btn" class="action-btn btn-outline hidden" onclick="resetForm()">Cancelar</button>
-                    </div>
+
+
+
+
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label class="create-label" style="margin-bottom:0;">Pergunta</label>
+                <div class="editor-toolbar" style="margin-bottom:0;">
+                    <button class="btn-outline btn-sm" onclick="formatQuestionText('bold')"><i class="fas fa-bold"></i></button>
+                    <button class="btn-outline btn-sm" onclick="formatQuestionText('italic')"><i class="fas fa-italic"></i></button>
+                    <button class="btn-outline btn-sm" onclick="formatQuestionText('underline')"><i class="fas fa-underline"></i></button>
                 </div>
             </div>
+            <div id="input-question" class="rich-editor" contenteditable="true" placeholder="Digite sua pergunta aqui..."></div>
+        </div>
+
+        <div class="answer-group">
+            <label class="create-label">Alternativas</label>
+            
+            <div class="answer-block correct-answer">
+                <i class="fas fa-check-circle answer-icon"></i>
+                <input type="text" id="input-opt-a" placeholder="Digite a resposta correta aqui">
+            </div>
+            
+            <div class="answer-block wrong-answer">
+                <i class="far fa-circle answer-icon"></i>
+                <input type="text" id="input-opt-b" placeholder="Alternativa incorreta 1">
+            </div>
+            
+            <div class="answer-block wrong-answer">
+                <i class="far fa-circle answer-icon"></i>
+                <input type="text" id="input-opt-c" placeholder="Alternativa incorreta 2">
+            </div>
+            
+            <div class="answer-block wrong-answer">
+                <i class="far fa-circle answer-icon"></i>
+                <input type="text" id="input-opt-d" placeholder="Alternativa incorreta 3">
+            </div>
+            <div class="answer-block wrong-answer">
+                <i class="far fa-circle answer-icon"></i>
+                <input type="text" id="input-opt-e" placeholder="Alternativa incorreta 4">
+            </div>
+        </div>
+
+        <!-- CAMPO FONTE -->
+        <div style="margin-bottom: 12px;">
+            <label class="create-label">Fonte / Referência (Link)</label>
+            <input type="url" id="input-source" placeholder="Ex: https://youtube.com/..." style="margin-bottom:0;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label class="create-label" style="margin-bottom:0">Explicação / Comentário (Opcional)</label>
+                
+                <!-- Barra de Ferramentas -->
+                <div class="editor-toolbar" style="margin-bottom:0">
+                    <button class="btn-outline btn-sm" onclick="formatCommentText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
+                    <button class="btn-outline btn-sm" onclick="formatCommentText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
+                    <button class="btn-outline btn-sm" onclick="formatCommentText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
+                </div>
+            </div>
+
+            <!-- Área de Edição Rica -->
+            <div id="input-comment" class="rich-editor" contenteditable="true" 
+                 placeholder="Explicação que aparece após responder..." 
+                 style="min-height: 120px; max-height: 300px; overflow-y: auto; resize: vertical; width: 100%; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--bg-body);">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; padding-top:16px; border-top:1px solid var(--border);">
+            <button id="save-btn" class="action-btn" onclick="handleSave()" style="flex:1;">
+                <i class="fas fa-save"></i> Salvar Card
+            </button>
+            <button id="cancel-edit-btn" class="action-btn btn-outline hidden" onclick="resetForm()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
         </section>
 
         <!-- OLD Create & Manage views REMOVED (Merged above) -->
@@ -6189,36 +6313,31 @@ function renderExploreTree() {
     const container = document.getElementById('explore-tree-container');
     container.innerHTML = '';
 
-    // 1. Processar Dados (Agora contando revisões REAIS do histórico)
+    // 1. Processar Estatísticas
     const statsMap = {};
     const lastReviewMap = {}; 
-    const reviewsCountMap = {}; // Novo mapa para contar revisões por categoria
+    const reviewsCountMap = {}; 
 
     if (typeof performanceData !== 'undefined' && Array.isArray(performanceData)) {
         performanceData.forEach(log => {
             const cat = (log.category || 'Sem Categoria');
             const sub = (log.subcategory || 'Geral');
             
-            // Inicializa mapas se não existirem
             if (!statsMap[cat]) statsMap[cat] = { subs: {}, correct: 0, total: 0 };
             if (!statsMap[cat].subs[sub]) statsMap[cat].subs[sub] = { correct: 0, total: 0 };
             
             if (!reviewsCountMap[cat]) reviewsCountMap[cat] = { total: 0, subs: {} };
             if (!reviewsCountMap[cat].subs[sub]) reviewsCountMap[cat].subs[sub] = 0;
 
-            // Contagem de Acertos (Percentual)
             const isCorrect = log.correct ? 1 : 0;
             statsMap[cat].subs[sub].total++;
             statsMap[cat].subs[sub].correct += isCorrect;
             statsMap[cat].total++;
             statsMap[cat].correct += isCorrect;
 
-            // Contagem de REVISÕES (Aqui está a correção!)
-            // Cada entrada no log conta como uma revisão feita
             reviewsCountMap[cat].total++;
             reviewsCountMap[cat].subs[sub]++;
 
-            // Rastrear última data
             if (!lastReviewMap[cat]) lastReviewMap[cat] = { lastDate: '', subs: {} };
             if (!lastReviewMap[cat].subs[sub]) lastReviewMap[cat].subs[sub] = '';
 
@@ -6227,12 +6346,18 @@ function renderExploreTree() {
         });
     }
 
+    // 2. Construir Árvore (3 Níveis)
     const tree = {};
     cards.forEach(c => {
         const cat = c.category || 'Sem Categoria';
         const sub = c.subcategory || 'Geral';
-        if (!tree[cat]) tree[cat] = { subs: new Set(), cardCount: 0 };
-        tree[cat].subs.add(sub);
+        const subsub = (c.subsubcategory && c.subsubcategory.trim() !== '') ? c.subsubcategory : 'Outros'; 
+
+        if (!tree[cat]) tree[cat] = { subs: {}, cardCount: 0 };
+        if (!tree[cat].subs[sub]) tree[cat].subs[sub] = { subsubs: new Set(), cardCount: 0 };
+        
+        tree[cat].subs[sub].subsubs.add(subsub);
+        tree[cat].subs[sub].cardCount++;
         tree[cat].cardCount++;
     });
 
@@ -6255,15 +6380,13 @@ function renderExploreTree() {
         return `${parts[2]}/${parts[1]}`;
     };
 
-    // Renderizar
+    // 3. Renderizar
     sortedCategories.forEach(cat => {
         const catStats = statsMap[cat] || { correct: 0, total: 0 };
         const catPercent = catStats.total === 0 ? 0 : Math.round((catStats.correct / catStats.total) * 100);
         const percentColor = getPercentColor(catPercent);
         
         const lastRev = (lastReviewMap[cat] && lastReviewMap[cat].lastDate) ? formatDate(lastReviewMap[cat].lastDate) : '-';
-        
-        // CORREÇÃO: Pega o total do nosso novo mapa de contagem, ou 0 se não existir
         const totalRevs = reviewsCountMap[cat] ? reviewsCountMap[cat].total : 0;
 
         const wrapper = document.createElement('div');
@@ -6283,7 +6406,7 @@ function renderExploreTree() {
             </div>
             
             <div class="tree-stats-group">
-                <div class="meta-info" title="Total de revisões feitas (Baseado no Histórico)">
+                <div class="meta-info" title="Total de revisões">
                     <i class="fas fa-history"></i> ${totalRevs}
                 </div>
                 <div class="meta-info" title="Última revisão">
@@ -6307,7 +6430,7 @@ function renderExploreTree() {
         childrenContainer.className = 'tree-children';
         childrenContainer.style.display = 'block'; 
 
-        const sortedSubs = Array.from(tree[cat].subs).sort();
+        const sortedSubs = Object.keys(tree[cat].subs).sort();
 
         sortedSubs.forEach(sub => {
             let subStats = { correct: 0, total: 0 };
@@ -6315,10 +6438,7 @@ function renderExploreTree() {
             const subPercent = subStats.total === 0 ? 0 : Math.round((subStats.correct / subStats.total) * 100);
             const subColor = getPercentColor(subPercent);
             
-            const subCards = cards.filter(c => (c.category === cat || (!c.category && cat==='Sem Categoria')) && (c.subcategory === sub || (!c.subcategory && sub==='Geral')));
-            const subCardCount = subCards.length;
-            
-            // CORREÇÃO: Pega contagem do subtópico do mapa
+            const subCardCount = tree[cat].subs[sub].cardCount;
             const subTotalRevs = (reviewsCountMap[cat] && reviewsCountMap[cat].subs[sub]) ? reviewsCountMap[cat].subs[sub] : 0;
             const subLastRev = (lastReviewMap[cat] && lastReviewMap[cat].subs[sub]) ? formatDate(lastReviewMap[cat].subs[sub]) : '-';
 
@@ -6329,31 +6449,87 @@ function renderExploreTree() {
                 ? `<span style="font-weight:700; color:${subColor}; font-size:0.9rem;">${subPercent}%</span>`
                 : `<span style="color:#aaa; font-size:0.9rem;">-</span>`;
 
+            // Lógica para Expandir: Só mostra seta se tiver sub-subcategorias reais
+            const hasSubSubs = tree[cat].subs[sub].subsubs.size > 0 && !(tree[cat].subs[sub].subsubs.size === 1 && tree[cat].subs[sub].subsubs.has('Outros'));
+            
+            const expandIcon = hasSubSubs 
+                ? `<i class="fas fa-chevron-right sub-toggle-icon" style="font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; width:12px;"></i>` 
+                : `<i class="fas fa-circle" style="font-size: 0.3rem; color: var(--text-muted); opacity:0.3; width:12px; text-align:center;"></i>`;
+
             subDiv.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px; flex:1;">
-                    <i class="far fa-circle" style="font-size:0.4rem; color:var(--text-muted); opacity:0.6;"></i>
-                    <span>${sub}</span>
-                </div>
+                <div style="width: 100%;">
+                    <!-- CABEÇALHO DA SUBCATEGORIA -->
+                    <div class="sub-header" style="display:flex; align-items:center; justify-content: space-between; margin-bottom: 5px; cursor: pointer; padding: 4px 0;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${expandIcon}
+                            <!-- ÍCONE DE PASTA RESTAURADO -->
+                            <i class="far fa-folder-open" style="font-size:0.9rem; color:var(--text-muted);"></i>
+                            <span style="font-weight: 500;">${sub}</span>
+                        </div>
 
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <div class="meta-info-sm" title="Revisões">
-                        <i class="fas fa-history"></i> ${subTotalRevs}
-                    </div>
-                     <div class="meta-info-sm" title="Última data">
-                        <i class="far fa-calendar-check"></i> ${subLastRev}
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <div class="meta-info-sm" title="Revisões">
+                                <i class="fas fa-history"></i> ${subTotalRevs}
+                            </div>
+                             <div class="meta-info-sm" title="Última data">
+                                <i class="far fa-calendar-check"></i> ${subLastRev}
+                            </div>
+                            <span class="card-count-pill-sm">${subCardCount} cards</span>
+                            <div style="width:40px; text-align:right;">${subBadge}</div>
+                             <button class="tree-options-btn-sm" title="Opções" 
+                                    onclick="event.stopPropagation(); showTreeMenu(event, 'subcategory', '${cat}', '${sub}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <span class="card-count-pill-sm">${subCardCount} cards</span>
-                    
-                    <div style="width:40px; text-align:right;">${subBadge}</div>
-                    
-                    <button class="tree-options-btn-sm" title="Opções" 
-                            onclick="event.stopPropagation(); showTreeMenu(event, 'subcategory', '${cat}', '${sub}')">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
+                    <!-- CONTAINER SUB-SUBCATEGORIAS (Nível 3) -->
+                    <div class="subsub-container hidden" style="padding-left: 28px; border-left: 1px dashed var(--border); margin-left: 5px; margin-top: 2px;">
+                        ${Array.from(tree[cat].subs[sub].subsubs).sort().map(subsub => {
+                            if (subsub === 'Outros' && tree[cat].subs[sub].subsubs.size === 1) return ''; 
+                            
+                            const count = cards.filter(c => 
+                                (c.category === cat) && 
+                                (c.subcategory === sub) && 
+                                (c.subsubcategory === subsub || (subsub === 'Outros' && !c.subsubcategory))
+                            ).length;
+
+                            return `
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding: 6px 0; font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px solid rgba(0,0,0,0.03);">
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <i class="fas fa-angle-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
+                                        <span>${subsub}</span>
+                                    </div>
+                                    <span style="background: var(--bg-body); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">
+                                        ${count}
+                                    </span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
             `;
+            
             childrenContainer.appendChild(subDiv);
+
+            // Evento Click para Expandir/Ocultar
+            if (hasSubSubs) {
+                const subHeader = subDiv.querySelector('.sub-header');
+                const subContainer = subDiv.querySelector('.subsub-container');
+                const icon = subDiv.querySelector('.sub-toggle-icon');
+
+                subHeader.onclick = (e) => {
+                    if(e.target.closest('button')) return;
+
+                    if (subContainer.classList.contains('hidden')) {
+                        subContainer.classList.remove('hidden');
+                        if(icon) icon.style.transform = 'rotate(90deg)';
+                    } else {
+                        subContainer.classList.add('hidden');
+                        if(icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                };
+            }
         });
 
         header.onclick = () => {
@@ -6378,6 +6554,30 @@ function renderExploreTree() {
 
 
 
+
+
+function startSpecificReview(cat, sub, subsub) {
+    // Filtra os cards
+    const sessionCards = cards.filter(c => 
+        (c.category === cat) && 
+        (c.subcategory === sub) &&
+        // Se subsub for 'Geral', pega os vazios ou os que são 'Geral'. 
+        // Se for específico, pega o específico.
+        (subsub === 'Geral' ? (!c.subsubcategory || c.subsubcategory === 'Geral') : c.subsubcategory === subsub)
+    );
+
+    if (sessionCards.length === 0) return alert('Nenhum card encontrado.');
+
+    // Inicia a sessão (supondo que você tenha essa função startSession)
+    sessionQueue = sessionCards; // ou embaralhar(sessionCards)
+    currentCardIndex = 0;
+    
+    // Fecha visualização e vai para o estudo
+    switchTab('study');
+    document.getElementById('sub-view-explore').classList.add('hidden');
+    // Mostra a tela de card...
+    nextCard(); 
+}
 
 
 
@@ -6505,8 +6705,11 @@ function renameSubcategory(category, oldName, newName) {
     
     currentCard = c; 
     
-    // Ajuste 1: Mostra Categoria > Subcategoria
-    const catDisplay = (c.category || 'Geral') + (c.subcategory ? ' > ' + c.subcategory : '');
+    // Ajuste 1: Mostra Categoria > Subcategoria > Sub-subcategoria
+    const catDisplay = (c.category || 'Geral') 
+                     + (c.subcategory ? ' > ' + c.subcategory : '')
+                     + (c.subsubcategory ? ' > ' + c.subsubcategory : ''); // <--- NOVO
+                     
     document.getElementById('detail-category').innerText = catDisplay;
     
     document.getElementById('detail-question').innerHTML = c.question;
@@ -6542,6 +6745,7 @@ function renameSubcategory(category, oldName, newName) {
     
     switchTab('card-detail');
 }
+
 
 
 
@@ -7008,6 +7212,33 @@ function renameSubcategory(category, oldName, newName) {
             updateLinkPreview();
         }
 
+        // Adicione esta nova função
+function updateSubsubcategorySuggestions() {
+    const currentCat = document.getElementById('input-category').value;
+    const currentSub = document.getElementById('input-subcategory').value;
+    const subSubList = document.getElementById('subsubcategory-list-suggestions');
+    
+    subSubList.innerHTML = '';
+    
+    if (!cards) return;
+
+    // Filtra cards que tenham a mesma categoria e subcategoria
+    const relevantCards = cards.filter(c => 
+        (c.category || '').toLowerCase() === currentCat.toLowerCase() &&
+        (c.subcategory || '').toLowerCase() === currentSub.toLowerCase()
+    );
+
+    // Cria lista única de sub-subcategorias
+    const subsubs = [...new Set(relevantCards.map(c => c.subsubcategory).filter(Boolean))];
+
+    subsubs.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        subSubList.appendChild(option);
+    });
+}
+
+
         function updateLinkPreview() {
             const category = selectedLinkCategory;
             const subcategory = document.getElementById('link-subcategory-select').value;
@@ -7264,6 +7495,29 @@ function openExternalLink(url) {
                     
                     // Buttons logic
                     let linkButtons = '';
+                        // --- LÓGICA DE SAÚDE DO TÓPICO (NOVO) ---
+    let healthIcon = '';
+    
+    // Só mostra saúde se o tópico estiver CONCLUÍDO (marcado como done)
+    if (topic.done) {
+        const diasLimite = 15; // Define quantos dias até ficar "doente"
+        const msPorDia = 86400000;
+        const ultimaRega = topic.lastCardAdded || 0; // Se nunca foi regado, é 0 (muito antigo)
+        const diasSemRega = (Date.now() - ultimaRega) / msPorDia;
+        
+        if (diasSemRega <= diasLimite) {
+            // 🌿 Saudável (Verde)
+            healthIcon = `<i class="fas fa-leaf" style="color:#00c851; margin-right:8px;" title="Tópico Saudável! Questão adicionada há ${Math.floor(diasSemRega)} dias."></i>`;
+        } else if (diasSemRega <= diasLimite * 2) {
+            // 🍂 Atenção (Laranja)
+            healthIcon = `<i class="fab fa-envira" style="color:#ffbb33; margin-right:8px;" title="Atenção: Tópico secando! ${Math.floor(diasSemRega)} dias sem novas questões."></i>`;
+        } else {
+            // 🥀 Crítico (Vermelho/Cinza) - Precisa urgente
+            healthIcon = `<i class="fas fa-seedling" style="color:#ff4444; margin-right:8px;" title="Crítico! ${Math.floor(diasSemRega)} dias abandonado. Adicione questões!"></i>`;
+        }
+    }
+    // ----------------------------------------
+
                     if (topic.linkedCategory) {
                          linkButtons += `<button class="topic-card-count" onclick="startSimulationForTopic(${sub.id}, ${topic.id})" title="Simulado: ${topic.linkedCategory}${topic.linkedSubcategory ? ' › ' + topic.linkedSubcategory : ''}"><i class="fas fa-play-circle" style="margin-right: 4px;"></i> ${topicCount} questões</button>`;
                     }
@@ -7280,6 +7534,8 @@ function openExternalLink(url) {
         </button>
     `;
 }
+
+
 
                     topicsHtml += `<div class="topic-row ${topic.done ? 'done' : ''}"><div class="topic-check" onclick="toggleTopic(${sub.id}, ${topic.id})">${topic.done ? '<i class="fas fa-check" style="font-size:0.8rem"></i>' : ''}</div><span style="flex:1; font-size:0.95rem;">${topic.text}</span>${linkButtons}<div class="topic-controls"><button class="btn-icon" onclick="openLinkTopicModal(${sub.id}, ${topic.id})" title="Vincular conteúdo"><i class="fas fa-link"></i></button><button class="btn-icon" onclick="editTopic(${sub.id}, ${topic.id})" title="Editar"><i class="fas fa-pen"></i></button><button class="btn-icon" onclick="deleteTopic(${sub.id}, ${topic.id})" title="Excluir" style="color:var(--danger);"><i class="fas fa-trash"></i></button></div></div>`;
                 });
@@ -8158,12 +8414,22 @@ async function saveNotesData() {
             });
         }
 
-        function handleSave() {
+       function handleSave() {
     const q = document.getElementById('input-question').innerHTML; 
     const a = document.getElementById('input-opt-a').value;
     const comment = document.getElementById('input-comment').innerHTML; 
     const cat = document.getElementById('input-category').value;
-    const subcat = document.getElementById('input-subcategory').value; 
+    const subcat = document.getElementById('input-subcategory').value;
+    
+    // --- NOVOS CAMPOS ADICIONADOS AQUI ---
+    const cargo = document.getElementById('input-cargo').value;
+    const banca = document.getElementById('input-banca').value;
+    const ano = document.getElementById('input-ano').value;
+    // -------------------------------------
+
+    // NOVO: Captura sub-subcategoria
+    const subsubcat = document.getElementById('input-subsubcategory').value;
+    
     const sourceLink = document.getElementById('input-source') ? document.getElementById('input-source').value : '';
     
     if(!q || !a) return alert('Preencha pergunta e resposta correta!');
@@ -8183,13 +8449,20 @@ async function saveNotesData() {
         
         if (index !== -1) {
             // Copia o card original e sobrescreve apenas os campos de texto
-            // Mantém nextReview, interval, ease, reviewsCount, history, etc.
             cards[index] = {
                 ...cards[index], // Mantém TUDO que já existia
                 question: q,
                 correctText: a,
                 category: cat,
                 subcategory: subcat,
+                subsubcategory: subsubcat, 
+                
+                // --- ADICIONADO NO OBJETO DE EDIÇÃO ---
+                cargo: cargo,
+                banca: banca,
+                ano: ano,
+                // --------------------------------------
+
                 comment: comment,
                 source: sourceLink,
                 options: opts
@@ -8206,6 +8479,14 @@ async function saveNotesData() {
             correctText: a,
             category: cat,
             subcategory: subcat,
+            subsubcategory: subsubcat, 
+
+            // --- ADICIONADO NO OBJETO DE CRIAÇÃO ---
+            cargo: cargo,
+            banca: banca,
+            ano: ano,
+            // ---------------------------------------
+
             comment: comment,
             source: sourceLink, 
             options: opts,
@@ -8220,13 +8501,48 @@ async function saveNotesData() {
 
     salvarDados('ted_flashcards', cards);
 
+    // --- NOVO: SISTEMA DE SAÚDE DO TÓPICO ---
+    // Se estamos criando um card novo, vamos "regar" o tópico correspondente
+    if (!editingId) { // Só vale para criações, não edições
+        let editalAlterado = false;
+        
+        // Varre todos os editais procurando tópicos que usem essa Categoria/Subcategoria
+        if (typeof editais !== 'undefined' && editais) { // Verifica se editais existe
+            editais.forEach(edital => {
+                edital.subjects.forEach(materia => {
+                    materia.topics.forEach(topico => {
+                        // Verifica vínculo (se o tópico "escuta" esta categoria)
+                        if (topico.linkedCategory === cat && 
+                           (!topico.linkedSubcategory || topico.linkedSubcategory === subcat)) {
+                            
+                            // ATUALIZA A "DATA DA REGA"
+                            topico.lastCardAdded = Date.now();
+                            editalAlterado = true;
+                        }
+                    });
+                });
+            });
+
+            // Se achou e atualizou algum tópico, salva os editais
+            if (editalAlterado) {
+                salvarDados('ted_editais', editais); 
+            }
+        }
+    }
+    // ----------------------------------------
+
     // ATUALIZA AS CATEGORIAS IMEDIATAMENTE APÓS SALVAR
-    updateCategoryDropdowns(); 
+    if (typeof updateCategoryDropdowns === 'function') {
+        updateCategoryDropdowns(); 
+    }
 
     resetForm();
     // Switch to Library view after save
-    switchStudyTab('library');
+    if (typeof switchStudyTab === 'function') {
+        switchStudyTab('library');
+    }
 }
+
 
 
 
@@ -8248,7 +8564,18 @@ async function saveNotesData() {
     document.getElementById('save-btn').innerHTML = '<i class="fas fa-save"></i> Salvar Card';
     document.getElementById('cancel-edit-btn').classList.add('hidden');
     editingId = null;
+
+    // --- NOVO: Fecha a aba de "Mais Detalhes" automaticamente ---
+    const detailsContainer = document.getElementById('extra-details-container');
+    if (detailsContainer) {
+        detailsContainer.style.display = 'none';
+        
+        // Opcional: Reseta o ícone para baixo também
+        const icon = document.querySelector('#details-trigger i');
+        if(icon) icon.className = 'fas fa-chevron-down';
+    }
 }
+
 
 
         function changeLibraryPage(direction) {
@@ -8488,10 +8815,24 @@ function formatCommentText(command) {
     document.getElementById('input-comment').focus();
 }
 
+function toggleDetails() {
+    const container = document.getElementById('extra-details-container');
+    const trigger = document.getElementById('details-trigger');
+    
+    if (container.style.display === 'none' || container.style.display === '') {
+        // ABRIR
+        container.style.display = 'grid'; 
+        trigger.innerHTML = '<span>Menos Opções</span> <i class="fas fa-caret-up"></i>';
+    } else {
+        // FECHAR
+        container.style.display = 'none';
+        trigger.innerHTML = '<span>Mais Opções</span> <i class="fas fa-caret-down"></i>';
+    }
+}
 
 
 
-        function editCard(id) {
+       function editCard(id) {
     const c = cards.find(x => x.id === id);
     if (!c) return;
 
@@ -8500,6 +8841,16 @@ function formatCommentText(command) {
     // Preenche campos de texto básicos
     document.getElementById('input-category').value = c.category || '';
     document.getElementById('input-subcategory').value = c.subcategory || ''; 
+    
+    // --- NOVO: Preenche a Sub-subcategoria ---
+    document.getElementById('input-subsubcategory').value = c.subsubcategory || '';
+
+    // --- ADICIONADO: Preenche Cargo, Banca e Ano ---
+    document.getElementById('input-cargo').value = c.cargo || '';
+    document.getElementById('input-banca').value = c.banca || '';
+    document.getElementById('input-ano').value = c.ano || '';
+    // -----------------------------------------------
+
     document.getElementById('input-question').innerHTML = c.question;
     document.getElementById('input-opt-a').value = c.correctText;
     
@@ -8528,11 +8879,31 @@ function formatCommentText(command) {
     // Ajusta visual dos botões
     document.getElementById('save-btn').innerHTML = '<i class="fas fa-pen"></i> Atualizar';
     document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+    // --- NOVO: Lógica Inteligente de Exibição ---
+    const detailsContainer = document.getElementById('extra-details-container');
+    const triggerIcon = document.querySelector('#details-trigger i');
+
+    if (detailsContainer) {
+        // Se houver algum dado preenchido nos campos extras, abre a aba
+        if (c.cargo || c.banca || c.ano) {
+            detailsContainer.style.display = 'grid';
+            if(triggerIcon) triggerIcon.className = 'fas fa-chevron-up';
+        } else {
+            // Se não, mantém fechado para não poluir
+            detailsContainer.style.display = 'none';
+            if(triggerIcon) triggerIcon.className = 'fas fa-chevron-down';
+        }
+    }
+    // --------------------------------------------
     
     // Troca para a aba de criação
     switchTab('study');
     switchStudyTab('creator');
 }
+
+
+
 
 
 // Wrappers simples
@@ -8582,71 +8953,132 @@ function loadStudySession() {
 }
 
         
-        function showCard(c) { 
-            currentCard = c; 
-            currentSelectedOption = null;
-            currentSelectedBtn = null;
-            
-            // Update Progress Display (1-based index)
-            document.getElementById('study-progress-display').innerText = `${currentCardIndex + 1} / ${currentSessionTotal}`;
-            
-            document.getElementById('study-content').classList.remove('hidden'); 
-            document.getElementById('no-cards-msg').classList.add('hidden'); 
-            document.getElementById('simulation-result').classList.add('hidden');
-            document.getElementById('question-display').innerHTML=c.question; 
-            document.getElementById('category-display').innerText = c.category || 'GERAL';
-            document.getElementById('subcategory-display').innerText = c.subcategory || '';
-            document.getElementById('card-id-display').innerText = '#' + c.id.toString().slice(-4);
-            document.getElementById('options-display').innerHTML=''; 
-            
-            // Comment Section Reset
-            document.getElementById('comment-display').classList.add('hidden');
-            document.getElementById('comment-edit-wrapper').classList.add('hidden');
-            document.getElementById('comment-content-wrapper').classList.remove('hidden');
-            // LÓGICA PARA EXIBIR A FONTE NO ESTUDO
-const sourceWrapper = document.getElementById('source-display-wrapper');
-const sourceLink = document.getElementById('source-link');
-if (c.source && c.source.trim() !== '') {
-    sourceWrapper.classList.remove('hidden');
-    sourceWrapper.style.display = 'flex'; // Força o display flex para alinhar icone
-    sourceLink.href = c.source;
-} else {
-    sourceWrapper.classList.add('hidden');
-    sourceWrapper.style.display = 'none';
+     function showCard(c) { 
+    currentCard = c; 
+    currentSelectedOption = null;
+    currentSelectedBtn = null;
+    
+    // Update Progress Display (1-based index)
+    document.getElementById('study-progress-display').innerText = `${currentCardIndex + 1} / ${currentSessionTotal}`;
+    
+    document.getElementById('study-content').classList.remove('hidden'); 
+    document.getElementById('no-cards-msg').classList.add('hidden'); 
+    document.getElementById('simulation-result').classList.add('hidden');
+    document.getElementById('question-display').innerHTML=c.question; 
+    
+    document.getElementById('card-id-display').innerText = '#' + c.id.toString().slice(-4);
+
+    // --- HIERARQUIA: CATEGORIA / SUB / SUB-SUB ---
+    document.getElementById('category-display').innerText = c.category || 'GERAL';
+    document.getElementById('subcategory-display').innerText = c.subcategory || '';
+    
+    // 1. Lógica da Sub-subcategoria (NOVO)
+    const elSubSub = document.getElementById('subsubcategory-display');
+    const elSepSub = document.getElementById('separator-subsub'); 
+    
+    if (c.subsubcategory && c.subsubcategory.trim() !== '') {
+        elSubSub.innerText = c.subsubcategory;
+        elSubSub.style.display = 'inline';
+        if (elSepSub) elSepSub.style.display = 'inline';
+    } else {
+        elSubSub.style.display = 'none';
+        if (elSepSub) elSepSub.style.display = 'none';
+    }
+    // ---------------------------------------------
+    
+    // --- ATUALIZAÇÃO: DADOS EXTRAS (Banca / Ano / Cargo) ---
+    const elBanca = document.getElementById('display-banca');
+    const elAno = document.getElementById('display-ano');
+    const elCargo = document.getElementById('display-cargo');
+    
+    const boxBanca = document.getElementById('display-banca-container');
+    const boxAno = document.getElementById('display-ano-container');
+    const boxCargo = document.getElementById('display-cargo-container');
+    
+    const sep1 = document.getElementById('sep-banca-ano');
+    const sep2 = document.getElementById('sep-ano-cargo');
+
+    // Preenche e exibe/oculta Banca
+    if (c.banca) {
+        elBanca.innerText = c.banca;
+        boxBanca.style.display = 'flex';
+    } else {
+        boxBanca.style.display = 'none';
+    }
+
+    // Preenche e exibe/oculta Ano
+    if (c.ano) {
+        elAno.innerText = c.ano;
+        boxAno.style.display = 'flex';
+    } else {
+        boxAno.style.display = 'none';
+    }
+
+    // Preenche e exibe/oculta Cargo
+    if (c.cargo) {
+        elCargo.innerText = c.cargo;
+        boxCargo.style.display = 'flex';
+    } else {
+        boxCargo.style.display = 'none';
+    }
+
+    // Lógica dos Separadores (Só aparecem se os vizinhos existirem)
+    if (sep1) sep1.style.display = (c.banca && (c.ano || c.cargo)) ? 'inline' : 'none';
+    if (sep2) sep2.style.display = (c.ano && c.cargo) ? 'inline' : 'none';
+    // -----------------------------------------------------------
+
+    document.getElementById('options-display').innerHTML=''; 
+    
+    // Comment Section Reset
+    document.getElementById('comment-display').classList.add('hidden');
+    document.getElementById('comment-edit-wrapper').classList.add('hidden');
+    document.getElementById('comment-content-wrapper').classList.remove('hidden');
+    
+    // LÓGICA PARA EXIBIR A FONTE NO ESTUDO
+    const sourceWrapper = document.getElementById('source-display-wrapper');
+    const sourceLink = document.getElementById('source-link');
+    if (c.source && c.source.trim() !== '') {
+        sourceWrapper.classList.remove('hidden');
+        sourceWrapper.style.display = 'flex'; // Força o display flex para alinhar icone
+        sourceLink.href = c.source;
+    } else {
+        sourceWrapper.classList.add('hidden');
+        sourceWrapper.style.display = 'none';
+    }
+    
+    // Handle Buttons State based on index
+    document.getElementById('nav-prev-btn').disabled = (currentCardIndex === 0);
+    
+    // If already answered, render state
+    const previousAnswer = sessionAnswers[c.id];
+    
+    if (previousAnswer) {
+            renderAnsweredState(previousAnswer);
+    } else {
+            renderUnansweredState();
+    }
+
+    const prefixes = ['a.', 'b.', 'c.', 'd.', 'e.'];
+    
+    c.options.sort(()=>Math.random()-0.5).forEach((o, index)=>{ 
+        const b=document.createElement('button'); 
+        b.className='option-btn'; 
+        b.dataset.val = o;
+        b.innerHTML = `<strong>${prefixes[index]||'-'}</strong> ${o}`; 
+        
+        if (previousAnswer) {
+            b.disabled = true;
+            if (o === c.correctText) b.classList.add('correct');
+            if (previousAnswer.selected === o && o !== c.correctText) b.classList.add('wrong');
+        } else {
+            b.onclick=()=>selectAnswer(b, o); 
+        }
+        
+        document.getElementById('options-display').appendChild(b); 
+    }); 
 }
 
-            
-            // Handle Buttons State based on index
-            document.getElementById('nav-prev-btn').disabled = (currentCardIndex === 0);
-            
-            // If already answered, render state
-            const previousAnswer = sessionAnswers[c.id];
-            
-            if (previousAnswer) {
-                 renderAnsweredState(previousAnswer);
-            } else {
-                 renderUnansweredState();
-            }
 
-            const prefixes = ['a.', 'b.', 'c.', 'd.', 'e.'];
-            
-            c.options.sort(()=>Math.random()-0.5).forEach((o, index)=>{ 
-                const b=document.createElement('button'); 
-                b.className='option-btn'; 
-                b.dataset.val = o;
-                b.innerHTML = `<strong>${prefixes[index]||'-'}</strong> ${o}`; 
-                
-                if (previousAnswer) {
-                    b.disabled = true;
-                    if (o === c.correctText) b.classList.add('correct');
-                    if (previousAnswer.selected === o && o !== c.correctText) b.classList.add('wrong');
-                } else {
-                    b.onclick=()=>selectAnswer(b, o); 
-                }
-                
-                document.getElementById('options-display').appendChild(b); 
-            }); 
-        }
         
         function renderUnansweredState() {
     document.getElementById('confirm-action-btn').classList.remove('hidden');
