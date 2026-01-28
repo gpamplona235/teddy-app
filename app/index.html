@@ -107,19 +107,20 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .dark-mode ::-webkit-scrollbar-thumb { background: #475569; }
 
-        /* SIDEBAR APRIMORADA - ALWAYS COLLAPSED */
         .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-nav);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 24px 12px; 
-            z-index: 100;
-            padding-top: 40px;
-            transition: background 0.3s;
-            position: relative;
-        }
+    width: var(--sidebar-width);
+    background: var(--bg-nav);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    z-index: 6000 !important; /* <--- MUDE ISTO (Era 100) */
+    padding-top: 40px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: visible !important; /* <--- ADICIONE ISTO para garantir */
+}
+
 
         .nav-links { display: flex; flex-direction: column; gap: 8px; flex: 1; margin-top: 20px; overflow: hidden; }
 
@@ -282,21 +283,23 @@
         .search-result-item strong { display: block; font-size: 0.95rem; }
         .search-result-item span { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* --- HERO HEADER STYLES --- */
-        .hero-header-card {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 24px;
-            padding: 24px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  .hero-header-card {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 24px;
+
+    /* Aumentei o padding vertical */
+    padding: 40px 24px; /* 40px em cima/baixo, 24px nas laterais */
+
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
         .hero-bg-icon {
             position: absolute; right: -20px; bottom: -30px; font-size: 10rem; opacity: 0.1; pointer-events: none;
         }
@@ -693,12 +696,80 @@
         .task-item.completed .task-check { background: var(--success); border-color: var(--success); }
         .task-item.completed span { text-decoration: line-through; color: var(--text-muted); }
         
-        .schedule-grid-container { overflow-x: auto; position: relative; max-height: 600px; padding-bottom: 20px; }
-        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 900px; table-layout: fixed; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
-        .modern-table th { background: var(--bg-body); color: var(--text-muted); border-bottom: 1px solid var(--border); padding: 16px; position: sticky; top: 0; z-index: 20; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-        .modern-table td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); height: 70px; vertical-align: middle; padding: 4px; position: relative; background: var(--bg-card); transition: background 0.2s; }
-        .modern-table td:hover { background: var(--bg-body); }
-        .modern-table td.time-label { background: var(--bg-body); color: var(--text-muted); border-right: 1px solid var(--border); width: 80px; text-align: center; position: sticky; left: 0; z-index: 10; font-size: 0.8rem; font-weight: bold; }
+       /* --- DESIGN MODERNO DA TABELA DE AGENDA --- */
+
+/* Container da Tabela */
+.schedule-grid-container { 
+    background: var(--bg-card); /* Fundo branco limpo */
+}
+
+.modern-table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    border: none; /* Remove a borda externa grossa */
+}
+
+/* Cabeçalho (Dias da Semana) */
+.modern-table th { 
+    background: var(--bg-card); /* Fundo branco para mesclar */
+    color: var(--text-muted); 
+    border-bottom: 2px solid var(--border); /* Linha mais forte embaixo do cabeçalho */
+    padding: 15px 5px; 
+    position: sticky; 
+    top: 0; 
+    z-index: 30; /* Fica acima de tudo */
+    font-weight: 700; 
+    text-transform: uppercase; 
+    font-size: 0.75rem; 
+    letter-spacing: 0.5px;
+}
+
+/* Coluna de Horas (Lateral Esquerda) */
+.modern-table td.time-label { 
+    background: var(--bg-card); /* Remove o cinza, deixa branco */
+    color: var(--text-muted); 
+    border-right: 1px solid transparent; /* Remove a linha vertical dura */
+    width: 60px; /* Mais estreito e elegante */
+    text-align: right; /* Alinha o número perto da grade */
+    padding-right: 15px; /* Espaço entre número e linha */
+    position: sticky; 
+    left: 0; 
+    z-index: 20; 
+    font-size: 0.75rem; 
+    font-weight: 600;
+    transform: translateY(-50%); /* Truque visual para alinhar o número com a linha */
+    vertical-align: top; /* Joga o número para o topo da célula */
+    padding-top: 8px;
+}
+
+/* Células da Grade */
+.modern-table td { 
+    border-right: 1px dashed var(--border); /* Linhas verticais pontilhadas (mais leve) */
+    border-bottom: 1px solid var(--border); /* Linhas horizontais sólidas */
+    height: 60px; 
+    vertical-align: top; 
+    padding: 2px; 
+    position: relative; 
+    background: transparent; 
+}
+
+/* Remove a borda direita da última coluna para não ficar estranho */
+.modern-table td:last-child, 
+.modern-table th:last-child {
+    border-right: none;
+}
+
+/* Remove a borda inferior da última linha */
+.modern-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efeito Hover na célula (opcional, para guiar o olho) */
+.modern-table td:not(.time-label):hover { 
+    background: rgba(0,0,0,0.02); /* Muito sutil */
+}
+
         
         .event-block { height: 100%; width: 100%; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 600; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; display: flex; align-items: center; gap: 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: transform 0.2s; }
         .event-block:hover { transform: scale(1.02); }
@@ -1045,32 +1116,39 @@
         }
 
         /* FAB STYLES - MODIFIED TO EXPAND UPWARDS */
-        .fab-container {
-            position: fixed;
-            bottom: 70px; /* Aumentado do original 50px */
-            right: 30px;  /* Movido mais para a direita */
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 12px;
-        }
-        
-        .fab-button {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            border: none;
-            box-shadow: var(--shadow-lg);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s, background 0.3s;
-        }
+.fab-container {
+    position: fixed;
+    bottom: 70px; /* Aumentado do original 50px */
+    right: 30px;  /* Movido mais para a direita */
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    
+    /* MODIFICAÇÃO: Remove o bloqueio de cliques na área vazia ao redor */
+    pointer-events: none; 
+}
+
+.fab-button {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, background 0.3s;
+    
+    /* MODIFICAÇÃO: Garante que o botão continue clicável */
+    pointer-events: auto; 
+}
+
         
         .fab-button:hover { transform: scale(1.1); background: var(--primary-hover); }
         .fab-button.active { transform: rotate(45deg); background: var(--danger); }
@@ -1721,19 +1799,19 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .dark-mode ::-webkit-scrollbar-thumb { background: #475569; }
 
-        /* SIDEBAR APRIMORADA - ALWAYS COLLAPSED */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-nav);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 24px 12px; 
-            z-index: 100;
-            padding-top: 40px;
-            transition: background 0.3s;
-            position: relative;
-        }
+      .sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-nav);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    z-index: 6000 !important; /* <--- MUDE ISTO (Era 100) */
+    padding-top: 40px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: visible !important; /* <--- ADICIONE ISTO para garantir */
+}
 
         .nav-links { display: flex; flex-direction: column; gap: 8px; flex: 1; margin-top: 20px; overflow: hidden; }
 
@@ -2306,10 +2384,80 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
         .task-item.completed .task-check { background: var(--success); border-color: var(--success); }
         .task-item.completed span { text-decoration: line-through; color: var(--text-muted); }
         
-        .schedule-grid-container { overflow-x: auto; position: relative; max-height: 600px; padding-bottom: 20px; }
-        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 900px; table-layout: fixed; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
-        .modern-table th { background: var(--bg-body); color: var(--text-muted); border-bottom: 1px solid var(--border); padding: 16px; position: sticky; top: 0; z-index: 20; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-        .modern-table td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); height: 70px; vertical-align: middle; padding: 4px; position: relative; background: var(--bg-card); transition: background 0.2s; }
+       /* --- DESIGN MODERNO DA TABELA DE AGENDA --- */
+
+/* Container da Tabela */
+.schedule-grid-container { 
+    background: var(--bg-card); /* Fundo branco limpo */
+}
+
+.modern-table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    border: none; /* Remove a borda externa grossa */
+}
+
+/* Cabeçalho (Dias da Semana) */
+.modern-table th { 
+    background: var(--bg-card); /* Fundo branco para mesclar */
+    color: var(--text-muted); 
+    border-bottom: 2px solid var(--border); /* Linha mais forte embaixo do cabeçalho */
+    padding: 15px 5px; 
+    position: sticky; 
+    top: 0; 
+    z-index: 30; /* Fica acima de tudo */
+    font-weight: 700; 
+    text-transform: uppercase; 
+    font-size: 0.75rem; 
+    letter-spacing: 0.5px;
+}
+
+/* Coluna de Horas (Lateral Esquerda) */
+.modern-table td.time-label { 
+    background: var(--bg-card); /* Remove o cinza, deixa branco */
+    color: var(--text-muted); 
+    border-right: 1px solid transparent; /* Remove a linha vertical dura */
+    width: 60px; /* Mais estreito e elegante */
+    text-align: right; /* Alinha o número perto da grade */
+    padding-right: 15px; /* Espaço entre número e linha */
+    position: sticky; 
+    left: 0; 
+    z-index: 20; 
+    font-size: 0.75rem; 
+    font-weight: 600;
+    transform: translateY(-50%); /* Truque visual para alinhar o número com a linha */
+    vertical-align: top; /* Joga o número para o topo da célula */
+    padding-top: 8px;
+}
+
+/* Células da Grade */
+.modern-table td { 
+    border-right: 1px dashed var(--border); /* Linhas verticais pontilhadas (mais leve) */
+    border-bottom: 1px solid var(--border); /* Linhas horizontais sólidas */
+    height: 60px; 
+    vertical-align: top; 
+    padding: 2px; 
+    position: relative; 
+    background: transparent; 
+}
+
+/* Remove a borda direita da última coluna para não ficar estranho */
+.modern-table td:last-child, 
+.modern-table th:last-child {
+    border-right: none;
+}
+
+/* Remove a borda inferior da última linha */
+.modern-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efeito Hover na célula (opcional, para guiar o olho) */
+.modern-table td:not(.time-label):hover { 
+    background: rgba(0,0,0,0.02); /* Muito sutil */
+}
+
         .modern-table td:hover { background: var(--bg-body); }
         .modern-table td.time-label { background: var(--bg-body); color: var(--text-muted); border-right: 1px solid var(--border); width: 80px; text-align: center; position: sticky; left: 0; z-index: 10; font-size: 0.8rem; font-weight: bold; }
         
@@ -3112,9 +3260,10 @@ select.lib-control {
     filter: invert(1);
 }
 
-/* Wrapper para manter o botão e o painel juntos */
 .quick-access-wrapper {
+    position: relative;
     width: 100%;
+    overflow: visible !important; /* <--- ADICIONE ISTO */
 }
 
 /* Ajuste do Ícone do Sino */
@@ -3127,71 +3276,123 @@ select.lib-control {
     transform: scale(1.1);
 }
 
-/* Painel de Anotações (Popover) */
+/* Painel de Anotações Recentes - Design Refinado */
 .quick-notes-panel {
     display: none;
     position: absolute;
-    left: 70px; /* Ao lado da sidebar */
-    top: 0; /* Alinhado ao topo do botão */
-    width: 280px;
+    left: 70px;
+    top: 0;
+    width: 300px; /* Levemente mais largo para respirar */
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    z-index: 2000;
+    border-radius: var(--radius-md); /* Padronizado com o app */
+    box-shadow: var(--shadow-lg); /* Sombra mais suave e elevada */
+    z-index: 6001 !important;
     overflow: hidden;
     flex-direction: column;
+    animation: fadeIn 0.2s ease-out; /* Animação suave ao abrir */
 }
 
-.quick-notes-panel.active {
-    display: flex;
-}
-
+/* Cabeçalho Limpo */
 .quick-notes-header {
-    background: var(--primary-dim);
-    padding: 12px;
-    font-weight: bold;
-    color: var(--primary-dark);
+    background: var(--bg-card); /* Fundo branco/escuro limpo, sem cor forte */
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
 }
 
-.quick-notes-list {
-    max-height: 250px;
-    overflow-y: auto;
-    padding: 5px;
+.quick-notes-header span {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
 }
 
-.quick-note-item {
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 5px;
+.quick-notes-header i {
+    color: var(--text-muted);
+    font-size: 1rem;
     cursor: pointer;
-    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.quick-notes-header i:hover {
+    color: var(--danger);
+    background: var(--bg-body);
+}
+
+/* Lista de Itens */
+.quick-notes-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 8px;
+    background: var(--bg-body); /* Contraste sutil com o card */
+}
+
+/* Item da Nota */
+.quick-note-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background: var(--bg-card);
+    border: 1px solid transparent; /* Invisível por padrão */
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    transition: all 0.2s ease;
 }
 
-.quick-note-item:last-child { border-bottom: none; }
-.quick-note-item:hover { background: var(--bg-body); }
+.quick-note-item:last-child {
+    margin-bottom: 0;
+}
+
+.quick-note-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Ícone da Nota (Opcional, se quiser adicionar via JS depois) */
+.quick-note-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+/* Conteúdo do Texto */
+.quick-note-content {
+    flex: 1;
+    overflow: hidden;
+}
 
 .quick-note-title {
     font-size: 0.9rem;
     color: var(--text-main);
-    font-weight: 500;
+    font-weight: 600;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Esconde o botão de histórico por padrão */
-#btn-quick-notes {
-    display: none;
-}
-
-/* Classe para mostrar o botão quando tiver conteúdo */
-#btn-quick-notes.visible {
-    display: flex !important; /* O !important garante que sobrescreva o none */
+.quick-note-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 
@@ -3671,8 +3872,150 @@ select.lib-control {
 
 
 
+/* --- CSS GRID AGENDA (Novo Design) --- */
+
+/* O Container da Grade */
+.agenda-grid-wrapper {
+    display: grid;
+    /* 1 coluna para hora (60px) + 7 colunas para dias (iguais) */
+    grid-template-columns: 90px repeat(7, 1fr); 
+    grid-auto-rows: minmax(60px, 1fr); /* Altura MÍNIMA de 60px, cresce se precisar */
+    width: 100%;
+    /* O height auto permite que o grid cresça e o pai controle o scroll */
+    background: var(--bg-card);
+}
+
+/* Cabeçalho Fixo (Dias da Semana) */
+.agenda-header {
+    display: grid;
+    grid-template-columns: 90px repeat(7, 1fr); /* Mesmo grid do corpo */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-card);
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.agenda-header-cell {
+    padding: 15px 5px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-right: 1px solid var(--border);
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Células de Hora (Coluna Esquerda) */
+.agenda-time-cell {
+    display: flex;
+    align-items: flex-start; /* Alinha número no topo */
+    justify-content: center;
+    padding-top: 8px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-body);
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+/* Células de Conteúdo (Dias) */
+.agenda-cell {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 2px;
+    position: relative;
+    transition: background 0.2s;
+    background: transparent;
+}
+
+.agenda-cell:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+/* Evento dentro da célula */
+.agenda-event {
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    height: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+/* Ícone de adicionar (+) */
+.empty-cell-icon {
+    display: none;
+    color: var(--primary);
+    font-size: 1rem;
+    opacity: 0.5;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.agenda-cell:hover .empty-cell-icon { display: flex; }
 
 
+/* --- CORREÇÃO MOBILE ESPECÍFICA PARA A AGENDA --- */
+@media (max-width: 768px) {
+    /* 1. Destrava o container principal */
+    #schedule-view-container {
+        position: relative !important; /* Solta ele da tela */
+        top: auto !important;
+        bottom: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: auto !important; /* Deixa crescer com o conteúdo */
+        overflow-y: visible !important; /* Quem rola é a página principal */
+        display: block !important; /* Remove o flex complexo */
+        padding: 10px !important;
+    }
+
+    /* 2. Ajusta as Metas do Dia para caber na tela */
+    #schedule-view-container .task-section {
+        width: 100% !important;
+        min-width: 0 !important; /* Remove o limite que quebrava telas pequenas */
+        max-width: none !important;
+        flex: none !important;
+        margin-bottom: 20px !important; /* Espaço entre os blocos */
+        min-height: auto !important; /* Altura automática */
+    }
+
+    /* 3. Ajusta a Agenda para caber na tela */
+    #schedule-view-container .schedule-main-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: none !important;
+        height: auto !important;
+        min-height: 500px !important; /* Garante altura para ver o calendário */
+    }
+    
+    /* 4. Esconde a sidebar fantasma se necessário */
+    #schedule-view {
+        padding-top: 0 !important;
+    }
+}
+
+#schedule-view .hero-header-card {
+    padding: 30px 24px !important; /* 50px em cima/baixo. Aumente se quiser mais */
+    min-height: 140px; /* Garante uma altura mínima maior */
+}
 
 
 </style>
@@ -3919,7 +4262,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.62</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.65</div>
         </div>
 
     </nav>
@@ -4753,8 +5096,133 @@ select.lib-control {
             <div id="subjects-container"></div>
         </section>
 
-        <section id="schedule-view" class="view-section hidden">
-            <div class="hero-header-card">
+ <section id="schedule-view" class="view-section hidden">
+    <!-- CONTAINER PRINCIPAL -->
+    <div id="schedule-view-container" style="
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        gap: 20px;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: var(--sidebar-width);
+        right: 0;
+        padding: 20px;
+        background: var(--bg-body);
+        z-index: 100;
+        box-sizing: border-box;
+        overflow-y: auto;
+    ">
+
+        <!-- BLOCO 1: BANNER (Agora fora das colunas para poder ir pro topo) -->
+        <!-- Usamos uma classe 'mobile-banner-only' para controlar visibilidade se quiser, 
+             mas aqui vamos deixar ele fluir naturalmente com a ordem -->
+        <div class="hero-header-card hero-mobile-top" style="
+            flex: 1 1 100%; /* Ocupa 100% da largura sempre que possível */
+            margin-bottom: 0; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            padding: 20px;
+            /* Ordem padrão: 2 (depois das metas em desktop wide). 
+               Vamos ajustar com Media Query no final para mudar isso. */
+            order: 2; 
+            display: none; /* Escondido por padrão no desktop wide (usamos o interno) */
+        ">
+            <i class="fas fa-calendar-alt hero-bg-icon"></i>
+            <div class="hero-content">
+                <div>
+                    <h2 class="hero-title">Minha Agenda</h2>
+                    <p class="hero-subtitle">Organize seu tempo e cumpra suas metas.</p>
+                </div>
+            </div>
+        </div>
+
+
+  <div class="task-section" style="
+    flex: 1 1 500px;
+    min-width: 350px;
+    order: 1; /* Sempre primeiro no desktop */
+    
+    /* MODIFICADO AQUI PARA ATIVAR ROLAGEM */
+    height: calc(100vh - 40px); /* Ocupa a tela toda menos margens */
+    max-height: calc(100vh - 40px); /* Limite máximo */
+    overflow-y: auto; /* Barra de rolagem aparece se conteúdo for grande */
+    
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+">
+
+            <!-- ... CONTEÚDO DAS METAS ... -->
+            <div class="task-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                <div style="min-width: 150px;">
+                    <h3 style="margin-bottom: 4px; font-size: 1.3rem;">Metas do Dia</h3>
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">Foco total hoje!</div>
+                    <div class="template-actions" style="margin-top: 5px;">
+                        <button class="btn-template btn-save-tmpl" onclick="openTemplateModal('task', 'save')"><i class="fas fa-save"></i> Salvar Modelo</button>
+                        <button class="btn-template btn-load-tmpl" onclick="openTemplateModal('task', 'load')"><i class="fas fa-folder-open"></i> Carregar</button>
+                    </div>
+                </div>
+                <button class="btn-sm btn-outline" onclick="clearCompletedTasks()" style="color: var(--text-muted);">Limpar Concluídas</button>
+            </div>
+          <!-- NOVO PAINEL DE PROGRESSO DUPLO -->
+<div class="progress-stats-container" style="margin-bottom: 24px;">
+    
+    <!-- Barra 1: Agendamentos (Compromissos com horário) -->
+    <div class="progress-group" style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); font-weight: 600;">
+            <span><i class="fas fa-calendar-check" style="margin-right: 6px; color: var(--primary);"></i>Agenda</span>
+            <span id="prog-agenda-text">0%</span>
+        </div>
+        <div style="height: 6px; background: var(--bg-body); border-radius: 10px; overflow: hidden;">
+            <div id="prog-agenda-fill" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+        </div>
+    </div>
+
+    <!-- Barra 2: Tarefas (Checklist simples) -->
+    <div class="progress-group">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-muted); font-weight: 600;">
+            <span><i class="fas fa-check-square" style="margin-right: 6px; color: var(--success);"></i>Tarefas</span>
+            <span id="prog-tasks-text">0%</span>
+        </div>
+        <div style="height: 6px; background: var(--bg-body); border-radius: 10px; overflow: hidden;">
+            <div id="prog-tasks-fill" style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+        </div>
+    </div>
+
+</div>
+
+            <div class="task-input-group" style="display:flex; gap:10px; margin-bottom:15px; flex-shrink:0;">
+                <input type="text" id="new-task-input" placeholder="Adicionar atividade extra..." style="margin-bottom: 0; padding: 14px; font-size: 0.95rem;">
+                <button class="action-btn" onclick="addTask()" style="width: auto; padding: 0 18px;"><i class="fas fa-plus"></i></button>
+            </div>
+            <div id="tasks-container" class="task-list" style="flex:1;"></div>
+        </div>
+
+
+        <!-- COLUNA 3: Agenda (Direita) -->
+        <div class="schedule-main-content" style="
+            flex: 999 1 600px;
+            min-width: 0;
+            order: 3; /* Terceiro */
+            
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+            min-height: 600px;
+            overflow: hidden;
+            gap: 20px;
+            position: relative;
+        ">
+            
+            <!-- Banner Agenda (VERSÃO DESKTOP - Só aparece se estiver lado a lado) -->
+            <div class="hero-header-card hero-desktop-inner" style="margin-bottom: 0; flex-shrink: 0; border-radius: 12px; overflow: hidden; padding: 20px;">
                 <i class="fas fa-calendar-alt hero-bg-icon"></i>
                 <div class="hero-content">
                     <div>
@@ -4764,63 +5232,69 @@ select.lib-control {
                 </div>
             </div>
 
-            <div class="schedule-layout">
-                <div class="task-section">
-                    <div class="task-header">
-                        <div>
-                            <h3 style="margin-bottom: 4px; font-size: 1.3rem;">Metas do Dia</h3>
-                            <div style="font-size: 0.9rem; color: var(--text-muted);">Foco total hoje!</div>
-                            <!-- New Template Buttons for Tasks -->
-                            <div class="template-actions">
-                                <button class="btn-template btn-save-tmpl" onclick="openTemplateModal('task', 'save')"><i class="fas fa-save"></i> Salvar Modelo</button>
-                                <button class="btn-template btn-load-tmpl" onclick="openTemplateModal('task', 'load')"><i class="fas fa-folder-open"></i> Carregar</button>
-                            </div>
+            <!-- Wrapper Calendário -->
+            <div class="calendar-wrapper" style="
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                padding: 0;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                box-shadow: var(--shadow-sm);
+            ">
+                <div style="padding: 15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-icon" onclick="changeWeek(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn-icon" onclick="changeWeek(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="current-week-label" style="display: block; font-weight: 800; font-size: 1.1rem; color: var(--primary);">Semana Atual</span>
+                        <div class="template-actions" style="margin-top:5px;">
+                            <button class="btn-template btn-save-tmpl" onclick="openTemplateModal('schedule', 'save')"><i class="fas fa-save"></i> Salvar</button>
+                            <button class="btn-template btn-load-tmpl" onclick="openTemplateModal('schedule', 'load')"><i class="fas fa-folder-open"></i> Carregar</button>
                         </div>
-                        <button class="btn-sm btn-outline" onclick="clearCompletedTasks()" style="color: var(--text-muted);">Limpar Concluídas</button>
                     </div>
-                    
-                    <div class="task-progress-bar" style="height:8px; background:var(--bg-body); border-radius:4px; overflow:hidden; margin-bottom:24px;">
-                        <div id="task-progress-fill" style="height:100%; background:var(--success); width:0%; transition: width 0.3s ease;"></div>
-                    </div>
-                    
-                    <div class="task-input-group" style="display:flex; gap:12px; margin-bottom:20px;">
-                        <input type="text" id="new-task-input" placeholder="Adicionar nova meta..." style="margin-bottom: 0; padding: 14px;">
-                        <button class="action-btn" onclick="addTask()" style="width: auto; padding: 0 20px;"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div id="tasks-container" class="task-list"></div>
                 </div>
-
-                <div class="calendar-wrapper">
-                    <div class="calendar-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 16px;">
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-icon" onclick="changeWeek(-1)"><i class="fas fa-chevron-left"></i></button>
-                            <button class="btn-icon" onclick="changeWeek(1)"><i class="fas fa-chevron-right"></i></button>
-                        </div>
-                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
-                            <span id="current-week-label" style="display: block; font-weight: 800; font-size: 1.1rem; color: var(--primary);">Semana Atual</span>
-                            <span id="current-month-label" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px;">...</span>
-                             <!-- New Template Buttons for Schedule -->
-                            <div class="template-actions">
-                                <button class="btn-template btn-save-tmpl" onclick="openTemplateModal('schedule', 'save')"><i class="fas fa-save"></i> Salvar</button>
-                                <button class="btn-template btn-load-tmpl" onclick="openTemplateModal('schedule', 'load')"><i class="fas fa-folder-open"></i> Carregar</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="schedule-grid-container">
-                        <table class="modern-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 80px;">Hora</th>
-                                    <th id="th-0">SEG</th><th id="th-1">TER</th><th id="th-2">QUA</th><th id="th-3">QUI</th><th id="th-4">SEX</th><th id="th-5">SÁB</th><th id="th-6">DOM</th>
-                                </tr>
-                            </thead>
-                            <tbody id="schedule-body"></tbody>
-                        </table>
-                    </div>
+                <div style="flex:1; overflow-y:auto; position:relative; display:flex; flex-direction:column;">
+                    <div id="agenda-header-row" class="agenda-header"></div>
+                    <div id="agenda-grid-body" class="agenda-grid-wrapper" style="overflow:visible; height:auto;"></div>
                 </div>
             </div>
-        </section>
+        </div>
+
+    </div>
+</section>
+
+<!-- ESTILO MÁGICO PARA TROCAR O BANNER DE LUGAR -->
+<style>
+    /* Regra para telas estreitas (Vertical / Mobile) - AUMENTADO PARA PEGAR SEU MONITOR VERTICAL */
+    @media (max-width: 1100px) {
+        
+        /* Mostra o Banner solto no topo */
+        .hero-mobile-top {
+            display: block !important;
+            order: 0 !important; /* Joga para o PRIMEIRO lugar (acima de tudo) */
+            margin-bottom: 10px !important;
+        }
+
+        /* Esconde o Banner duplicado de dentro da Agenda */
+        .hero-desktop-inner {
+            display: none !important;
+        }
+        
+        /* Ajusta a ordem dos outros para garantir */
+        .task-section { order: 1 !important; }
+        .schedule-main-content { order: 2 !important; }
+    }
+</style>
+
+
+
+
+
+
 
         <section id="notes-view" class="view-section hidden">
             <div class="hero-header-card">
@@ -5288,22 +5762,74 @@ select.lib-control {
         </div>
     </div>
 
-    <div id="schedule-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:flex-end;justify-content:center;">
-        <div class="card-box" style="width:100%;max-width:500px;margin:0;border-bottom-left-radius:0;border-bottom-right-radius:0;">
-            <h3>Agendar</h3>
-            <input type="text" id="schedule-block-title" placeholder="Título">
-            <div style="display:flex;gap:12px;margin-bottom:20px;">
-                <div class="color-chip" onclick="selectColor('var(--primary)',this)" style="background:var(--primary);width:30px;height:30px;border-radius:50%;border:2px solid transparent;"></div>
-                <div class="color-chip" onclick="selectColor('var(--success)',this)" style="background:var(--success);width:30px;height:30px;border-radius:50%;border:2px solid transparent;"></div>
-                <div class="color-chip" onclick="selectColor('var(--info)',this)" style="background:var(--info);width:30px;height:30px;border-radius:50%;border:2px solid transparent;"></div>
+<div id="schedule-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:flex-end;justify-content:center;">
+    <div class="card-box" style="width:100%;max-width:500px;margin:0;border-bottom-left-radius:0;border-bottom-right-radius:0; padding: 25px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Detalhes do Agendamento</h3>
+        
+        <!-- Título -->
+        <div style="margin-bottom: 15px;">
+            <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Título</label>
+            <input type="text" id="schedule-block-title" placeholder="Ex: Revisar Direito Constitucional" 
+                   style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size:1rem; outline:none;">
+        </div>
+        
+        <!-- Horário e Cores na mesma linha (Visual Clean) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <!-- Horário Fim -->
+            <div>
+                <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Término</label>
+                <select id="schedule-end-time" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size:0.95rem; outline: none; height: 42px;">
+                    <!-- JS popula aqui -->
+                </select>
             </div>
-            <div style="display:flex;gap:10px;">
-                <button class="action-btn" onclick="saveScheduleBlock()">Salvar</button>
-                <button class="action-btn btn-danger hidden" id="btn-delete-block" onclick="deleteScheduleBlock()">Excluir</button>
-                <button class="btn-outline" onclick="closeScheduleModal()">Cancelar</button>
+            
+            <!-- Cores Expandidas -->
+                        <div>
+                <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Cor da Etiqueta</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; min-height: 42px;">
+                    <!-- Padrões -->
+                    <div class="color-chip" onclick="selectColor('var(--primary)',this)" style="background:var(--primary);width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;"></div>
+                    <div class="color-chip" onclick="selectColor('var(--success)',this)" style="background:var(--success);width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;"></div>
+                    <div class="color-chip" onclick="selectColor('var(--info)',this)" style="background:var(--info);width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;"></div>
+                    <!-- Cores Intermediárias -->
+                    <div class="color-chip" onclick="selectColor('var(--warning)',this)" style="background:var(--warning);width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Alerta"></div>
+                    <div class="color-chip" onclick="selectColor('#ef4444',this)" style="background:#ef4444;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Urgente"></div>
+                    <div class="color-chip" onclick="selectColor('#8b5cf6',this)" style="background:#8b5cf6;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Estudo Intenso"></div>
+                    <div class="color-chip" onclick="selectColor('#64748b',this)" style="background:#64748b;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Geral"></div>
+                    <!-- Novas Cores Extras -->
+                    <div class="color-chip" onclick="selectColor('#f97316',this)" style="background:#f97316;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Laranja"></div>
+                    <div class="color-chip" onclick="selectColor('#ec4899',this)" style="background:#ec4899;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Rosa"></div>
+                    <div class="color-chip" onclick="selectColor('#06b6d4',this)" style="background:#06b6d4;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Turquesa"></div>
+                    <div class="color-chip" onclick="selectColor('#84cc16',this)" style="background:#84cc16;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Lima"></div>
+                    <div class="color-chip" onclick="selectColor('#6366f1',this)" style="background:#6366f1;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Índigo"></div>
+                </div>
             </div>
+
+        </div>
+
+        <!-- Descrição (NOVO) -->
+        <div style="margin-bottom: 25px;">
+            <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Descrição / Detalhes</label>
+            <textarea id="schedule-block-desc" placeholder="Adicione notas, links ou detalhes sobre o estudo..." 
+                      style="width:100%; height:80px; padding:12px; border-radius:8px; border:1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size:0.9rem; outline:none; resize:none; font-family: inherit; line-height: 1.4;"></textarea>
+        </div>
+        
+        <!-- Botões -->
+        <div style="display:flex; gap:12px;">
+            <button class="action-btn" onclick="saveScheduleBlock()" style="flex:2; display:flex; justify-content:center; align-items:center; gap:8px;">
+                <i class="fas fa-save"></i> Salvar
+            </button>
+            <button class="action-btn btn-danger hidden" id="btn-delete-block" onclick="deleteScheduleBlock()" style="flex:1;">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn-outline" onclick="closeScheduleModal()" style="flex:1;">
+                Cancelar
+            </button>
         </div>
     </div>
+</div>
+
+
     
     <div id="simulation-config-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:center;justify-content:center; padding: 20px;">
         <div class="card-box" style="width:100%;max-width:450px;margin:0; text-align: left; max-height: 90vh; display:flex; flex-direction:column;">
@@ -5967,9 +6493,8 @@ function toggleQuickNotes() {
     
     const history = JSON.parse(sessionStorage.getItem('ted_quick_history') || '[]');
 
-    
     if (history.length === 0) {
-        list.innerHTML = '<div style="padding:15px;text-align:center;color:#888">Nenhuma nota aberta recentemente.</div>';
+        list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.9rem;">Nenhuma nota recente.</div>';
     } else {
         history.forEach(h => {
             const item = document.createElement('div');
@@ -5978,14 +6503,21 @@ function toggleQuickNotes() {
             // Limpa título
             let cleanTitle = h.title.replace(/<[^>]*>/g, '').trim() || "Nota sem nome";
             
+            // --- NOVO DESIGN ESTRUTURADO ---
             item.innerHTML = `
-                <div style="flex:1">
-                    <div style="font-weight:500;color:var(--text-main)">${cleanTitle}</div>
-                    <div style="font-size:10px;color:var(--text-muted)">${new Date(h.timestamp).toLocaleTimeString()}</div>
+                <div class="quick-note-icon">
+                    <i class="fas fa-sticky-note"></i>
                 </div>
+                <div class="quick-note-content">
+                    <div class="quick-note-title">${cleanTitle}</div>
+                    <div class="quick-note-time">
+                        <i class="far fa-clock" style="font-size: 0.7rem;"></i>
+                        ${new Date(h.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--text-muted); opacity: 0.5;"></i>
             `;
             
-            // --- CORREÇÃO AQUI ---
             item.onclick = () => {
                 panel.style.display = 'none'; // Fecha o painel primeiro
                 
@@ -6017,11 +6549,9 @@ function toggleQuickNotes() {
                     } else {
                         // Se não achar a nota (foi deletada?), remove do histórico para não confundir
                         alert('Esta anotação não foi encontrada (pode ter sido excluída).');
-                    
                     }
                 }, 50);
             };
-            // ---------------------
             
             list.appendChild(item);
         });
@@ -6033,10 +6563,11 @@ function toggleQuickNotes() {
     if(btn) {
         const rect = btn.getBoundingClientRect();
         panel.style.position = 'fixed';
-        panel.style.left = (rect.right + 10) + 'px';
+        panel.style.left = (rect.right + 15) + 'px'; // Ajustado levemente
         panel.style.top = Math.max(10, rect.top - 50) + 'px';
     }
 }
+
 
 
 
@@ -6186,65 +6717,75 @@ function toggleQuickNotes() {
     });
 }
         // --- NAVEGAÇÃO ---
-        function switchTab(tab) {
-          if (tab !== 'note-editor') {
+function switchTab(tab) {
+    if (tab !== 'note-editor') {
         persistCurrentNote();
     }
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            const target = document.getElementById(tab + '-view');
-            if(target) target.classList.remove('hidden');
-            
-            const titles = {
-                'dashboard': 'INÍCIO', 'study':'ESTUDAR', 
-                'notes':'CADERNO', 'schedule':'CRONOGRAMA', 'performance':'DADOS',
-                'card-detail': 'DETALHES', 'note-editor': 'EDITOR', 'settings': 'CONFIGURAÇÕES',
-                'syllabus': 'EDITAIS', 'syllabus-detail': 'EDITAL',
-                'pomodoro': 'POMODORO'
-            };
-            document.getElementById('page-title-display').innerText = titles[tab] || '';
-            
-            document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(btn => btn.classList.remove('active'));
-            
-            let activeTab = tab;
-            if(tab === 'syllabus-detail') activeTab = 'syllabus';
-            if(tab === 'card-detail') activeTab = 'study';
-            if(tab === 'note-editor') activeTab = 'notes';
 
-            document.querySelectorAll(`button[onclick="switchTab('${activeTab}')"]`).forEach(btn => btn.classList.add('active'));
+    // --- NOVO: LÓGICA DE TELA CHEIA PARA AGENDA ---
+    // Se for 'schedule', adiciona a classe. Se não, remove.
+    if (tab === 'schedule') {
+        document.body.classList.add('full-width-mode');
+    } else {
+        document.body.classList.remove('full-width-mode');
+    }
+    // ------------------------------------------------
 
-            if (tab === 'notes') {
-    renderCurrentFolder();
-    renderReviewBanner(); // <--- Adicione esta linha aqui!
-}
-            if (tab === 'schedule') { renderSchedule(); renderTasks(); }
-            if (tab === 'dashboard') {
-    renderDashboard();
-    renderReviewBanner(); // Faz o banner aparecer na tela inicial também!
-}
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    const target = document.getElementById(tab + '-view');
+    if(target) target.classList.remove('hidden');
+    
+    const titles = {
+        'dashboard': 'INÍCIO', 'study':'ESTUDAR', 
+        'notes':'CADERNO', 'schedule':' ', 'performance':'DADOS',
+        'card-detail': 'DETALHES', 'note-editor': 'EDITOR', 'settings': 'CONFIGURAÇÕES',
+        'syllabus': 'EDITAIS', 'syllabus-detail': 'EDITAL',
+        'pomodoro': 'POMODORO'
+    };
+    document.getElementById('page-title-display').innerText = titles[tab] || '';
+    
+    document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(btn => btn.classList.remove('active'));
+    
+    let activeTab = tab;
+    if(tab === 'syllabus-detail') activeTab = 'syllabus';
+    if(tab === 'card-detail') activeTab = 'study';
+    if(tab === 'note-editor') activeTab = 'notes';
 
-            if (tab === 'pomodoro') renderPomoHistory();
-            if (tab === 'study') {
-                 // Default to practice if not set, or maintain state if switching back
-                 if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-practice') loadStudyView();
-                 if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-library') renderManageList();
-            }
-            if (tab === 'performance') renderPerformanceView();
-            if (tab === 'syllabus') renderSyllabusList();
+    document.querySelectorAll(`button[onclick="switchTab('${activeTab}')"]`).forEach(btn => btn.classList.add('active'));
 
-            // Floating Widget Logic
-            const floatWidget = document.getElementById('floating-timer-widget');
-            if(tab === 'pomodoro') {
-                floatWidget.classList.remove('visible');
-            } else {
-                // Show if running OR if active but paused (timeLeft < fullTime)
-                const fullTime = pomoSettings[pomoCurrentMode] * 60;
-                if(pomoIsRunning || pomoTimeLeft < fullTime) {
-                    floatWidget.classList.add('visible');
-                } else {
-                    floatWidget.classList.remove('visible');
-                }
-            }
+    if (tab === 'notes') {
+        renderCurrentFolder();
+        renderReviewBanner(); 
+    }
+    if (tab === 'schedule') { renderSchedule(); renderTasks(); }
+    if (tab === 'dashboard') {
+        renderDashboard();
+        renderReviewBanner(); 
+    }
+
+    if (tab === 'pomodoro') renderPomoHistory();
+    if (tab === 'study') {
+         // Default to practice if not set, or maintain state if switching back
+         if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-practice') loadStudyView();
+         if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-library') renderManageList();
+    }
+    if (tab === 'performance') renderPerformanceView();
+    if (tab === 'syllabus') renderSyllabusList();
+
+    // Floating Widget Logic
+    const floatWidget = document.getElementById('floating-timer-widget');
+    if(tab === 'pomodoro') {
+        floatWidget.classList.remove('visible');
+    } else {
+        // Show if running OR if active but paused (timeLeft < fullTime)
+        const fullTime = pomoSettings[pomoCurrentMode] * 60;
+        if(pomoIsRunning || pomoTimeLeft < fullTime) {
+            floatWidget.classList.add('visible');
+        } else {
+            floatWidget.classList.remove('visible');
         }
+    }
+}
 
 // Variável global para controlar o fechamento ao clicar fora
 let isPopoverOpen = false;
@@ -6922,47 +7463,32 @@ function renameSubcategory(category, oldName, newName) {
         }
 
         function finishPomoSession() {
-            if(pomoIsRunning) toggleTimer(); // Stop timer
-            const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-            audio.play().catch(e=>console.log(e));
-            
-            showAlert("Tempo Esgotado!", "Sessão finalizada com sucesso! Seus dados foram salvos.");
+    if(pomoIsRunning) toggleTimer(); // Stop timer
+    const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    audio.play().catch(e=>console.log(e));
+    
+    showAlert("Tempo Esgotado!", "Sessão finalizada com sucesso! Use o botão 'Salvar no Cronograma' no histórico se desejar adicioná-la à agenda.");
 
-            // Save to history automatically as "Pomodoro" if focus
-            if (pomoCurrentMode === 'focus') {
-                const sessionName = "Pomodoro";
-                const now = new Date();
-                
-                const newItem = {
-                    id: Date.now(),
-                    name: sessionName,
-                    duration: pomoSettings.focus, // Note: This logs the planned duration, or could log elapsed if modified
-                    type: 'focus',
-                    date: now.toISOString()
-                };
-                pomoHistory.unshift(newItem);
-                savePomoHistory();
-                renderPomoHistory();
+    // Save to history automatically as "Pomodoro" if focus
+    if (pomoCurrentMode === 'focus') {
+        const sessionName = "Pomodoro";
+        const now = new Date();
+        
+        const newItem = {
+            id: Date.now(),
+            name: sessionName,
+            duration: pomoSettings.focus,
+            type: 'focus',
+            date: now.toISOString()
+        };
+        pomoHistory.unshift(newItem);
+        savePomoHistory();
+        renderPomoHistory();
+    }
+    
+    resetTimer();
+}
 
-                // Save to Schedule Grid (Current time slot)
-                const currentYear = now.getFullYear();
-                const weekNum = getWeekNumber(now); // Use consistent week helper
-                const dayIndex = now.getDay() === 0 ? 6 : now.getDay() - 1; // Mon=0 ... Sun=6
-                const hour = now.getHours();
-
-                if(hour >= 0 && hour <= 23) {
-                    const key = `${currentYear}-${weekNum}-${dayIndex}-${hour}`;
-                    // Force save regardless of duration
-                    scheduleData[key] = { title: "Pomodoro", color: "var(--primary)" }; 
-                    saveSchedule();
-                    
-                    // If schedule view is open, refresh
-                    if(!document.getElementById('schedule-view').classList.contains('hidden')) renderSchedule();
-                }
-            }
-            
-            resetTimer();
-        }
 
         function openPomoSettings() {
             document.getElementById('pomo-input-focus').value = pomoSettings.focus;
@@ -8167,21 +8693,290 @@ async function saveNotesData() {
         }
     }
 
-    // Tarefas
-    const tasksPreview = document.getElementById('dash-tasks-preview'); 
-    if(tasksPreview) {
-        tasksPreview.innerHTML = '';
-        const pendingTasks = tasks.filter(t => !t.done); const doneTasks = tasks.filter(t => t.done);
-        if (pendingTasks.length === 0 && doneTasks.length === 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); font-style:italic;">Nenhuma meta definida.</div>';
-        else if (pendingTasks.length === 0 && doneTasks.length > 0) tasksPreview.innerHTML = '<div style="font-size:0.85rem; color:var(--success); font-weight:bold;"><i class="fas fa-check-circle"></i> Tudo concluído!</div>';
-        else { pendingTasks.slice(0, 3).forEach(t => { tasksPreview.innerHTML += `<div style="display:flex; gap:10px; align-items:center; background:var(--bg-body); padding:8px; border-radius:6px; font-size:0.9rem;"><div class="task-check" onclick="toggleTask(${t.id}); renderDashboard();" style="width:16px; height:16px; min-width:16px;"></div><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.text}</span></div>`; }); if (pendingTasks.length > 3) tasksPreview.innerHTML += `<div style="font-size:0.8rem; color:var(--text-muted); text-align:center;">+ ${pendingTasks.length - 3} metas</div>`; }
+   // --- DENTRO DE renderDashboard() ---
+// Substitua todo o trecho referente ao 'dash-tasks-preview' por este:
+
+const dashTasksDiv = document.getElementById('dash-tasks-preview');
+if (dashTasksDiv) {
+    dashTasksDiv.innerHTML = '';
+    
+    // Configuração de estilo para o container (Rolagem e Altura Fixa)
+    // Isso impede que ele estique o card e desalinhe a grid
+   // Altura fixa de 140px iguala visualmente ao gráfico do lado
+// Altura fixa de 140px iguala visualmente ao gráfico do lado
+dashTasksDiv.style.cssText = "height: 140px; overflow-y: auto; padding-right: 4px; margin-top: 10px;";
+
+
+    
+    let itemsToShow = [];
+
+    // 1. PEGAR E AGRUPAR AGENDAMENTOS (Igual ao Cronograma)
+    if (typeof scheduleData !== 'undefined' && typeof getWeekNumber === 'function') {
+        const today = new Date();
+        const jsDay = today.getDay();
+        const dayIndex = jsDay === 0 ? 6 : jsDay - 1; 
+        const currentYear = today.getFullYear();
+        const currentWeek = getWeekNumber(today); 
+
+        let currentGroup = null;
+
+        // Varre as 24h para agrupar
+        for (let h = 0; h < 24; h++) {
+            const key = `${currentYear}-${currentWeek}-${dayIndex}-${h}`;
+            const item = scheduleData[key];
+            
+            // Lógica de Agrupamento
+            if (item && item.title) {
+                const itemDone = item.done === true;
+                const groupDone = currentGroup ? (currentGroup.done === true) : false;
+
+                if (currentGroup && 
+                    currentGroup.title === item.title && 
+                    currentGroup.color === item.color && 
+                    groupDone === itemDone) {
+                    // Continua o grupo
+                    currentGroup.endHour = h + 1;
+                } else {
+                    // Salva anterior e inicia novo
+                    if (currentGroup) itemsToShow.push(currentGroup);
+                    
+                    currentGroup = {
+                        type: 'agenda',
+                        title: item.title,
+                        color: item.color || 'var(--primary)',
+                        done: itemDone,
+                        startHour: h,
+                        endHour: h + 1,
+                        // Dados para o clique
+                        year: currentYear,
+                        week: currentWeek,
+                        day: dayIndex
+                    };
+                }
+            } else {
+                if (currentGroup) {
+                    itemsToShow.push(currentGroup);
+                    currentGroup = null;
+                }
+            }
+        }
+        if (currentGroup) itemsToShow.push(currentGroup);
+    }
+
+    // 2. PEGAR TAREFAS (Checklist)
+    if (typeof tasks !== 'undefined') {
+        tasks.forEach(t => {
+            itemsToShow.push({
+                type: 'task',
+                id: t.id,
+                title: t.text,
+                done: t.done,
+                color: 'var(--text-muted)' // Cor neutra para tarefas
+            });
+        });
+    }
+
+    // 3. RENDERIZAR LISTA (Filtrando concluídos se necessário)
+    // Se quiser esconder os feitos sempre, descomente a linha abaixo:
+    // itemsToShow = itemsToShow.filter(i => !i.done);
+
+    if (itemsToShow.length === 0) {
+        dashTasksDiv.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-top:20px;">Tudo livre hoje!</div>';
+    } else {
+        itemsToShow.forEach(item => {
+            // Define o clique (diferente para Agenda e Tarefa)
+            let clickAction = "";
+            let iconClass = "";
+            let timeLabel = "";
+
+            if (item.type === 'agenda') {
+                // Clique chama a função de marcar agenda e DEPOIS atualiza a home
+                clickAction = `toggleScheduleDone('${item.year}', ${item.week}, ${item.day}, ${item.startHour}, ${item.endHour}); setTimeout(renderDashboard, 100);`;
+                iconClass = item.done ? "fas fa-check-square" : "fas fa-clock";
+                timeLabel = `<span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto;">${item.startHour}:00 - ${item.endHour}:00</span>`;
+            } else {
+                // Clique chama a função de marcar tarefa e DEPOIS atualiza a home
+                clickAction = `toggleTask(${item.id}); setTimeout(renderDashboard, 100);`;
+                iconClass = item.done ? "fas fa-check-square" : "far fa-square";
+            }
+
+            // Estilos visuais (Riscado se feito)
+            const opacity = item.done ? '0.6' : '1';
+            const textDecor = item.done ? 'line-through' : 'none';
+            const borderStyle = item.type === 'agenda' ? `border-left: 3px solid ${item.color};` : `border-left: 3px solid var(--border);`;
+
+            dashTasksDiv.innerHTML += `
+            <div style="
+                background: var(--bg-body); 
+                padding: 8px 10px; 
+                border-radius: 6px; 
+                font-size: 0.85rem; 
+                color: var(--text-main); 
+                margin-bottom: 6px; 
+                display: flex; 
+                align-items: center;
+                cursor: pointer;
+                transition: background 0.2s;
+                opacity: ${opacity};
+                ${borderStyle}
+            " onclick="${clickAction}">
+                
+                <i class="${iconClass}" style="color:${item.done ? 'var(--success)' : item.color}; font-size:0.9rem; margin-right:8px; width:16px; text-align:center;"></i>
+                
+                <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration: ${textDecor}; font-weight:500;">
+                    ${item.title}
+                </div>
+                ${timeLabel}
+            </div>`;
+        });
     }
 }
 
+}
 
-        function renderTasks() { const c = document.getElementById('tasks-container'); c.innerHTML = ''; tasks.forEach(t => c.innerHTML += `<div class="task-item ${t.done?'completed':''}"><div class="task-check" onclick="toggleTask(${t.id})">${t.done?'<i class="fas fa-check"></i>':''}</div><span style="flex:1;">${t.text}</span><i class="fas fa-trash" onclick="deleteTask(${t.id})" style="color:var(--text-muted);cursor:pointer;"></i></div>`); }
+
+function renderTasks() {
+    const c = document.getElementById('tasks-container');
+    if (!c) return; // Segurança caso o container não exista
+    
+    // --- CABEÇALHO DE CONTROLE ---
+    const visibilityIcon = showCompletedSchedule ? '<i class="far fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
+    const visibilityText = showCompletedSchedule ? 'Ocultar Concluídos' : 'Mostrar Concluídos';
+    
+    c.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border);">
+            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">AGENDAMENTOS</span>
+            <span onclick="toggleCompletedVisibility()" style="cursor:pointer; font-size:0.75rem; color:var(--primary); font-weight:600; display:flex; align-items:center; gap:5px;">
+                ${visibilityIcon} ${visibilityText}
+            </span>
+        </div>
+    `;
+
+    // --- Integração com Agenda (Agrupada) ---
+    if (typeof scheduleData !== 'undefined' && typeof getWeekNumber === 'function') {
+        const today = new Date();
+        const jsDay = today.getDay(); 
+        const dayIndex = jsDay === 0 ? 6 : jsDay - 1; 
+
+        const currentYear = today.getFullYear();
+        const weekOffset = (typeof currentWeekOffset !== 'undefined') ? currentWeekOffset : 0;
+        
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + (weekOffset * 7));
+        const currentWeek = getWeekNumber(targetDate);
+        
+        // 1. AGRUPAMENTO
+        let groupedItems = [];
+        let currentGroup = null;
+
+        for (let h = 0; h < 24; h++) {
+            const key = `${currentYear}-${currentWeek}-${dayIndex}-${h}`;
+            const item = scheduleData[key];
+
+            if (item && item.title) {
+                const itemDone = item.done === true;
+                const groupDone = currentGroup ? (currentGroup.done === true) : false;
+
+                if (currentGroup && 
+                    currentGroup.title === item.title && 
+                    currentGroup.color === item.color && 
+                    groupDone === itemDone) {
+                    currentGroup.endHour = h + 1; 
+                } else {
+                    if (currentGroup) groupedItems.push(currentGroup);
+                    currentGroup = {
+                        title: item.title,
+                        color: item.color || 'var(--primary)',
+                        done: itemDone,
+                        startHour: h,
+                        endHour: h + 1,
+                        year: currentYear,
+                        week: currentWeek,
+                        day: dayIndex
+                    };
+                }
+            } else {
+                if (currentGroup) {
+                    groupedItems.push(currentGroup);
+                    currentGroup = null;
+                }
+            }
+        }
+        if (currentGroup) groupedItems.push(currentGroup);
+
+        // 2. RENDERIZAÇÃO DOS AGENDAMENTOS
+        if (groupedItems.length === 0) {
+             c.innerHTML += `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding:10px;">Nada agendado.</div>`;
+        }
+
+        groupedItems.forEach(group => {
+            if (group.done && !showCompletedSchedule) return;
+
+            const timeLabel = `${group.startHour.toString().padStart(2,'0')}:00 - ${group.endHour.toString().padStart(2,'0')}:00`;
+            const textStyle = group.done ? 'text-decoration: line-through; opacity: 0.6; color: var(--text-muted);' : 'color: var(--text-main);';
+            const icon = group.done ? '<i class="fas fa-check-square"></i>' : '<i class="far fa-square"></i>';
+            const iconColor = group.done ? 'var(--text-muted)' : group.color;
+            
+            c.innerHTML += `
+            <div class="task-item agendamento-item" style="border-left: 4px solid ${group.color}; background: var(--bg-body); margin-bottom: 8px; transition: all 0.2s;">
+                <!-- INPUT OCULTO PARA CONTAGEM DO PROGRESSO (AGENDA) -->
+                <input type="checkbox" style="display:none" ${group.done ? 'checked' : ''} class="agenda-counter-check">
+
+                <!-- Checkbox visual clicável -->
+                <div onclick="toggleScheduleDone('${group.year}', ${group.week}, ${group.day}, ${group.startHour}, ${group.endHour})" 
+                     style="width: 30px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size: 1.1rem; color: ${iconColor};">
+                    ${icon}
+                </div>
+                
+                <div style="flex:1; display:flex; flex-direction:column; padding: 4px 0; ${textStyle}">
+                    <span style="font-weight:600; font-size:0.9rem;">${group.title}</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${timeLabel}</span>
+                </div>
+            </div>`;
+        });
+    }
+
+    // --- RENDERIZAÇÃO DAS TAREFAS (SEPARADOR) ---
+    if (typeof tasks !== 'undefined' && tasks.length > 0) {
+        c.innerHTML += `<div style="margin: 15px 0 10px 0; border-top: 1px dashed var(--border);"></div>`;
+        c.innerHTML += `<span style="font-size:0.8rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:10px;">LISTA DE TAREFAS</span>`;
+    
+        tasks.forEach(t => {
+            c.innerHTML += `
+            <div class="task-item ${t.done ? 'completed' : ''}" style="margin-bottom:8px;">
+                <!-- INPUT OCULTO PARA CONTAGEM DO PROGRESSO (TAREFAS) -->
+                <input type="checkbox" style="display:none" ${t.done ? 'checked' : ''} class="task-counter-check">
+
+                <div class="task-check" onclick="toggleTask(${t.id})">
+                    ${t.done ? '<i class="fas fa-check"></i>' : ''}
+                </div>
+                <span style="flex:1;">${t.text}</span>
+                <i class="fas fa-trash" onclick="deleteTask(${t.id})" style="color:var(--text-muted);cursor:pointer; opacity:0.6;"></i>
+            </div>`;
+        });
+    }
+
+    // --- CHAMA A ATUALIZAÇÃO DO PROGRESSO APÓS RENDERIZAR TUDO ---
+    updateDailyProgress();
+}
+
+
+
+       
+
         function addTask() { const v = document.getElementById('new-task-input').value; if(v) { tasks.push({id:Date.now(), text:v, done:false}); document.getElementById('new-task-input').value=''; saveSchedule(); renderTasks(); renderDashboard(); } }
-        function toggleTask(id) { const t=tasks.find(x=>x.id===id); if(t)t.done=!t.done; saveSchedule(); renderTasks(); renderDashboard(); }
+        function toggleTask(id) { 
+    const t = tasks.find(x => x.id === id); 
+    if (t) t.done = !t.done; 
+    
+    saveSchedule(); 
+    renderTasks(); 
+    renderDashboard(); 
+    
+    // ADICIONE ISTO AQUI:
+    updateDailyProgress(); 
+}
+
         function deleteTask(id) { tasks=tasks.filter(x=>x.id!==id); saveSchedule(); renderTasks(); renderDashboard(); }
         function clearCompletedTasks() { tasks=tasks.filter(t=>!t.done); saveSchedule(); renderTasks(); renderDashboard(); }
 
@@ -8202,44 +8997,77 @@ async function saveNotesData() {
         }
 
         function renderSchedule() {
-            const body = document.getElementById('schedule-body'); body.innerHTML = '';
+    const container = document.getElementById('agenda-grid-body'); 
+    if(!container) return; // Segurança
+    container.innerHTML = '';
+    
+    // Calcular Datas (mantido da sua lógica original)
+    const today = new Date(); 
+    if(typeof currentWeekOffset !== 'undefined') today.setDate(today.getDate() + (currentWeekOffset*7));
+    const diff = today.getDate() - today.getDay() + (today.getDay()===0?-6:1);
+    const monday = new Date(today.setDate(diff));
+    
+    // Renderiza Cabeçalho (Dias)
+    const headerContainer = document.getElementById('agenda-header-row');
+    if(headerContainer) {
+        let headerHTML = '<div class="agenda-header-cell" style="background:var(--bg-body);">Hora</div>';
+        const diasSemana = ["SEG","TER","QUA","QUI","SEX","SÁB","DOM"];
+        const realToday = new Date();
+        
+        for(let i=0; i<7; i++) { 
+            const d = new Date(monday); 
+            d.setDate(monday.getDate()+i); 
+            const isToday = (d.getDate()===realToday.getDate() && d.getMonth()===realToday.getMonth());
+            const color = isToday ? 'var(--primary)' : 'var(--text-muted)';
             
-            // Calculate the Monday of the current displayed week
-            const today = new Date(); 
-            today.setDate(today.getDate() + (currentWeekOffset*7));
-            const diff = today.getDate() - today.getDay() + (today.getDay()===0?-6:1);
-            const monday = new Date(today.setDate(diff));
-            
-            const realToday = new Date();
-            document.getElementById('current-week-label').innerText = `${monday.getDate()} - Semana`;
-            
-            // Render Headers (Mon-Sun)
-            for(let i=0; i<7; i++) { 
-                const d=new Date(monday); 
-                d.setDate(monday.getDate()+i); 
-                const th=document.getElementById(`th-${i}`); 
-                th.innerText = ["SEG","TER","QUA","QUI","SEX","SÁB","DOM"][i] + " " + d.getDate(); 
-                th.style.color='var(--text-muted)'; 
-                if(d.getDate()===realToday.getDate() && d.getMonth()===realToday.getMonth()) th.style.color='var(--primary)'; 
-            }
-            
-            // Consistent Week Calculation for Rendering
-            // This ensures keys like '2024-42-0-13' match between saving and rendering
-            const currentYear = monday.getFullYear();
-            const weekNum = getWeekNumber(monday);
-            const weekKey = `${currentYear}-${weekNum}`;
-            
-            for(let h=0; h<=23; h++) {
-                const tr = document.createElement('tr'); 
-                tr.innerHTML = `<td class="time-label">${h}:00</td>`;
-                for(let d=0; d<7; d++) {
-                    const k = `${weekKey}-${d}-${h}`; 
-                    const b = scheduleData[k];
-                    tr.innerHTML += `<td>${b ? `<div class="event-block" style="background:${b.color}" onclick="editSch('${k}')">${b.title}</div>` : `<div class="empty-cell-btn" onclick="createSch('${k}')"><i class="fas fa-plus"></i></div>`}</td>`;
-                } 
-                body.appendChild(tr);
-            }
+            headerHTML += `<div class="agenda-header-cell" style="color:${color}">
+                ${diasSemana[i]} <span style="font-size:1.1em; display:block;">${d.getDate()}</span>
+            </div>`;
         }
+        headerContainer.innerHTML = headerHTML;
+    }
+    
+    // Preparar chaves para busca
+    const currentYear = monday.getFullYear();
+    const weekNum = getWeekNumber(monday);
+    const weekKey = `${currentYear}-${weekNum}`;
+    
+    // Renderiza Corpo (24 horas)
+    for(let h=0; h<24; h++) {
+        // 1. Célula da Hora
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'agenda-time-cell';
+        timeDiv.innerText = `${h}:00`;
+        container.appendChild(timeDiv);
+        
+        // 2. Células dos 7 Dias
+        for(let d=0; d<7; d++) {
+            const k = `${weekKey}-${d}-${h}`; 
+            const b = scheduleData[k];
+            
+            const cell = document.createElement('div');
+            cell.className = 'agenda-cell';
+            
+            if(b) {
+                // Tem evento
+                // --- AQUI ESTÁ A EDIÇÃO DO RISCADO ---
+                const doneStyle = b.done ? 'text-decoration: line-through; opacity: 0.6;' : '';
+                
+                cell.innerHTML = `<div class="agenda-event" 
+                                       style="background:${b.color}; ${doneStyle}" 
+                                       onclick="editSch('${k}')">
+                                       ${b.title}
+                                  </div>`;
+            } else {
+                // Célula vazia
+                cell.innerHTML = `<div class="empty-cell-icon" onclick="createSch('${k}')"><i class="fas fa-plus"></i></div>`;
+            }
+            container.appendChild(cell);
+        }
+    }
+}
+
+
         
         function saveSchedule() {
     // Agora salva as duas coisas no banco de dados correto (localForage)
@@ -8249,8 +9077,57 @@ async function saveNotesData() {
 
         window.createSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=''; document.getElementById('btn-delete-block').classList.add('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
         window.editSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=scheduleData[k].title; selectedColor=scheduleData[k].color; document.getElementById('btn-delete-block').classList.remove('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
-        function saveScheduleBlock() { if(!document.getElementById('schedule-block-title').value) return; scheduleData[editingScheduleBlock]={title:document.getElementById('schedule-block-title').value, color:selectedColor}; saveSchedule(); document.getElementById('schedule-modal').classList.add('hidden'); renderSchedule(); }
-        function deleteScheduleBlock() { delete scheduleData[editingScheduleBlock]; saveSchedule(); document.getElementById('schedule-modal').classList.add('hidden'); renderSchedule(); }
+
+
+function saveScheduleBlock() { 
+    const titleInput = document.getElementById('schedule-block-title');
+    if(!titleInput.value) return; 
+
+    // 1. Extrai o horário inicial da chave do bloco clicado (Ex: '2025-04-3-14')
+    const parts = editingScheduleBlock.split('-');
+    const year = parts[0];
+    const week = parts[1];
+    const day = parts[2];
+    const startHour = parseInt(parts[3]);
+
+    // 2. Pega o horário final selecionado no novo campo
+    let endHour = parseInt(document.getElementById('schedule-end-time').value);
+
+    // Proteção: Se por acaso o select estiver vazio, define como 1 hora de duração
+    if (!endHour || isNaN(endHour)) {
+        endHour = startHour + 1;
+    }
+
+    // 3. Loop: Salva o evento em TODOS os blocos entre o início e o fim
+    // Se começar às 14h e terminar às 16h, ele salva na chave das 14h e das 15h.
+    for (let h = startHour; h < endHour; h++) {
+        const key = `${year}-${week}-${day}-${h}`;
+        
+        scheduleData[key] = {
+            title: titleInput.value, 
+            color: selectedColor
+        }; 
+    }
+    
+    saveSchedule(); 
+    document.getElementById('schedule-modal').classList.add('hidden'); 
+    renderSchedule(); 
+    
+    renderTasks(); // <--- Atualiza as metas instantaneamente ao salvar
+}
+
+
+function deleteScheduleBlock() { 
+    delete scheduleData[editingScheduleBlock]; 
+    
+    saveSchedule(); 
+    document.getElementById('schedule-modal').classList.add('hidden'); 
+    renderSchedule(); 
+    
+    renderTasks(); // <--- Atualiza as metas instantaneamente ao deletar
+}
+
+
         function closeScheduleModal() { document.getElementById('schedule-modal').classList.add('hidden'); }
         function selectColor(c, el) { selectedColor=c; document.querySelectorAll('.color-chip').forEach(x=>x.style.border='3px solid transparent'); el.style.border='3px solid white'; }
         function changeWeek(d) { currentWeekOffset+=d; renderSchedule(); }
@@ -10820,6 +11697,114 @@ function goToStudyPractice() {
         switchStudyTab('practice'); // Muda para a sub-aba Praticar
     }
 }
+
+// Função auxiliar para popular o seletor de horário
+function populateEndTimeSelect(startHour) {
+    const endSelect = document.getElementById('schedule-end-time');
+    endSelect.innerHTML = ''; // Limpa opções antigas
+
+    // Gera opções partindo da próxima hora até o fim do dia (24h)
+    for (let h = startHour + 1; h <= 24; h++) {
+        const option = document.createElement('option');
+        option.value = h;
+        // Formata: 24 vira "00:00 (Fim do dia)"
+        const label = h === 24 ? "00:00 (Fim do dia)" : `${h.toString().padStart(2, '0')}:00`;
+        option.innerText = label;
+        endSelect.appendChild(option);
+    }
+}
+
+window.createSch = (k) => {
+    editingScheduleBlock = k;
+    document.getElementById('schedule-block-title').value = '';
+    
+    // Extrai a hora inicial da chave 'Ano-Semana-Dia-Hora'
+    const parts = k.split('-'); 
+    const startHour = parseInt(parts[3]); 
+    
+    // Preenche o seletor com horas seguintes
+    populateEndTimeSelect(startHour);
+
+    document.getElementById('btn-delete-block').classList.add('hidden');
+    document.getElementById('schedule-modal').classList.remove('hidden');
+};
+
+window.editSch = (k) => {
+    editingScheduleBlock = k;
+    document.getElementById('schedule-block-title').value = scheduleData[k].title;
+    selectedColor = scheduleData[k].color; 
+    
+    const parts = k.split('-');
+    const startHour = parseInt(parts[3]);
+    
+    populateEndTimeSelect(startHour);
+
+    document.getElementById('btn-delete-block').classList.remove('hidden');
+    document.getElementById('schedule-modal').classList.remove('hidden');
+};
+
+
+// --- NOVAS FUNÇÕES PARA O CRONOGRAMA ---
+
+// Variável para controlar visualização
+let showCompletedSchedule = true;
+
+// Ao iniciar, tenta carregar a preferência salva
+if(localStorage.getItem('ted_show_completed_schedule') !== null) {
+    showCompletedSchedule = (localStorage.getItem('ted_show_completed_schedule') === 'true');
+}
+
+// Função para ocultar/mostrar
+window.toggleCompletedVisibility = function() {
+    showCompletedSchedule = !showCompletedSchedule;
+    localStorage.setItem('ted_show_completed_schedule', showCompletedSchedule);
+    renderTasks(); // Recarrega a lista
+}
+
+// Função para marcar como feito
+window.toggleScheduleDone = function(year, week, day, startHour, endHour) {
+    // Percorre o intervalo de horas (ex: 14h as 16h)
+    for (let h = startHour; h < endHour; h++) {
+        const key = `${year}-${week}-${day}-${h}`;
+        if (scheduleData[key]) {
+            // Inverte o status (true -> false ou false -> true)
+            scheduleData[key].done = !scheduleData[key].done;
+        }
+    }
+    saveSchedule(); // Salva no banco de dados
+    renderTasks();  // Atualiza o banner lateral
+    renderSchedule(); // Atualiza a grade principal (para riscar)
+}
+
+
+
+function updateDailyProgress() {
+    // 1. CONTAGEM TAREFAS
+    const taskChecks = document.querySelectorAll('.task-counter-check');
+    let taskTotal = taskChecks.length;
+    let taskChecked = 0;
+    taskChecks.forEach(cb => { if (cb.checked) taskChecked++; });
+
+    // 2. CONTAGEM AGENDA
+    const agendaChecks = document.querySelectorAll('.agenda-counter-check');
+    let agendaTotal = agendaChecks.length;
+    let agendaChecked = 0;
+    agendaChecks.forEach(cb => { if (cb.checked) agendaChecked++; });
+
+    // 3. ATUALIZA VISUAL
+    let taskPct = (taskTotal > 0) ? Math.round((taskChecked / taskTotal) * 100) : 0;
+    const elTaskFill = document.getElementById('prog-tasks-fill');
+    const elTaskText = document.getElementById('prog-tasks-text');
+    if (elTaskFill) elTaskFill.style.width = `${taskPct}%`;
+    if (elTaskText) elTaskText.textContent = `${taskPct}%`;
+
+    let agendaPct = (agendaTotal > 0) ? Math.round((agendaChecked / agendaTotal) * 100) : 0;
+    const elAgendaFill = document.getElementById('prog-agenda-fill');
+    const elAgendaText = document.getElementById('prog-agenda-text');
+    if (elAgendaFill) elAgendaFill.style.width = `${agendaPct}%`;
+    if (elAgendaText) elAgendaText.textContent = `${agendaPct}%`;
+}
+
 
 
 
