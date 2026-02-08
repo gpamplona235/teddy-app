@@ -114,11 +114,11 @@
     display: flex;
     flex-direction: column;
     padding: 24px 12px;
-    z-index: 6000 !important; /* <--- MUDE ISTO (Era 100) */
+    z-index: 6000 !important; 
     padding-top: 40px;
     transition: background 0.3s;
     position: relative;
-    overflow: visible !important; /* <--- ADICIONE ISTO para garantir */
+    overflow: visible !important; 
 }
 
 
@@ -4017,6 +4017,229 @@ select.lib-control {
     min-height: 140px; /* Garante uma altura mínima maior */
 }
 
+/* --- CALENDÁRIO OTIMIZADO --- */
+#dash-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.calendar-header-day {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.calendar-day-cell {
+    min-height: 44px; /* Compacto */
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--bg-body);
+    border: 1px solid transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.calendar-day-cell:hover {
+    background: var(--bg-card);
+    border-color: var(--primary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    z-index: 2;
+}
+
+.calendar-day-cell.is-today {
+    background: rgba(var(--primary-rgb), 0.08);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-weight: 800;
+}
+
+:root{
+  /* Cores leves (ajuste se quiser) */
+  --cal-done-bg: #e8f1ff;   /* azul claro */
+  --cal-late-bg: #ffe8ea;   /* vermelho claro */
+  --cal-empty-bg:#eaf8ef;   /* verde claro */
+
+  --cal-done-bd: #86aefc;
+  --cal-late-bd: #ff9aa5;
+  --cal-empty-bd:#7fd29b;
+}
+
+/* Status do dia */
+.calendar-day-cell.status-done{
+  background: var(--cal-done-bg);
+  border-color: var(--cal-done-bd);
+}
+.calendar-day-cell.status-late{
+  background: var(--cal-late-bg);
+  border-color: var(--cal-late-bd);
+}
+.calendar-day-cell.status-empty{
+  background: var(--cal-empty-bg);
+  border-color: var(--cal-empty-bd);
+}
+
+/* Legenda (canto inferior direito do banner) */
+.dash-calendar-banner{
+  position: relative; /* importante para a legenda “grudar” no banner */
+}
+
+.calendar-legend{
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
+
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend-item{ display:flex; align-items:center; gap:8px; }
+.legend-swatch{
+  width: 12px; height: 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.legend-swatch.done{ background: var(--cal-done-bg); border-color: var(--cal-done-bd); }
+.legend-swatch.late{ background: var(--cal-late-bg); border-color: var(--cal-late-bd); }
+.legend-swatch.empty{ background: var(--cal-empty-bg); border-color: var(--cal-empty-bd); }
+
+
+/* --- Cores Específicas para o MODO ESCURO --- */
+.dark-mode {
+  /* Versões escuras e translúcidas das cores para garantir contraste com texto branco */
+  --cal-done-bg: rgba(59, 130, 246, 0.2);  /* Azul escuro transparente */
+  --cal-late-bg: rgba(239, 68, 68, 0.2);   /* Vermelho escuro transparente */
+  --cal-empty-bg: rgba(16, 185, 129, 0.2); /* Verde escuro transparente */
+
+  --cal-done-bd: rgba(59, 130, 246, 0.5);
+  --cal-late-bd: rgba(239, 68, 68, 0.5);
+  --cal-empty-bd: rgba(16, 185, 129, 0.5);
+}
+
+
+
+/* Indicadores */
+.calendar-indicators {
+    display: flex;
+    gap: 3px;
+    margin-top: 3px;
+}
+
+.indicator-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+.dot-review { background-color: var(--primary); }
+.dot-event { background-color: var(--secondary); }
+
+/* --- NOVO BANNER ESTILO TABELA (POPOVER) --- */
+.calendar-popover {
+    position: absolute;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    z-index: 9999;
+    width: 260px; /* Mais largo para caber texto */
+    opacity: 0;
+    transform: translateY(5px) scale(0.98);
+    transition: all 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-popover.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Cabeçalho do Banner */
+.popover-header {
+    background: var(--bg-body);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popover-date {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.popover-badge-total {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Corpo Tabela */
+.popover-body {
+    padding: 4px 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.popover-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.popover-row:last-child { border-bottom: none; }
+
+.popover-row-icon {
+    width: 24px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.popover-row-content { flex: 1; }
+.popover-row-time { 
+    font-size: 0.75rem; 
+    color: var(--text-muted); 
+    font-weight: 600; 
+    margin-right: 8px;
+    min-width: 35px;
+}
+
+.task-title { font-weight: 500; }
+.empty-state { padding: 15px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+
+
 
 </style>
 </head>
@@ -4262,7 +4485,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.65</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.76</div>
         </div>
 
     </nav>
@@ -4306,6 +4529,13 @@ select.lib-control {
                     </button>
                 </div>
             </div>
+
+            <!-- Mini Banner Flutuante do Calendário -->
+<div id="calendar-popover-banner" class="calendar-popover">
+    <div class="popover-title">Programado para este dia</div>
+    <div class="popover-count" id="popover-content-count">0 cards</div>
+</div>
+
             
             <div class="dashboard-grid">
                 <div class="card-box stat-widget" style="cursor: pointer; position: relative;" onclick="goToStudyPractice()">
@@ -4371,6 +4601,78 @@ select.lib-control {
                     <button class="btn-sm btn-outline" onclick="switchTab('schedule')" style="margin-top:12px; width:100%;">Ver Cronograma</button>
                 </div>
             </div>
+
+
+
+           <!-- Banner: Calendário de Revisões (NOVO) -->
+<div class="card-box" style="margin-top: 20px; margin-bottom: 20px; padding: 24px; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+    
+    <!-- Cabeçalho (Título e Botões) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <h3 style="margin:0;">Calendário de Revisões</h3>
+            <span id="calendar-selected-info" style="font-size: 0.9rem; color: var(--primary); font-weight: 600;"></span>
+        </div>
+        
+        <!-- Botões -->
+        <div class="toggle-container" style="background: var(--bg-body); padding: 4px; border-radius: 8px; display: flex; gap: 5px;">
+            <button onclick="renderDashCalendar('week')" id="btn-view-week" class="btn-sm active" style="border:none; border-radius:6px; cursor:pointer; padding: 5px 12px; transition: all 0.2s;">Semana</button>
+            <button onclick="renderDashCalendar('month')" id="btn-view-month" class="btn-sm" style="border:none; border-radius:6px; cursor:pointer; padding: 5px 12px; transition: all 0.2s;">Mês</button>
+        </div>
+    </div>
+    
+    <!-- Container Flex Vertical para Grid e Legenda -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Grid do Calendário -->
+        <div id="dash-calendar-grid" style="display: grid; gap: 8px; grid-template-columns: repeat(7, 1fr);">
+            <!-- Dias serão gerados via JS -->
+        </div>
+
+               <!-- Legenda Limpa: Sem moldura, Horizontal, Direita -->
+        <div class="calendar-legend" style="
+            position: static !important;
+            display: flex; 
+            flex-direction: row !important;
+            align-items: center; 
+            justify-content: flex-end;      
+            gap: 16px; 
+            padding-top: 12px; 
+            /* border-top: 1px solid rgba(0,0,0,0.05); REMOVIDO: Linha superior */
+            border: none !important;        /* REMOVIDO: Qualquer borda ao redor */
+            background: transparent !important; /* REMOVIDO: Fundo branco/cinza se houver */
+            box-shadow: none !important;    /* REMOVIDO: Sombras */
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            width: 100%;
+            margin: 0;
+        ">
+            <!-- Item: Feito -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 12px; height: 12px; background: var(--cal-done-bg); border: 1px solid var(--cal-done-bd); border-radius: 3px;"></div>
+                <span>Feito</span>
+            </div>
+            
+            <!-- Item: Atrasado -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 12px; height: 12px; background: var(--cal-late-bg); border: 1px solid var(--cal-late-bd); border-radius: 3px;"></div>
+                <span>Atrasado</span>
+            </div>
+
+            <!-- Item: Vazio -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 12px; height: 12px; background: var(--cal-empty-bg); border: 1px solid var(--cal-empty-bd); border-radius: 3px;"></div>
+                <span>Vazio</span>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
 
 <!-- Banners de Subtópicos da Semana -->
 <div class="stats-banners-grid">
@@ -6716,8 +7018,7 @@ function toggleQuickNotes() {
         setTimeout(() => msg.remove(), 2000);
     });
 }
-        // --- NAVEGAÇÃO ---
-function switchTab(tab) {
+    function switchTab(tab) {
     if (tab !== 'note-editor') {
         persistCurrentNote();
     }
@@ -6757,7 +7058,26 @@ function switchTab(tab) {
         renderCurrentFolder();
         renderReviewBanner(); 
     }
-    if (tab === 'schedule') { renderSchedule(); renderTasks(); }
+    
+    // --- PARTE EDITADA AQUI ---
+    if (tab === 'schedule') { 
+        renderSchedule(); 
+        renderTasks(); 
+        
+        // Rola para a hora atual após renderizar
+        setTimeout(() => {
+            const now = new Date();
+            // Pega a hora atual e subtrai 1 para dar um respiro visual (não ficar colado no topo)
+            const targetHour = Math.max(0, now.getHours() - 1); 
+            const timeCells = document.querySelectorAll('.agenda-time-cell');
+            
+            if (timeCells[targetHour]) {
+                timeCells[targetHour].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+    // ---------------------------
+
     if (tab === 'dashboard') {
         renderDashboard();
         renderReviewBanner(); 
@@ -6765,9 +7085,9 @@ function switchTab(tab) {
 
     if (tab === 'pomodoro') renderPomoHistory();
     if (tab === 'study') {
-         // Default to practice if not set, or maintain state if switching back
-         if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-practice') loadStudyView();
-         if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-library') renderManageList();
+          // Default to practice if not set, or maintain state if switching back
+          if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-practice') loadStudyView();
+          if(document.querySelector('.study-nav-btn.active').id === 'sub-nav-library') renderManageList();
     }
     if (tab === 'performance') renderPerformanceView();
     if (tab === 'syllabus') renderSyllabusList();
@@ -6786,6 +7106,7 @@ function switchTab(tab) {
         }
     }
 }
+
 
 // Variável global para controlar o fechamento ao clicar fora
 let isPopoverOpen = false;
@@ -8636,7 +8957,6 @@ async function saveFoldersData() {
     }
 }
 
-// --- FUNÇÃO DE SALVAR NOTAS CORRIGIDA (Substitui a antiga) ---
 async function saveNotesData() {
     // 1. Se estiver com o editor aberto, pega o texto mais recente antes de salvar
     if (editingNoteId && typeof quill !== 'undefined') {
@@ -8646,7 +8966,12 @@ async function saveNotesData() {
         if (noteIndex !== -1 && quill.root) {
             const conteudoNovo = quill.root.innerHTML;
             notes[noteIndex].content = conteudoNovo;
-            notes[noteIndex].updatedAt = new Date().toISOString();
+            
+            // --- CORREÇÃO DE DATA/HORA LOCAL ---
+            const d = new Date();
+            // Ajusta para o fuso local antes de converter para ISO
+            const localISO = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString();
+            notes[noteIndex].updatedAt = localISO;
         }
     }
 
@@ -8659,180 +8984,506 @@ async function saveNotesData() {
     }
 }
 
+
         function formatText(cmd, arg=null) { document.getElementById('note-content').focus(); document.execCommand(cmd, false, arg); }
         function closeNoteEditor() { switchTab('notes'); }
 
-        function renderDashboard() {
+
+
+      function renderDashboard() {
     const now = Date.now();
-    const due = cards.filter(c => c.nextReview <= now).length;
-    document.getElementById('dash-due-count').innerText = due;
     
-    // --- ALTERAÇÃO: Mostra total de cards em vez de ofensiva ---
-    const totalEl = document.getElementById('dash-total-cards');
-    if(totalEl) totalEl.innerText = cards.length; 
-    // -----------------------------------------------------------
+    // --- 1. Atualiza Contadores (Cards para Hoje) ---
+    // Verifica se 'cards' existe para evitar erros
+    if (typeof cards !== 'undefined') {
+        const due = cards.filter(c => c.nextReview <= now).length;
+        const dueEl = document.getElementById('dash-due-count');
+        if (dueEl) dueEl.innerText = due;
 
-    const nextTaskEl = document.getElementById('dash-next-task');
-    if(cards.length > 0) {
-        const nextCard = [...cards].sort((a,b) => a.nextReview - b.nextReview)[0];
-        const dateStr = new Date(nextCard.nextReview).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-        nextTaskEl.innerHTML = `<div style="font-size:0.9rem">${dateStr}</div><div style="font-size:0.8rem; color:var(--primary); font-weight:600;">${nextCard.category || 'Geral'}</div>`;
-    } else { nextTaskEl.innerText = "Nenhuma"; }
-
-    atualizarBannersSubtopicos();
-    
-    // Gráfico mini
-    const chart = document.getElementById('dash-mini-chart'); 
-    if(chart) {
-        chart.innerHTML = '';
-        for(let i=6; i>=0; i--) {
-            const d = new Date(); d.setDate(d.getDate() - i);
-            const count = performanceData.filter(p => p.date === d.toISOString().split('T')[0]).length;
-            const h = Math.min(count * 5, 80);
-            chart.innerHTML += `<div class="chart-col"><div class="chart-bar-container"><div class="chart-bar" style="height:${Math.max(4, h)}px;background:${count>0?'var(--primary)':'var(--border)'};"></div></div><div class="chart-label">${d.toLocaleDateString('pt-BR', {weekday:'short'}).slice(0,3)}</div></div>`;
-        }
-    }
-
-   // --- DENTRO DE renderDashboard() ---
-// Substitua todo o trecho referente ao 'dash-tasks-preview' por este:
-
-const dashTasksDiv = document.getElementById('dash-tasks-preview');
-if (dashTasksDiv) {
-    dashTasksDiv.innerHTML = '';
-    
-    // Configuração de estilo para o container (Rolagem e Altura Fixa)
-    // Isso impede que ele estique o card e desalinhe a grid
-   // Altura fixa de 140px iguala visualmente ao gráfico do lado
-// Altura fixa de 140px iguala visualmente ao gráfico do lado
-dashTasksDiv.style.cssText = "height: 140px; overflow-y: auto; padding-right: 4px; margin-top: 10px;";
-
-
-    
-    let itemsToShow = [];
-
-    // 1. PEGAR E AGRUPAR AGENDAMENTOS (Igual ao Cronograma)
-    if (typeof scheduleData !== 'undefined' && typeof getWeekNumber === 'function') {
-        const today = new Date();
-        const jsDay = today.getDay();
-        const dayIndex = jsDay === 0 ? 6 : jsDay - 1; 
-        const currentYear = today.getFullYear();
-        const currentWeek = getWeekNumber(today); 
-
-        let currentGroup = null;
-
-        // Varre as 24h para agrupar
-        for (let h = 0; h < 24; h++) {
-            const key = `${currentYear}-${currentWeek}-${dayIndex}-${h}`;
-            const item = scheduleData[key];
-            
-            // Lógica de Agrupamento
-            if (item && item.title) {
-                const itemDone = item.done === true;
-                const groupDone = currentGroup ? (currentGroup.done === true) : false;
-
-                if (currentGroup && 
-                    currentGroup.title === item.title && 
-                    currentGroup.color === item.color && 
-                    groupDone === itemDone) {
-                    // Continua o grupo
-                    currentGroup.endHour = h + 1;
-                } else {
-                    // Salva anterior e inicia novo
-                    if (currentGroup) itemsToShow.push(currentGroup);
-                    
-                    currentGroup = {
-                        type: 'agenda',
-                        title: item.title,
-                        color: item.color || 'var(--primary)',
-                        done: itemDone,
-                        startHour: h,
-                        endHour: h + 1,
-                        // Dados para o clique
-                        year: currentYear,
-                        week: currentWeek,
-                        day: dayIndex
-                    };
-                }
+        // --- Mostra total de cards em vez de ofensiva ---
+        const totalEl = document.getElementById('dash-total-cards');
+        if (totalEl) totalEl.innerText = cards.length;
+        
+        // --- Atualiza Próxima Atividade ---
+        const nextTaskEl = document.getElementById('dash-next-task');
+        if (nextTaskEl) {
+            if (cards.length > 0) {
+                const nextCard = [...cards].sort((a, b) => a.nextReview - b.nextReview)[0];
+                const dateStr = new Date(nextCard.nextReview).toLocaleString('pt-BR', {
+                    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                });
+                nextTaskEl.innerHTML = `<div style="font-size:0.9rem">${dateStr}</div><div style="font-size:0.8rem; color:var(--primary); font-weight:600;">${nextCard.category || 'Geral'}</div>`;
             } else {
-                if (currentGroup) {
-                    itemsToShow.push(currentGroup);
-                    currentGroup = null;
-                }
+                nextTaskEl.innerText = "Nenhuma";
             }
         }
-        if (currentGroup) itemsToShow.push(currentGroup);
     }
 
-    // 2. PEGAR TAREFAS (Checklist)
-    if (typeof tasks !== 'undefined') {
-        tasks.forEach(t => {
-            itemsToShow.push({
-                type: 'task',
-                id: t.id,
-                title: t.text,
-                done: t.done,
-                color: 'var(--text-muted)' // Cor neutra para tarefas
+    // --- 2. Atualiza Banners e Gráficos ---
+    if (typeof atualizarBannersSubtopicos === 'function') atualizarBannersSubtopicos();
+
+    const chart = document.getElementById('dash-mini-chart');
+    if (chart && typeof performanceData !== 'undefined') {
+        chart.innerHTML = '';
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const count = performanceData.filter(p => p.date === d.toISOString().split('T')[0]).length;
+            const h = Math.min(count * 5, 80);
+            chart.innerHTML += `<div class="chart-col"><div class="chart-bar-container"><div class="chart-bar" style="height:${Math.max(4, h)}px;background:${count > 0 ? 'var(--primary)' : 'var(--border)'};"></div></div><div class="chart-label">${d.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3)}</div></div>`;
+        }
+    }
+
+    // --- 3. METAS DO DIA (Seu código novo) ---
+    const dashTasksDiv = document.getElementById('dash-tasks-preview');
+    if (dashTasksDiv) {
+        dashTasksDiv.innerHTML = '';
+        
+        // Estilo para rolagem e altura fixa
+        dashTasksDiv.style.cssText = "height: 140px; overflow-y: auto; padding-right: 4px; margin-top: 10px;";
+
+        let itemsToShow = [];
+
+        // A. Pegar Agendamentos (Cronograma)
+        if (typeof scheduleData !== 'undefined' && typeof getWeekNumber === 'function') {
+            const today = new Date();
+            const jsDay = today.getDay();
+            const dayIndex = jsDay === 0 ? 6 : jsDay - 1;
+            const currentYear = today.getFullYear();
+            const currentWeek = getWeekNumber(today);
+
+            let currentGroup = null;
+
+            for (let h = 0; h < 24; h++) {
+                const key = `${currentYear}-${currentWeek}-${dayIndex}-${h}`;
+                const item = scheduleData[key];
+
+                if (item && item.title) {
+                    const itemDone = item.done === true;
+                    const groupDone = currentGroup ? (currentGroup.done === true) : false;
+
+                    if (currentGroup &&
+                        currentGroup.title === item.title &&
+                        currentGroup.color === item.color &&
+                        groupDone === itemDone) {
+                        currentGroup.endHour = h + 1;
+                    } else {
+                        if (currentGroup) itemsToShow.push(currentGroup);
+                        currentGroup = {
+                            type: 'agenda',
+                            title: item.title,
+                            color: item.color || 'var(--primary)',
+                            done: itemDone,
+                            startHour: h,
+                            endHour: h + 1,
+                            year: currentYear,
+                            week: currentWeek,
+                            day: dayIndex
+                        };
+                    }
+                } else {
+                    if (currentGroup) {
+                        itemsToShow.push(currentGroup);
+                        currentGroup = null;
+                    }
+                }
+            }
+            if (currentGroup) itemsToShow.push(currentGroup);
+        }
+
+        // B. Pegar Tarefas (Checklist)
+        if (typeof tasks !== 'undefined') {
+            tasks.forEach(t => {
+                itemsToShow.push({
+                    type: 'task',
+                    id: t.id,
+                    title: t.text,
+                    done: t.done,
+                    color: 'var(--text-muted)'
+                });
             });
+        }
+
+        // C. Renderizar Lista
+        if (itemsToShow.length === 0) {
+            dashTasksDiv.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-top:20px;">Tudo livre hoje!</div>';
+        } else {
+            itemsToShow.forEach(item => {
+                let clickAction = "";
+                let iconClass = "";
+                let timeLabel = "";
+
+                if (item.type === 'agenda') {
+                    clickAction = `toggleScheduleDone('${item.year}', ${item.week}, ${item.day}, ${item.startHour}, ${item.endHour}); setTimeout(renderDashboard, 100);`;
+                    iconClass = item.done ? "fas fa-check-square" : "fas fa-clock";
+                    timeLabel = `<span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto;">${item.startHour}:00 - ${item.endHour}:00</span>`;
+                } else {
+                    clickAction = `toggleTask(${item.id}); setTimeout(renderDashboard, 100);`;
+                    iconClass = item.done ? "fas fa-check-square" : "far fa-square";
+                }
+
+                const opacity = item.done ? '0.6' : '1';
+                const textDecor = item.done ? 'line-through' : 'none';
+                const borderStyle = item.type === 'agenda' ? `border-left: 3px solid ${item.color};` : `border-left: 3px solid var(--border);`;
+
+                dashTasksDiv.innerHTML += `
+                <div style="
+                    background: var(--bg-body); 
+                    padding: 8px 10px; 
+                    border-radius: 6px; 
+                    font-size: 0.85rem; 
+                    color: var(--text-main); 
+                    margin-bottom: 6px; 
+                    display: flex; 
+                    align-items: center;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                    opacity: ${opacity};
+                    ${borderStyle}
+                " onclick="${clickAction}">
+                    <i class="${iconClass}" style="color:${item.done ? 'var(--success)' : item.color}; font-size:0.9rem; margin-right:8px; width:16px; text-align:center;"></i>
+                    <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration: ${textDecor}; font-weight:500;">
+                        ${item.title}
+                    </div>
+                    ${timeLabel}
+                </div>`;
+            });
+        }
+    }
+    
+    // --- 4. ATUALIZAR CALENDÁRIO (Adicionado no final para garantir a renderização) ---
+    // Isso garante que o calendário que adicionamos antes seja desenhado/atualizado
+    if (typeof renderDashCalendar === 'function') {
+        renderDashCalendar(typeof currentCalendarView !== 'undefined' ? currentCalendarView : 'week');
+    }
+}
+
+
+let activePopoverTimeout;
+
+function renderDashCalendar(viewType = 'week') {
+    currentCalendarView = viewType;
+    
+    // Atualiza botões
+    const btnWeek = document.getElementById('btn-view-week');
+    const btnMonth = document.getElementById('btn-view-month');
+    
+    [btnWeek, btnMonth].forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+    });
+    const activeBtn = viewType === 'week' ? btnWeek : btnMonth;
+    activeBtn.style.background = 'var(--bg-body)';
+    activeBtn.style.color = 'var(--primary)';
+    activeBtn.style.fontWeight = '700';
+
+    const grid = document.getElementById('dash-calendar-grid');
+    grid.innerHTML = '';
+    
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    
+    // Mapeia Cards (Revisões)
+    const reviewsMap = {};
+    if (typeof cards !== 'undefined') {
+        cards.forEach(card => {
+            if (!card.nextReview) return;
+            const d = new Date(card.nextReview);
+            const key = d.toDateString(); 
+            if (!reviewsMap[key]) reviewsMap[key] = 0;
+            reviewsMap[key]++;
         });
     }
 
-    // 3. RENDERIZAR LISTA (Filtrando concluídos se necessário)
-    // Se quiser esconder os feitos sempre, descomente a linha abaixo:
-    // itemsToShow = itemsToShow.filter(i => !i.done);
+    // Mapeia Agenda (Eventos) - Simples verificação se tem algo no dia
+    // Precisamos disso para pintar a bolinha da agenda no calendário
+    const eventsMap = {}; 
+    if (typeof scheduleData !== 'undefined') {
+        // scheduleData chaves são "YYYY-W-D-H"
+        // É custoso iterar tudo, faremos check reverso na hora de renderizar o dia
+    }
 
-    if (itemsToShow.length === 0) {
-        dashTasksDiv.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-top:20px;">Tudo livre hoje!</div>';
+    // Gera dias
+    let daysToRender = [];
+    if (viewType === 'week') {
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay()); 
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(startOfWeek);
+            d.setDate(startOfWeek.getDate() + i);
+            daysToRender.push(d);
+        }
     } else {
-        itemsToShow.forEach(item => {
-            // Define o clique (diferente para Agenda e Tarefa)
-            let clickAction = "";
-            let iconClass = "";
-            let timeLabel = "";
+        const year = today.getFullYear();
+        const month = today.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let i = 1; i <= daysInMonth; i++) daysToRender.push(new Date(year, month, i));
+    }
 
-            if (item.type === 'agenda') {
-                // Clique chama a função de marcar agenda e DEPOIS atualiza a home
-                clickAction = `toggleScheduleDone('${item.year}', ${item.week}, ${item.day}, ${item.startHour}, ${item.endHour}); setTimeout(renderDashboard, 100);`;
-                iconClass = item.done ? "fas fa-check-square" : "fas fa-clock";
-                timeLabel = `<span style="font-size:0.7rem; color:var(--text-muted); margin-left:auto;">${item.startHour}:00 - ${item.endHour}:00</span>`;
-            } else {
-                // Clique chama a função de marcar tarefa e DEPOIS atualiza a home
-                clickAction = `toggleTask(${item.id}); setTimeout(renderDashboard, 100);`;
-                iconClass = item.done ? "fas fa-check-square" : "far fa-square";
-            }
+    // Labels
+    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(l => {
+        const h = document.createElement('div');
+        h.className = 'calendar-header-day';
+        h.textContent = l;
+        grid.appendChild(h);
+    });
 
-            // Estilos visuais (Riscado se feito)
-            const opacity = item.done ? '0.6' : '1';
-            const textDecor = item.done ? 'line-through' : 'none';
-            const borderStyle = item.type === 'agenda' ? `border-left: 3px solid ${item.color};` : `border-left: 3px solid var(--border);`;
+    if (viewType === 'month') {
+        const skip = daysToRender[0].getDay();
+        for(let i=0; i<skip; i++) grid.appendChild(document.createElement('div'));
+    }
 
-            dashTasksDiv.innerHTML += `
-            <div style="
-                background: var(--bg-body); 
-                padding: 8px 10px; 
-                border-radius: 6px; 
-                font-size: 0.85rem; 
-                color: var(--text-main); 
-                margin-bottom: 6px; 
-                display: flex; 
-                align-items: center;
-                cursor: pointer;
-                transition: background 0.2s;
-                opacity: ${opacity};
-                ${borderStyle}
-            " onclick="${clickAction}">
-                
-                <i class="${iconClass}" style="color:${item.done ? 'var(--success)' : item.color}; font-size:0.9rem; margin-right:8px; width:16px; text-align:center;"></i>
-                
-                <div style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration: ${textDecor}; font-weight:500;">
-                    ${item.title}
+        daysToRender.forEach(date => {
+        const dateKey = date.toDateString();
+        const reviewCount = reviewsMap[dateKey] || 0;
+        const isToday = dateKey === today.toDateString();
+        
+        // Verifica se tem eventos na Agenda
+        const dayEvents = getEventsForDate(date);
+        const hasEvents = dayEvents.length > 0;
+
+        // --- LÓGICA DE CORES (Novo) ---
+        
+        // 1. Data de referência para atraso (zera hora para comparar apenas dias)
+        const checkDate = new Date(date);
+        checkDate.setHours(0,0,0,0);
+        
+        // Consideramos "atraso" se for anterior a hoje (ontem já conta como 1 dia)
+        const isPast = checkDate.getTime() < today.getTime();
+
+        // 2. Verifica pendências
+        // Eventos são pendentes se não tiverem 'done: true'
+        const pendingEvents = dayEvents.filter(ev => !ev.done);
+        // O dia tem pendência se: tem review para fazer OU tem evento não concluído
+        const hasPending = (reviewCount > 0) || (pendingEvents.length > 0);
+
+        // 3. Define Status
+        let statusClass = '';
+
+        if (!hasEvents && reviewCount === 0) {
+            // VERDE: Vazio (sem cards, sem agenda)
+            statusClass = 'status-empty';
+        } 
+        else if (!hasPending) {
+            // AZUL: Tem atividades e todas estão concluídas (0 reviews pendentes e 0 eventos pendentes)
+            statusClass = 'status-done';
+        } 
+        else if (hasPending && isPast) {
+            // VERMELHO: Tem pendência e já passou o dia
+            statusClass = 'status-late';
+        }
+        // (Dias futuros com pendências ficam com a cor padrão/neutra)
+
+
+        const cell = document.createElement('div');
+        // Adiciona a classe de status junto com as classes originais
+        cell.className = `calendar-day-cell ${isToday ? 'is-today' : ''} ${statusClass}`;
+        
+        // Estrutura Visual do Dia
+        let html = `<span style="font-size: 0.9rem; font-weight: ${isToday ? '800' : '500'}">${date.getDate()}</span>`;
+        
+        // Indicadores (Bolinhas)
+        if (reviewCount > 0 || hasEvents) {
+            html += `<div class="calendar-indicators">`;
+            if (reviewCount > 0) html += `<div class="indicator-dot dot-review" title="${reviewCount} revisões"></div>`;
+            if (hasEvents) html += `<div class="indicator-dot dot-event" title="${dayEvents.length} eventos"></div>`;
+            html += `</div>`;
+        }
+
+        cell.innerHTML = html;
+        cell.onclick = (e) => showCalendarPopoverV2(e.currentTarget, date, reviewCount, dayEvents);
+        grid.appendChild(cell);
+    });
+
+}
+
+// helper simples
+function isBeforeDay(a, b){
+  const da = new Date(a); da.setHours(0,0,0,0);
+  const db = new Date(b); db.setHours(0,0,0,0);
+  return da.getTime() < db.getTime();
+}
+function addDays(d, n){
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
+
+
+// Função Auxiliar: Extrai eventos do scheduleData Global
+function getEventsForDate(date) {
+    if (typeof scheduleData === 'undefined' || typeof getWeekNumber === 'undefined') return [];
+    
+    const year = date.getFullYear();
+    const weekNum = getWeekNumber(date);
+    
+    // Converter dia JS (0=Dom) para Agenda (0=Seg...6=Dom)
+    let dayIndex = date.getDay() - 1;
+    if (dayIndex === -1) dayIndex = 6; // Domingo vira 6
+
+    const events = [];
+    for(let h=0; h<24; h++) {
+        const key = `${year}-${weekNum}-${dayIndex}-${h}`;
+        if (scheduleData[key]) {
+            events.push({
+                time: `${h}:00`,
+                title: scheduleData[key].title,
+                color: scheduleData[key].color,
+                done: scheduleData[key].done
+            });
+        }
+    }
+    return events;
+}
+
+function showCalendarPopoverV2(element, date, reviewCount, events) {
+    const popover = document.getElementById('calendar-popover-banner');
+    
+    // 1. Monta o HTML estilo Tabela
+    const dateStr = date.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'long' });
+    const totalItems = reviewCount + events.length;
+
+    let bodyHTML = '';
+
+    // Linha de Revisões (se houver)
+    if (reviewCount > 0) {
+        bodyHTML += `
+        <div class="popover-row" style="background: rgba(var(--primary-rgb), 0.03);">
+            <div class="popover-row-icon"><i class="fas fa-layer-group" style="color:var(--primary)"></i></div>
+            <div class="popover-row-content">
+                <span style="font-weight:700; color:var(--primary)">${reviewCount}</span> cards para revisar
+            </div>
+        </div>`;
+    }
+
+    // Linhas da Agenda
+    if (events.length > 0) {
+        events.forEach(ev => {
+            const styleDone = ev.done ? 'text-decoration:line-through; opacity:0.5;' : '';
+            bodyHTML += `
+            <div class="popover-row">
+                <div class="popover-row-time">${ev.time}</div>
+                <div class="popover-row-content" style="${styleDone}">
+                    <span class="indicator-dot" style="background:${ev.color}; display:inline-block; margin-right:4px;"></span>
+                    <span class="task-title">${ev.title}</span>
                 </div>
-                ${timeLabel}
             </div>`;
         });
     }
+
+    // Estado Vazio
+    if (totalItems === 0) {
+        bodyHTML = `<div class="empty-state">Nada programado para este dia. Aproveite! ✨</div>`;
+    }
+
+    popover.innerHTML = `
+        <div class="popover-header">
+            <span class="popover-date">${dateStr}</span>
+            ${totalItems > 0 ? `<span class="popover-badge-total">${totalItems} itens</span>` : ''}
+        </div>
+        <div class="popover-body">
+            ${bodyHTML}
+        </div>
+    `;
+
+    // 2. Posicionamento Colado (Fixed Positioning Logic)
+    popover.style.display = 'flex';
+    const rect = element.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect();
+    
+    // Centraliza horizontalmente
+    let left = rect.left + (rect.width / 2) - (popoverRect.width / 2);
+    
+    // Tenta colocar EMBAIXO
+    let top = rect.bottom + 8; // 8px de respiro
+    
+    // Se sair da tela na direita, ajusta
+    if (left + popoverRect.width > window.innerWidth) {
+        left = window.innerWidth - popoverRect.width - 20;
+    }
+    // Se sair na esquerda
+    if (left < 10) left = 10;
+
+    // Se ficar muito baixo na tela (sair por baixo), joga para CIMA
+    if (top + popoverRect.height > window.innerHeight) {
+        top = rect.top - popoverRect.height - 8;
+    }
+
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`; // Note que usamos coordenadas da viewport pois é position fixed ou absolute no body
+
+    // Se estiver usando position:absolute e tiver scroll na página, precisamos somar o scroll
+    // SE o popover estiver direto no body:
+    popover.style.left = `${left + window.scrollX}px`;
+    popover.style.top = `${top + window.scrollY}px`;
+
+    // Animação
+    requestAnimationFrame(() => popover.classList.add('visible'));
+
+    // Fechar ao clicar fora
+    const closeFn = (e) => {
+        if (!popover.contains(e.target) && !element.contains(e.target)) {
+            popover.classList.remove('visible');
+            document.removeEventListener('click', closeFn);
+        }
+    };
+    // Timeout pequeno para não fechar imediatamente ao clicar no dia
+    setTimeout(() => document.addEventListener('click', closeFn), 100);
 }
 
+
+// Função para exibir o Mini Banner
+function showCalendarPopover(element, count, date) {
+    const popover = document.getElementById('calendar-popover-banner');
+    const countText = document.getElementById('popover-content-count');
+    
+    // Formata a data bonita (ex: 31 de Jan)
+    const dateStr = date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+    
+    // Atualiza conteúdo
+    popover.querySelector('.popover-title').innerText = `Para ${dateStr}:`;
+    
+    if (count === 0) {
+        countText.innerHTML = `<span style="color: var(--text-muted); font-size: 0.9rem;">Nenhum card programado</span>`;
+    } else {
+        const s = count > 1 ? 's' : '';
+        countText.innerHTML = `${count} card${s} <i class="fas fa-layer-group" style="font-size: 0.8rem; margin-left: 4px;"></i>`;
+    }
+
+    // Posicionamento Matemático
+    const rect = element.getBoundingClientRect();
+    const popoverRect = popover.getBoundingClientRect(); // Precisa estar visível ou ter tamanho
+    
+    // Torna visível primeiro para calcular (mas transparente)
+    popover.style.display = 'block';
+    
+    // Calcula centro
+    const top = rect.top - popover.offsetHeight - 12; // 12px acima do elemento
+    const left = rect.left + (rect.width / 2) - (popover.offsetWidth / 2);
+
+    popover.style.top = `${top + window.scrollY}px`;
+    popover.style.left = `${left + window.scrollX}px`;
+    
+    // Animação de entrada
+    requestAnimationFrame(() => {
+        popover.classList.add('visible');
+    });
+
+    // Auto-hide após 3 segundos
+    if (activePopoverTimeout) clearTimeout(activePopoverTimeout);
+    activePopoverTimeout = setTimeout(() => {
+        popover.classList.remove('visible');
+    }, 3000);
 }
+
+// Fechar ao clicar fora
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.calendar-day-cell')) {
+        const popover = document.getElementById('calendar-popover-banner');
+        if (popover) popover.classList.remove('visible');
+    }
+});
+
 
 
 function renderTasks() {
@@ -10131,17 +10782,25 @@ function saveCommentEdit() {
 
     }
     
-    if(studyMode !== 'simulation') {
-            // Adicionamos 'subcategory' aqui
-performanceData.push({
-    date: new Date().toISOString().split('T')[0], 
-    correct: isCor, 
-    category: currentCard.category || 'Geral',
-    subcategory: currentCard.subcategory || 'Sem Subtópico' 
-});
+   if(studyMode !== 'simulation') {
+    // Adicionamos 'subcategory' aqui
+    performanceData.push({
+        date: getLocalDateString(), // <--- CORRIGIDO
+        correct: isCor, 
+        category: currentCard.category || 'Geral',
+        subcategory: currentCard.subcategory || 'Sem Subtópico' 
+    });
 
-            salvarDados('ted_performance', performanceData);
-    }
+    salvarDados('ted_performance', performanceData);
+}
+}
+
+
+
+function getLocalDateString() {
+    const d = new Date();
+    const local = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
+    return local.toISOString().split('T')[0];
 }
 
 
@@ -10319,24 +10978,27 @@ function showAlert(title, msg) {
             });
         }
         
-        // Save the simulation result
-        function saveSimulationResult() {
-            const simRecord = {
-                id: Date.now(),
-                date: new Date().toISOString(),
-                score: simulationResults.correct,
-                total: simulationResults.total,
-                log: currentSimulationLog
-            };
-            simulationHistory.unshift(simRecord);
-            salvarDados('ted_simulation_history', simulationHistory);
-            
-            alert('Simulado salvo no histórico!');
-            // Reload performance view in background
-            renderPerformanceView();
-            // Go back to menu
-            finishRandomReview();
-        }
+function saveSimulationResult() {
+    // Pega data/hora local completa
+    const d = new Date();
+    const localISO = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString(); 
+    // ^ Isso gera algo como "2026-02-07T19:01:00.000Z" mas representando a hora local
+
+    const simRecord = {
+        id: Date.now(),
+        date: localISO, // <--- USE A VARIÁVEL AQUI
+        score: simulationResults.correct,
+        total: simulationResults.total,
+        log: currentSimulationLog
+    };
+    simulationHistory.unshift(simRecord);
+    salvarDados('ted_simulation_history', simulationHistory);
+    
+    alert('Simulado salvo no histórico!');
+    renderPerformanceView();
+    finishRandomReview();
+}
+
 
         function updateCategoryDropdowns() { 
     const listSuggestions = document.getElementById('category-list-suggestions'); 
@@ -10360,7 +11022,26 @@ function showAlert(title, msg) {
     }
 }
 
-        function exportAllData() { const d = { cards, performanceData, folders, notes, scheduleData, tasks, userData, editais, pomoSettings, pomoHistory, simulationHistory, taskTemplates, scheduleTemplates }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'})); a.download = `Teddy_Backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); }
+        function exportAllData() { 
+    const d = { 
+        cards, performanceData, folders, notes, 
+        scheduleData, tasks, userData, editais, 
+        pomoSettings, pomoHistory, simulationHistory, 
+        taskTemplates, scheduleTemplates 
+    }; 
+    
+    const a = document.createElement('a'); 
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'})); 
+    
+    // Usa a função auxiliar getLocalDateString() se já tiver criado ela
+    // Se não, pode usar a lógica inline mesmo:
+    const localDate = new Date();
+    const localStr = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    
+    a.download = `Teddy_Backup_${localStr}.json`; // <--- CORRIGIDO
+    a.click(); 
+}
+
         function importAllData(i) {
     if (i.files.length === 0) return;
     const r = new FileReader();
@@ -11855,6 +12536,8 @@ function updateDailyProgress() {
 
 
 
+
+<div id="calendar-popover-banner" class="calendar-popover"></div>
 
 
 
