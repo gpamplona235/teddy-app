@@ -29,18 +29,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* PERMITE REDIMENSIONAR O EDITOR */
-#editor-container {
-    resize: vertical; /* Permite puxar para baixo/cima */
-    overflow: auto;   /* Necessário para o resize funcionar */
-    min-height: 200px; /* Altura mínima para não sumir */
-    max-height: 800px; /* (Opcional) Altura máxima */
-}
-        /* Aumenta a fonte padrão do editor Quill */
-#editor-container .ql-editor {
-    font-size: 18px; /* O padrão costuma ser 13px ou 14px */
-    line-height: 1.6; /* Melhora a leitura também */
-}
+
         :root {
             /* CORES ORIGINAIS */
             --primary: #ed8432;
@@ -3182,7 +3171,7 @@ body.dark-mode .ql-snow .ql-picker { color: var(--text-main) !important; }
 
 .library-filters-container {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr; /* Busca maior que os outros */
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 15px;
     background: var(--bg-card);
     padding: 20px;
@@ -3234,6 +3223,14 @@ select.lib-control {
     box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15); /* Glow suave */
     outline: none;
 }
+
+.lib-wide { grid-column: span 2; }
+
+@media (max-width: 768px) {
+    .library-filters-container { grid-template-columns: 1fr 1fr; }
+    .lib-wide { grid-column: span 2; }
+}
+
 
 /* Responsividade para celular */
 @media (max-width: 768px) {
@@ -4239,6 +4236,253 @@ select.lib-control {
 .task-title { font-weight: 500; }
 .empty-state { padding: 15px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
 
+/* EDITOR DE NOTAS — ESTILO OBSIDIAN (PÁGINA INFINITA) */
+#note-editor-view {
+  padding: 0;
+  max-width: 1200px; /* Deixa o texto confortável para ler */
+}
+
+/* 1. BARRA DE FERRAMENTAS FLUTUANTE (TOTALMENTE ARREDONDADA) */
+.ql-toolbar.ql-snow {
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important; /* Arredondado em todos os cantos */
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  position: sticky;
+  top: 16px; /* Descola um pouco do teto */
+  margin-bottom: 24px; /* Espaço entre a barra e o texto */
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(var(--bg-card-rgb, 255,255,255), 0.75) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important; /* Sombra suave de flutuação */
+}
+
+.dark-mode .ql-toolbar.ql-snow {
+  background: rgba(30, 41, 59, 0.75) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+}
+
+/* Ícones da toolbar com a cor primária ao hover */
+.ql-toolbar.ql-snow .ql-formats button:hover .ql-stroke,
+.ql-toolbar.ql-snow .ql-formats button.ql-active .ql-stroke {
+  stroke: var(--primary) !important;
+}
+.ql-toolbar.ql-snow .ql-formats button:hover .ql-fill,
+.ql-toolbar.ql-snow .ql-formats button.ql-active .ql-fill {
+  fill: var(--primary) !important;
+}
+.ql-toolbar.ql-snow .ql-formats button {
+  border-radius: 6px;
+  padding: 4px 6px;
+  transition: background 0.15s;
+}
+.ql-toolbar.ql-snow .ql-formats button:hover {
+  background: var(--primary-light);
+}
+
+/* 2. ÁREA DE TEXTO INFINITA (SEM CAIXA) */
+#editor-container {
+  background: transparent !important;
+  border: none !important; /* Tira qualquer borda da caixa */
+  /* Removemos o height fixo e o overflow: auto para ele crescer infinito */
+  height: auto !important; 
+  min-height: 500px;
+  overflow: visible !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+  background: transparent !important;
+  font-family: inherit !important; /* Volta para a fonte padrão do seu app */
+  height: auto !important;
+}
+
+
+/* Onde o texto de fato é digitado */
+.ql-editor {
+  background: transparent !important;
+  color: var(--text-main) !important;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  padding: 0 20px 100px 20px !important; /* Margens laterais menores e espaço extra no final da página */
+  height: auto !important; /* Deixa esticar o quanto for necessário */
+  overflow: visible !important; /* Corta a rolagem interna, joga pra janela principal */
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--text-muted) !important;
+  font-style: normal;
+  opacity: 0.6;
+  left: 20px !important; /* Alinha o placeholder com o texto */
+}
+
+/* Remove scrollbars de dentro do editor para forçar o scroll da página */
+.ql-editor::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* 3. BARRA SUPERIOR DO EDITOR (Voltar, Pasta, Revisão, Salvar) */
+.note-editor-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border); /* Linha divisória bem sutil separando do título */
+}
+
+.note-editor-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Botão Voltar Redesenhado */
+.btn-topbar-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem; /* Aumentado para acompanhar os outros */
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 14px; /* Aumentado levemente */
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.btn-topbar-back:hover {
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Select de Pasta Estilo "Pílula Moderna" */
+.topbar-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0; /* ZERADO: O espaço passa para o select, para ele esticar até as bordas */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.topbar-select-wrapper:hover {
+  border-color: var(--primary);
+}
+
+/* O ícone da pasta passa a flutuar solto do lado esquerdo */
+.topbar-select-wrapper i.fa-folder-open {
+  position: absolute;
+  left: 14px; /* Ajustado de 12px para 14px */
+  color: var(--primary);
+  font-size: 1rem; /* Ajustado de 0.9rem para 1rem */
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* O ícone da seta passa a flutuar solto do lado direito */
+.topbar-select-wrapper i.arrow-icon {
+  position: absolute;
+  right: 14px; /* Ajustado de 12px para 14px */
+  color: var(--text-muted);
+  font-size: 0.8rem; /* Ajustado de 0.7rem para 0.8rem */
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* O select agora ocupa TODO o fundo do botão e empurra o texto com paddings para não bater nos ícones */
+.topbar-select-wrapper select {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border: none !important;
+  background: transparent !important;
+  padding: 12px 34px 12px 38px !important; /* AUMENTADO o padding superior/inferior para 12px */
+  font-weight: 600;
+  font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
+  color: var(--text-main) !important;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  min-width: 100px;
+  max-width: 350px;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.topbar-select-wrapper select:focus {
+  outline: none !important;
+}
+
+.topbar-select-wrapper select option {
+  background: var(--bg-card);
+  color: var(--text-main);
+  padding: 10px; /* Leve aumento nas opções do dropdown */
+}
+
+/* Botão de Revisão Inteligente */
+.btn-topbar-srs {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* AUMENTADO de 8px para 10px */
+  background: rgba(245, 158, 11, 0.1); 
+  color: #d97706; 
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 12px 20px; /* AUMENTADO de 10px 16px para 12px 20px */
+  font-weight: 600;
+  font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-topbar-srs:hover {
+  background: #f59e0b; 
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+/* Botão Salvar */
+.btn-topbar-save {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* AUMENTADO de 8px para 10px */
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px; /* AUMENTADO de 10px 20px para 12px 24px */
+  font-weight: 600;
+  font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.btn-topbar-save:hover {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+
+
+/* Esconde textos em telas de celular para caber tudo e focar nos ícones */
+@media (max-width: 600px) {
+  .btn-label { display: none; }
+  .btn-topbar-srs, .btn-topbar-save { padding: 10px 14px; }
+  .topbar-select-wrapper select { min-width: 50px; }
+}
+
 
 
 </style>
@@ -4485,7 +4729,7 @@ select.lib-control {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.76</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.82</div>
         </div>
 
     </nav>
@@ -4838,7 +5082,12 @@ select.lib-control {
                     <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; flex-wrap: wrap; gap:16px;">
                         <div>
                             <h3 style="color: white; margin: 0; font-size: 1.2rem;">Sessão de Estudo</h3>
-                            <p style="opacity: 0.9; margin-top: 4px; font-size: 0.9rem;">Cards para revisar: <strong id="due-count">0</strong></p>
+                            <p style="opacity: 0.9; margin-top: 4px; font-size: 0.9rem">
+  <a onclick="openReviewByCategoryModal()" style="color: white; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;">
+    Cards para revisar: <strong id="due-count">0</strong>
+  </a>
+</p>
+
                         </div>
                         <div style="display: flex; gap: 8px;">
                             <button class="action-btn" onclick="openSimulationModal()" style="background: var(--primary-dark); width: auto; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2);">
@@ -5107,37 +5356,54 @@ select.lib-control {
         <div id="total-cards-count" style="font-weight: 600; color: var(--primary);">Calculando...</div>
     </div>
 
-    <!-- Filtros -->
-    <div class="library-filters-container">
-        
-        <!-- Busca -->
-        <div class="lib-input-group">
-            <label class="lib-label">Pesquisar</label>
-            <input type="text" id="search-cards" class="lib-control" 
-                   placeholder="Digite palavras-chave..." onkeyup="renderManageList()">
-        </div>
-
-        <!-- Ordenação -->
-        <div class="lib-input-group">
-            <label class="lib-label">Ordenar por</label>
-            <select id="filter-sort" class="lib-control" onchange="renderManageList()">
-                <option value="newest">Mais Recentes</option>
-                <option value="oldest">Mais Antigos</option>
-                <option value="reviewDateAsc">Próximas Revisões (Cedo)</option>
-                <option value="reviewDateDesc">Próximas Revisões (Tarde)</option>
-                <option value="az">Ordem Alfabética (A-Z)</option>
-            </select>
-        </div>
-
-        <!-- Categoria -->
-        <div class="lib-input-group">
-            <label class="lib-label">Categoria</label>
-            <select id="filter-category" class="lib-control" onchange="renderManageList()">
-                <option value="all">Todas as Categorias</option>
-                <!-- Opções preenchidas automaticamente -->
-            </select>
-        </div>
+  <!-- Filtros -->
+<div class="library-filters-container">
+    <!-- Busca (2 colunas) -->
+    <div class="lib-input-group lib-wide">
+        <label class="lib-label">Pesquisar</label>
+        <input type="text" id="search-cards" class="lib-control" placeholder="Digite palavras-chave..." onkeyup="renderManageList()">
     </div>
+    <!-- Ordenação (2 colunas) -->
+    <div class="lib-input-group lib-wide">
+        <label class="lib-label">Ordenar por</label>
+        <select id="filter-sort" class="lib-control" onchange="renderManageList()">
+            <option value="newest">Mais Recentes</option>
+            <option value="oldest">Mais Antigos</option>
+            <option value="reviewDateAsc">Próximas Revisões (Cedo)</option>
+            <option value="reviewDateDesc">Próximas Revisões (Tarde)</option>
+            <option value="az">Ordem Alfabética (A-Z)</option>
+        </select>
+    </div>
+    <!-- Categoria -->
+    <div class="lib-input-group">
+        <label class="lib-label">Categoria</label>
+        <select id="filter-category" class="lib-control" onchange="updateLibrarySubFilters('category')">
+            <option value="all">Todas</option>
+        </select>
+    </div>
+    <!-- Subcategoria (novo) -->
+    <div class="lib-input-group">
+        <label class="lib-label">Subcategoria</label>
+        <select id="filter-subcategory" class="lib-control" onchange="updateLibrarySubFilters('subcategory')">
+            <option value="all">Todas</option>
+        </select>
+    </div>
+    <!-- Sub-subcategoria (novo) -->
+    <div class="lib-input-group">
+        <label class="lib-label">Detalhe</label>
+        <select id="filter-subsubcategory" class="lib-control" onchange="renderManageList()">
+            <option value="all">Todos</option>
+        </select>
+    </div>
+    <!-- Banca (novo) -->
+    <div class="lib-input-group">
+        <label class="lib-label">Banca</label>
+        <select id="filter-banca" class="lib-control" onchange="renderManageList()">
+            <option value="all">Todas</option>
+        </select>
+    </div>
+</div>
+
 
     <!-- Lista de Cards -->
     <div id="cards-list-container"></div>
@@ -5641,28 +5907,42 @@ select.lib-control {
             </div>
         </section>
 
-        <section id="note-editor-view" class="view-section hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <button class="btn-back" onclick="closeNoteEditor()" style="margin-bottom: 0;">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </button>
-                <div style="display:flex; gap:12px; align-items:center;">
-                    <select id="note-folder-select" style="margin-bottom:0; width:auto; padding:10px;">
-                        <option value="null">Início</option>
-                    </select>
-                    <button class="action-btn" onclick="openSRSSettings()" style="width: auto; margin-right: 5px; background: var(--warning); color: #fff;" title="Configurar Revisão">
-    <i class="fas fa-history"></i>
-</button>
-                    <button class="action-btn" onclick="saveNote()" style="width: auto;">Salvar</button>
-                </div>
+       <section id="note-editor-view" class="view-section hidden">
+    <!-- 1. NOVA BARRA SUPERIOR DO EDITOR -->
+    <div class="note-editor-topbar">
+        <button class="btn-topbar-back" onclick="closeNoteEditor()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        
+        <div class="note-editor-actions">
+            <!-- Dropdown de Pasta/Categoria -->
+            <div class="topbar-select-wrapper">
+                <i class="far fa-folder-open"></i>
+                <select id="note-folder-select">
+                    <option value="null">Início</option>
+                </select>
+                <i class="fas fa-chevron-down arrow-icon"></i>
             </div>
             
-            <input type="text" id="note-title" placeholder="Título da Anotação" style="font-size: 1.8rem; font-weight: 800; border: none; background: transparent; padding: 0; margin-bottom: 20px; color: var(--text-main);">
-            <!-- O Quill vai nascer aqui dentro -->
-          <div id="editor-container" style="min-height: 600px; height: 65vh; max-height: 90vh; resize: vertical; overflow: auto; border-radius: 0 0 8px 8px;"></div>
+            <!-- Botão Revisão Inteligente -->
+            <button class="btn-topbar-srs" onclick="openSRSSettings()" title="Configurar Revisão Inteligente">
+                <i class="fas fa-brain"></i> <span class="btn-label">Revisão</span>
+            </button>
+            
+            <!-- Botão Salvar -->
+            <button class="btn-topbar-save" onclick="saveNote()">
+                <i class="fas fa-save"></i> <span class="btn-label">Salvar</span>
+            </button>
+        </div>
+    </div>
+    
+    <input type="text" id="note-title" placeholder="Título da Anotação" style="font-size: 1.8rem; font-weight: 800; border: none; background: transparent; padding: 0; margin-bottom: 20px; color: var(--text-main);">
+    
+    <!-- O Quill vai nascer aqui dentro -->
+    <div id="editor-container"></div>
+</section>
 
 
-        </section>
 
         <section id="card-detail-view" class="view-section hidden">
             <button class="btn-back" onclick="switchTab('study'); switchStudyTab('library');">
@@ -6153,6 +6433,25 @@ select.lib-control {
         </div>
     </div>
 
+    <!-- Modal: Revisar por Categoria -->
+<div id="review-category-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div class="card-box" style="width:100%;max-width:460px;margin:0;text-align:left;max-height:90vh;display:flex;flex-direction:column;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 style="margin:0;color:var(--primary)">Revisar por Categoria</h3>
+      <button class="btn-icon" onclick="document.getElementById('review-category-modal').classList.add('hidden')"><i class="fas fa-times"></i></button>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px;">Escolha uma categoria para revisar só aqueles cards pendentes.</p>
+    <div id="review-category-list" style="overflow-y:auto;flex:1;padding-right:4px;"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <button class="action-btn" onclick="startReviewByCategory(null);document.getElementById('review-category-modal').classList.add('hidden');" style="width:100%;">
+        <i class="fas fa-layer-group"></i> Revisar Todas as Categorias
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
     <!-- Modal genérico para edição -->
     <div id="generic-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center; padding: 20px;">
         <div class="card-box" style="width:100%;max-width:500px;margin:0; text-align: left; max-height: 90vh; display:flex; flex-direction:column;">
@@ -6216,62 +6515,106 @@ select.lib-control {
         </div>
     </div>
 
-    <!-- Modal para vincular tópico a categoria de cards E anotações -->
-    <div id="link-topic-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center; padding: 20px;">
-        <div class="card-box" style="width:100%;max-width:500px;margin:0; text-align: left; max-height: 90vh; display:flex; flex-direction:column;">
-            <h3>Vincular Conteúdo</h3>
-            <p style="color:var(--text-muted); margin-bottom:16px;">Associe este tópico a cards de estudo e/ou uma anotação do caderno.</p>
+<!-- Modal de Vinculação (Corrigido) -->
+<div id="link-topic-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2000;display:flex;align-items:center;justify-content:center; padding: 15px;">
+    
+    <style>
+        .link-modal-section { background: var(--bg-body); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .link-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-weight: 700; color: var(--primary); font-size: 1rem; }
+        .selected-chip { display: flex; justify-content: space-between; align-items: center; background: #e0f2fe; color: var(--primary); padding: 12px 16px; border-radius: 8px; font-weight: 600; border: 1px solid #bae6fd; }
+        .remove-link-btn { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; padding: 4px 8px; transition: transform 0.2s; }
+        .remove-link-btn:hover { transform: scale(1.1); }
+        .sub-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        @media (max-width: 600px) { .sub-options-grid { grid-template-columns: 1fr; } }
+        .search-result-item { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+        .search-result-item:hover { background: var(--bg-main); }
+    </style>
+
+    <div class="card-box" style="width:100%;max-width:550px;margin:0; text-align: left; max-height: 90vh; display:flex; flex-direction:column; overflow-y: auto; padding: 0;">
+        
+        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border);">
+            <h3 style="margin:0; font-size: 1.3rem;">Vincular Conteúdo</h3>
+            <p style="color:var(--text-muted); margin-top:4px; font-size: 0.9rem;">Defina o material de revisão para este tópico.</p>
+        </div>
+
+        <div style="padding: 24px;">
             
-            <div style="margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:16px;">
-                <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">1. Vincular Flashcards</label>
-                <label style="font-weight:600; margin-bottom:4px; display:block; font-size:0.9rem;">Categoria Principal</label>
-                
-                <!-- NEW SEARCHABLE DROPDOWN FOR CATEGORIES -->
-                <div class="search-container">
-                    <input type="text" id="link-category-search" placeholder="Buscar categoria..." onkeyup="filterLinkCategories()" onfocus="filterLinkCategories()" autocomplete="off">
-                    <div id="link-category-results" class="search-results-list"></div>
+            <!-- 1. FLASHCARDS -->
+            <div class="link-modal-section">
+                <div class="link-section-header"><i class="fas fa-layer-group"></i> 1. Flashcards (Questões)</div>
+
+                <!-- Busca -->
+                <div id="link-cat-search-container">
+                    <div class="search-container" style="margin-bottom:0;">
+                        <input type="text" id="link-category-search" placeholder="Buscar Matéria..." onkeyup="filterLinkCategories()" onfocus="filterLinkCategories()" autocomplete="off" style="margin-bottom:0;">
+                        <div id="link-category-results" class="search-results-list" style="max-height: 150px; overflow-y: auto; display: none;"></div>
+                    </div>
                 </div>
-                
-                <label style="font-weight:600; margin-bottom:4px; display:block; font-size:0.9rem;">Subcategoria (Opcional)</label>
-                <select id="link-subcategory-select" style="margin-bottom:12px;">
-                    <option value="">Todas as subcategorias</option>
-                </select>
-                
-                <div id="link-preview" style="background:var(--bg-body); padding:10px; border-radius:8px; font-size:0.9rem; display:none;">
-                    Cards disponíveis: <span id="link-card-count" style="font-weight:bold; color:var(--primary);">0</span>
+
+                <!-- Selecionado -->
+                <div id="link-cat-selected-container" class="hidden">
+                    <div class="selected-chip">
+                        <span id="display-selected-category">Categoria</span>
+                        <button class="remove-link-btn" onclick="clearLinkCategory()"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <div class="sub-options-grid">
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:4px; display:block;">Tópico (Sub)</label>
+                            <select id="link-subcategory-select" class="lib-control" style="margin:0;" onchange="updateLinkSubsubcategories(this.value)">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:4px; display:block;">Detalhe (Sub-sub)</label>
+                            <select id="link-subsubcategory-select" class="lib-control" style="margin:0;" onchange="updateLinkPreview()">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="link-preview" style="margin-top:12px; font-size:0.85rem; color:var(--primary); font-weight:600; display:flex; align-items:center; gap:6px;">
+                        <i class="fas fa-check-circle"></i> <span id="link-card-count">0</span> cards vinculados.
+                    </div>
                 </div>
             </div>
 
-          <div style="margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:16px;">
-    <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">2. Vincular Anotação</label>
-    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">
-        Selecione uma anotação do seu Caderno para associar a este tópico. Útil para resumos teóricos ou mapas mentais.
-    </p>
-    <!-- NEW SEARCHABLE DROPDOWN FOR NOTES -->
-    <div class="search-container">
-        <input type="text" id="link-note-search" placeholder="Buscar anotação..." onkeyup="filterLinkNotes()" onfocus="filterLinkNotes()" autocomplete="off">
-        <div id="link-note-results" class="search-results-list"></div>
-    </div>
-</div>
+            <!-- 2. ANOTAÇÕES -->
+            <div class="link-modal-section">
+                <div class="link-section-header"><i class="fas fa-sticky-note"></i> 2. Anotação (Resumo)</div>
+                
+                <div id="link-note-search-container">
+                    <div class="search-container" style="margin-bottom:0;">
+                        <input type="text" id="link-note-search" placeholder="Buscar resumo..." onkeyup="filterLinkNotes()" onfocus="filterLinkNotes()" autocomplete="off" style="margin-bottom:0;">
+                        <div id="link-note-results" class="search-results-list" style="max-height: 150px; overflow-y: auto; display: none;"></div>
+                    </div>
+                </div>
 
-            <!-- NOVA SEÇÃO: Vincular Link Externo -->
-<div style="margin-bottom:20px;">
-    <label style="font-weight:700; margin-bottom:8px; display:block; color:var(--primary);">3. Vincular Link Externo</label>
-    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">
-        Cole o link para um caderno de questões externo (ex: QConcursos, TEC Concursos) ou qualquer outro material de estudo online relacionado a este tópico.
-    </p>
-    <div class="search-container">
-        <input type="text" id="link-url-input" placeholder="Cole o link aqui (https://...)" autocomplete="off">
-    </div>
-</div>
+                <div id="link-note-selected-container" class="hidden">
+                     <div class="selected-chip" style="background: #fdf4ff; border-color: #f0abfc; color: #c026d3;">
+                        <span id="display-selected-note">Título</span>
+                        <button class="remove-link-btn" onclick="clearLinkNote()" style="color: #c026d3;"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
 
-            
-            <div style="display:flex;gap:10px;">
-                <button class="action-btn" id="link-topic-confirm-btn">Salvar Vínculos</button>
-                <button class="btn-outline" onclick="document.getElementById('link-topic-modal').classList.add('hidden')">Cancelar</button>
+            <!-- 3. LINK EXTERNO -->
+            <div class="link-modal-section" style="margin-bottom:0;">
+                <div class="link-section-header"><i class="fas fa-link"></i> 3. Link Externo (URL)</div>
+                <input type="text" id="link-url-input" placeholder="Ex: https://..." autocomplete="off" style="margin-bottom:0;">
             </div>
         </div>
+
+        <div style="padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border); border-radius: 0 0 12px 12px; display:flex; justify-content:flex-end; gap:12px;">
+            <button class="btn-outline" onclick="document.getElementById('link-topic-modal').classList.add('hidden')">Cancelar</button>
+            <button class="action-btn" style="width:auto; padding: 0 24px;" onclick="saveTopicLink()">Salvar Alterações</button>
+        </div>
     </div>
+</div>
+
+
+
+
 
     <!-- NEW: Template Management Modal -->
     <div id="template-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center; padding: 20px;">
@@ -7629,10 +7972,8 @@ function renameSubcategory(category, oldName, newName) {
     
     // Load specific logic
     if (subTab === 'practice') loadStudyView();
-    if (subTab === 'library') {
-        updateCategoryDropdowns(); 
-        renderManageList();
-    }
+  if (subTab === 'library') { populateLibraryFilters(); renderManageList(); }
+
     
     // LINHA NOVA 2: Carrega a árvore quando clica na aba explore
     if (subTab === 'explore') renderExploreTree(); 
@@ -7642,6 +7983,38 @@ function renameSubcategory(category, oldName, newName) {
         updateCategoryDropdowns(); 
     }
 }
+
+function normalizeBancaName(s) {
+  return (s || "").replace(/\s+/g, " ").trim();
+}
+
+function limparBancasDuplicadas() {
+  if (!Array.isArray(cards)) return;
+
+  let changed = 0;
+
+  cards.forEach(c => {
+    const oldVal = c.banca;
+    const newVal = normalizeBancaName(oldVal);
+
+    if ((oldVal || "") !== newVal) {
+      c.banca = newVal;
+      changed++;
+    }
+  });
+
+  if (changed === 0) {
+    if (typeof showAlert === "function") showAlert("Tudo certo", "Nenhuma banca precisava de correção.");
+    return;
+  }
+
+  salvarDados("tedflashcards", cards).then(() => {
+    if (typeof showAlert === "function") showAlert("Concluído", `${changed} cards atualizados (banca normalizada).`);
+    if (typeof populateLibraryFilters === "function") populateLibraryFilters();
+    if (typeof renderManageList === "function") renderManageList();
+  });
+}
+
 
 
 
@@ -7956,187 +8329,295 @@ function renameSubcategory(category, oldName, newName) {
         }
         // --- POMODORO LOGIC END ---
 
-        function openLinkTopicModal(subjectId, topicId) {
-    linkingTopicData = { subjectId, topicId };
-    const edital = editais.find(e => e.id === currentEditalId);
-    const subject = edital.subjects.find(s => s.id === subjectId);
-    const topic = subject.topics.find(t => t.id === topicId);
-    
-    // Setup Categories
-    selectedLinkCategory = topic.linkedCategory || null;
-    document.getElementById('link-category-search').value = selectedLinkCategory || '';
-    updateLinkSubcategories(topic.linkedSubcategory);
-    updateLinkPreview();
+                // Abre o Modal e configura o estado inicial (Busca vs Selecionado)
+      // --- FUNÇÕES DE VINCULAÇÃO (EDITE ESTE BLOCO INTEIRO) ---
 
-    // Setup Notes
-    selectedLinkNoteId = topic.linkedNoteId || null;
-    if (selectedLinkNoteId) {
-        const note = notes.find(n => n.id === selectedLinkNoteId);
-        document.getElementById('link-note-search').value = note ? note.title : '';
-    } else {
+    function openLinkTopicModal(subjectId, topicId) {
+        linkingTopicData = { subjectId, topicId };
+
+        const edital = editais.find(e => e.id == currentEditalId);
+        const subject = edital.subjects.find(s => s.id == subjectId);
+        const topic = subject.topics.find(t => t.id == topicId);
+        
+        document.getElementById('link-topic-modal').classList.remove('hidden');
+
+        // --- 1. FLASHCARDS ---
+        selectedLinkCategory = topic.linkedCategory || null;
+
+        if (selectedLinkCategory) {
+            // UI: Configura visual de "Selecionado"
+            document.getElementById('link-cat-search-container').classList.add('hidden');
+            document.getElementById('link-cat-selected-container').classList.remove('hidden');
+            document.getElementById('display-selected-category').innerText = selectedLinkCategory;
+            
+            // LÓGICA DE CASCATA: Carrega Subcategorias e DEPOIS Sub-subcategorias
+            // false = não resetar, usar o valor salvo
+            updateLinkSubcategories(topic.linkedSubcategory, false);
+            
+            // O updateLinkSubcategories já popula o select de subcategoria.
+            // Agora populamos o sub-sub com base no sub salvo.
+            updateLinkSubsubcategories(topic.linkedSubsubcategory);
+        } else {
+            // Se não tem nada salvo, mostra a busca limpa
+            clearLinkCategory(); 
+        }
+
+        // --- 2. ANOTAÇÕES ---
+        selectedLinkNoteId = topic.linkedNoteId || null;
+        if (selectedLinkNoteId) {
+            const note = notes.find(n => n.id == selectedLinkNoteId);
+            selectLinkNote(selectedLinkNoteId, note ? note.title : 'Nota desconhecida');
+        } else {
+            clearLinkNote();
+        }
+
+        // --- 3. URL ---
+        document.getElementById('link-url-input').value = topic.linkedUrl || '';
+    }
+
+    // Busca Categorias (Digitando)
+    function filterLinkCategories() {
+        const input = document.getElementById('link-category-search');
+        const filter = input.value.toLowerCase();
+        const results = document.getElementById('link-category-results');
+        
+        // Pega categorias únicas
+        const categories = [...new Set(cards.map(c => c.category || 'Sem Categoria'))].sort();
+        const filtered = categories.filter(c => c.toLowerCase().includes(filter));
+
+        results.innerHTML = '';
+        if (filtered.length > 0) {
+            filtered.forEach(cat => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.innerText = cat;
+                // Usando função anônima para evitar problemas de aspas
+                item.onclick = function() { selectLinkCategory(cat); };
+                results.appendChild(item);
+            });
+            results.style.display = 'block';
+        } else {
+            results.style.display = 'none';
+        }
+    }
+
+    // Seleciona uma categoria (Muda para visual de Chip)
+    function selectLinkCategory(cat, resetSubs = true) {
+        selectedLinkCategory = cat;
+        
+        // UI: Esconde Busca, Mostra Selecionado
+        document.getElementById('link-cat-search-container').classList.add('hidden');
+        document.getElementById('link-cat-selected-container').classList.remove('hidden');
+        document.getElementById('display-selected-category').innerText = cat;
+        
+        // Limpa lista de resultados e input
+        document.getElementById('link-category-results').style.display = 'none';
+        document.getElementById('link-category-search').value = '';
+
+        // Se for uma nova seleção manual, reseta e recarrega os subs do zero
+        // Se vier do carregamento inicial (openLinkTopicModal), resetSubs será false
+        if (resetSubs) {
+            updateLinkSubcategories(null, true);
+        }
+    }
+
+    // Desvincula Categoria (Volta para visual de Busca)
+    function clearLinkCategory() {
+        selectedLinkCategory = null;
+
+        // UI: Esconde Selecionado, Mostra Busca
+        document.getElementById('link-cat-selected-container').classList.add('hidden');
+        document.getElementById('link-cat-search-container').classList.remove('hidden');
+        
+        // Reseta selects internos
+        document.getElementById('link-subcategory-select').innerHTML = '<option value="">Todos</option>';
+        document.getElementById('link-subsubcategory-select').innerHTML = '<option value="">Todos</option>';
+        document.getElementById('link-card-count').innerText = '0';
+    }
+
+    // Busca Notas (Corrigido com criação de elemento seguro)
+    function filterLinkNotes() {
+        const input = document.getElementById('link-note-search');
+        const filter = input.value.toLowerCase();
+        const results = document.getElementById('link-note-results');
+        
+        const filtered = notes.filter(n => n.title.toLowerCase().includes(filter));
+
+        results.innerHTML = '';
+        if (filtered.length > 0) {
+            filtered.forEach(n => {
+                const folderName = n.folderId ? (folders.find(f => f.id == n.folderId)?.name || 'Pasta') : 'Início';
+                
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.innerHTML = `<strong>${n.title}</strong><span style="font-size:0.8rem; color:var(--text-muted); float:right;">${folderName}</span>`;
+                
+                item.onclick = function() { selectLinkNote(n.id, n.title); };
+                
+                results.appendChild(item);
+            });
+            results.style.display = 'block';
+        } else {
+            results.style.display = 'none';
+        }
+    }
+
+    function selectLinkNote(id, title) {
+        selectedLinkNoteId = id;
+        document.getElementById('link-note-search-container').classList.add('hidden');
+        document.getElementById('link-note-selected-container').classList.remove('hidden');
+        document.getElementById('display-selected-note').innerText = title;
+        document.getElementById('link-note-results').style.display = 'none';
         document.getElementById('link-note-search').value = '';
     }
 
-    // Setup External Link (NOVO)
-    // Preenche o campo com a URL salva ou vazio
-    document.getElementById('link-url-input').value = topic.linkedUrl || '';
-
-    document.getElementById('link-topic-modal').classList.remove('hidden');
-}
-
-        function filterLinkCategories() {
-            const input = document.getElementById('link-category-search');
-            const filter = input.value.toLowerCase();
-            const results = document.getElementById('link-category-results');
-            
-            const categories = [...new Set(cards.map(c => c.category || 'Geral'))].sort();
-            const filtered = categories.filter(c => c.toLowerCase().includes(filter));
-            
-            results.innerHTML = '';
-            if (filtered.length > 0) {
-                filtered.forEach(cat => {
-                    results.innerHTML += `<div class="search-result-item" onclick="selectLinkCategory('${cat}')">${cat}</div>`;
-                });
-                results.style.display = 'block';
-            } else {
-                results.style.display = 'none';
-            }
-        }
-        
-        function selectLinkCategory(cat) {
-            selectedLinkCategory = cat;
-            document.getElementById('link-category-search').value = cat;
-            document.getElementById('link-category-results').style.display = 'none';
-            updateLinkSubcategories();
-            updateLinkPreview();
-        }
-
-        function filterLinkNotes() {
-            const input = document.getElementById('link-note-search');
-            const filter = input.value.toLowerCase();
-            const results = document.getElementById('link-note-results');
-            
-            const filtered = notes.filter(n => n.title.toLowerCase().includes(filter));
-            
-            results.innerHTML = '';
-            // Add option to clear
-            results.innerHTML += `<div class="search-result-item" onclick="selectLinkNote(null, '')" style="color:var(--danger);"><i class="fas fa-times"></i> Nenhuma anotação</div>`;
-            
-            if (filtered.length > 0) {
-                filtered.forEach(n => {
-                    const folderName = n.folderId ? (folders.find(f => f.id === n.folderId)?.name || 'Pasta desconhecida') : 'Início';
-                    results.innerHTML += `<div class="search-result-item" onclick="selectLinkNote('${n.id}', '${n.title}')"><strong>${n.title}</strong><span>${folderName}</span></div>`;
-                });
-                results.style.display = 'block';
-            } else if (filter === '') {
-                // Show recent/all if empty
-                 notes.slice(0, 10).forEach(n => {
-                    const folderName = n.folderId ? (folders.find(f => f.id === n.folderId)?.name || 'Pasta desconhecida') : 'Início';
-                    results.innerHTML += `<div class="search-result-item" onclick="selectLinkNote('${n.id}', '${n.title}')"><strong>${n.title}</strong><span>${folderName}</span></div>`;
-                });
-                results.style.display = 'block';
-            } else {
-                results.style.display = 'none';
-            }
-        }
-        
-        function selectLinkNote(id, title) {
-            selectedLinkNoteId = id;
-            document.getElementById('link-note-search').value = title;
-            document.getElementById('link-note-results').style.display = 'none';
-        }
-
-        function updateLinkSubcategories(selectedSubcategory = '') {
-            const subcategorySelect = document.getElementById('link-subcategory-select');
-            const category = selectedLinkCategory;
-            subcategorySelect.innerHTML = '<option value="">Todas as subcategorias</option>';
-            if (category) {
-                const subcategories = [...new Set(cards.filter(c => (c.category || 'Geral') === category && c.subcategory).map(c => c.subcategory))].sort();
-                subcategories.forEach(sub => {
-                    subcategorySelect.innerHTML += `<option value="${sub}" ${selectedSubcategory === sub ? 'selected' : ''}>${sub}</option>`;
-                });
-            }
-            updateLinkPreview();
-        }
-
-        // Adicione esta nova função
-function updateSubsubcategorySuggestions() {
-    const currentCat = document.getElementById('input-category').value;
-    const currentSub = document.getElementById('input-subcategory').value;
-    const subSubList = document.getElementById('subsubcategory-list-suggestions');
-    
-    subSubList.innerHTML = '';
-    
-    if (!cards) return;
-
-    // Filtra cards que tenham a mesma categoria e subcategoria
-    const relevantCards = cards.filter(c => 
-        (c.category || '').toLowerCase() === currentCat.toLowerCase() &&
-        (c.subcategory || '').toLowerCase() === currentSub.toLowerCase()
-    );
-
-    // Cria lista única de sub-subcategorias
-    const subsubs = [...new Set(relevantCards.map(c => c.subsubcategory).filter(Boolean))];
-
-    subsubs.forEach(s => {
-        const option = document.createElement('option');
-        option.value = s;
-        subSubList.appendChild(option);
-    });
-}
-
-
-        function updateLinkPreview() {
-            const category = selectedLinkCategory;
-            const subcategory = document.getElementById('link-subcategory-select').value;
-            const previewDiv = document.getElementById('link-preview');
-            const countSpan = document.getElementById('link-card-count');
-            
-            if (!category) { 
-                previewDiv.style.display = 'none'; 
-                return; 
-            }
-            
-            let filteredCards = cards.filter(c => (c.category || 'Geral') === category);
-            if (subcategory) filteredCards = filteredCards.filter(c => c.subcategory === subcategory);
-            
-            countSpan.textContent = filteredCards.length;
-            previewDiv.style.display = 'block';
-        }
-
-        function saveTopicLink() {
-    if (!linkingTopicData) return;
-    const { subjectId, topicId } = linkingTopicData;
-
-    const category = selectedLinkCategory;
-    const subcategory = document.getElementById('link-subcategory-select').value;
-    const noteId = selectedLinkNoteId;
-    
-    // --- NOVO: Pega o valor da URL ---
-    let url = document.getElementById('link-url-input').value.trim();
-    // Adiciona https:// se o usuário esqueceu, para evitar problemas
-    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url;
+    function clearLinkNote() {
+        selectedLinkNoteId = null;
+        document.getElementById('link-note-selected-container').classList.add('hidden');
+        document.getElementById('link-note-search-container').classList.remove('hidden');
+        document.getElementById('link-note-search').value = '';
     }
 
-    const edital = editais.find(e => e.id === currentEditalId);
-    const subject = edital.subjects.find(s => s.id === subjectId);
-    const topic = subject.topics.find(t => t.id === topicId);
+    // Atualiza Select de Subcategorias
+    function updateLinkSubcategories(savedSubValue, resetChain = false) {
+        const subcategorySelect = document.getElementById('link-subcategory-select');
+        const category = selectedLinkCategory;
 
-    // Update Card Links
-    topic.linkedCategory = category || null;
-    topic.linkedSubcategory = subcategory || null;
+        subcategorySelect.innerHTML = '<option value="">Todos</option>';
 
-    // Update Note Link
-    topic.linkedNoteId = noteId || null;
-    
-    // --- NOVO: Salva a URL ---
-    topic.linkedUrl = url || null;
+        if (category) {
+            const subcategories = [...new Set(cards.filter(c => c.category == category && c.subcategory && c.subcategory != 'Geral').map(c => c.subcategory))].sort();
+            
+            subcategories.forEach(sub => {
+                // Marca como selecionado se bater com o valor salvo
+                const isSelected = (savedSubValue && savedSubValue == sub);
+                subcategorySelect.innerHTML += `<option value="${sub}" ${isSelected ? 'selected' : ''}>${sub}</option>`;
+            });
+            
+            // Se tiver valor salvo, forçamos o value do select para garantir
+            if (savedSubValue) {
+                subcategorySelect.value = savedSubValue;
+            }
+        }
+        
+        // Se for reset manual, limpa o próximo nível
+        // Se for carregamento, passamos o controle para quem chamou (openLinkTopicModal) chamar o próximo nível
+        if (resetChain) {
+            updateLinkSubsubcategories(null);
+        }
+    }
 
-    saveEditais();
-    document.getElementById('link-topic-modal').classList.add('hidden');
-    renderEditalDetail();
-}
+    // Atualiza Select de Sub-subcategorias
+    function updateLinkSubsubcategories(savedSubSubValue) {
+        const subSubSelect = document.getElementById('link-subsubcategory-select');
+        const category = selectedLinkCategory;
+        const subcategory = document.getElementById('link-subcategory-select').value;
+
+        subSubSelect.innerHTML = '<option value="">Todos</option>';
+
+        if (category && subcategory) {
+             const subSubCats = [...new Set(cards
+                .filter(c => c.category == category && c.subcategory == subcategory && c.subsubcategory && c.subsubcategory != 'Outros')
+                .map(c => c.subsubcategory))].sort();
+
+             subSubCats.forEach(ss => {
+                 const isSelected = (savedSubSubValue && savedSubSubValue == ss);
+                 subSubSelect.innerHTML += `<option value="${ss}" ${isSelected ? 'selected' : ''}>${ss}</option>`;
+             });
+
+             if (savedSubSubValue) {
+                 subSubSelect.value = savedSubSubValue;
+             }
+        }
+        updateLinkPreview();
+    }
+
+    // Esta função é usada na tela de CRIAÇÃO de cards (diferente da vinculação), mas mantive aqui pois estava no seu bloco
+    function updateSubsubcategorySuggestions() {
+        const currentCat = document.getElementById('input-category').value;
+        const currentSub = document.getElementById('input-subcategory').value;
+        const subSubList = document.getElementById('subsubcategory-list-suggestions');
+        
+        subSubList.innerHTML = '';
+        
+        if (!cards) return;
+
+        const relevantCards = cards.filter(c => 
+            (c.category || '').toLowerCase() === currentCat.toLowerCase() &&
+            (c.subcategory || '').toLowerCase() === currentSub.toLowerCase()
+        );
+
+        const subsubs = [...new Set(relevantCards.map(c => c.subsubcategory).filter(Boolean))];
+
+        subsubs.forEach(s => {
+            const option = document.createElement('option');
+            option.value = s;
+            subSubList.appendChild(option);
+        });
+    }
+
+
+
+            function updateLinkPreview() {
+        const category = selectedLinkCategory;
+        const subcategory = document.getElementById('link-subcategory-select').value;
+        const subsubcategory = document.getElementById('link-subsubcategory-select').value;
+        
+        const previewDiv = document.getElementById('link-preview');
+        const countSpan = document.getElementById('link-card-count');
+
+        if (!category) {
+            previewDiv.style.display = 'none';
+            return;
+        }
+
+        let filteredCards = cards.filter(c => c.category == category || (category == 'Geral' && !c.category));
+
+        if (subcategory) {
+            filteredCards = filteredCards.filter(c => c.subcategory == subcategory);
+        }
+        
+        if (subsubcategory) {
+            filteredCards = filteredCards.filter(c => c.subsubcategory == subsubcategory);
+        }
+
+        countSpan.textContent = filteredCards.length;
+        previewDiv.style.display = 'block';
+    }
+
+    function saveTopicLink() {
+        if (!linkingTopicData) return;
+        const { subjectId, topicId } = linkingTopicData;
+        const category = selectedLinkCategory;
+        const subcategory = document.getElementById('link-subcategory-select').value;
+        const subsubcategory = document.getElementById('link-subsubcategory-select').value;
+        const noteId = selectedLinkNoteId;
+        
+        let url = document.getElementById('link-url-input').value.trim();
+        if (url && !url.startsWith('http') && !url.startsWith('https')) {
+            url = 'https://' + url;
+        }
+
+        const edital = editais.find(e => e.id == currentEditalId);
+        const subject = edital.subjects.find(s => s.id == subjectId);
+        const topic = subject.topics.find(t => t.id == topicId);
+
+        // Update Card Links
+        topic.linkedCategory = category || null;
+        topic.linkedSubcategory = subcategory || null;
+        topic.linkedSubsubcategory = subsubcategory || null; // NOVO
+
+        // Update Note Link
+        topic.linkedNoteId = noteId || null;
+        
+        // Update URL
+        topic.linkedUrl = url || null;
+
+        saveEditais();
+        document.getElementById('link-topic-modal').classList.add('hidden');
+        renderEditalDetail();
+    }
+
 
 
 function openExternalLink(url) {
@@ -8152,34 +8633,49 @@ function openExternalLink(url) {
             openNoteEditor(noteId);
         }
 
-        function startSimulationForTopic(subjectId, topicId) {
-            const edital = editais.find(e => e.id === currentEditalId);
-            const subject = edital.subjects.find(s => s.id === subjectId);
-            const topic = subject.topics.find(t => t.id === topicId);
-            if (!topic.linkedCategory) return alert('Este tópico não está vinculado a nenhuma categoria de cards.');
-            let filteredCards = cards.filter(c => (c.category || 'Geral') === topic.linkedCategory);
-            if (topic.linkedSubcategory) filteredCards = filteredCards.filter(c => c.subcategory === topic.linkedSubcategory);
-            if (filteredCards.length === 0) return alert('Nenhum card encontrado para esta associação.');
-            simulationQueue = [...filteredCards].sort(() => 0.5 - Math.random());
-            simulationResults = { correct: 0, wrong: 0, total: simulationQueue.length };
-            currentSimulationLog = [];
-            currentSessionTotal = simulationQueue.length;
-            currentSessionDone = 0;
-            studyMode = 'simulation';
-            
-            // NEW NAV INIT
-            currentCardIndex = 0;
-            sessionAnswers = {};
-            
-            document.getElementById('study-content').classList.remove('hidden');
-            document.getElementById('simulation-result').classList.add('hidden');
-            document.getElementById('no-cards-msg').classList.add('hidden');
-            showCard(simulationQueue[0]);
-            switchTab('study');
-            switchStudyTab('practice');
-            document.getElementById('due-count').innerText = simulationQueue.length;
-            document.getElementById('finish-review-btn').classList.remove('hidden'); // Show finish early
+            function startSimulationForTopic(subjectId, topicId) {
+        const edital = editais.find(e => e.id == currentEditalId);
+        const subject = edital.subjects.find(s => s.id == subjectId);
+        const topic = subject.topics.find(t => t.id == topicId);
+
+        if (!topic.linkedCategory) return; // Should not happen given button logic
+
+        // Filter cards
+        let filteredCards = cards.filter(c => c.category == topic.linkedCategory || (topic.linkedCategory == 'Geral' && !c.category));
+        
+        if (topic.linkedSubcategory) {
+            filteredCards = filteredCards.filter(c => c.subcategory == topic.linkedSubcategory);
         }
+        
+        // NOVO: Filtro por Sub-subcategoria
+        if (topic.linkedSubsubcategory) {
+            filteredCards = filteredCards.filter(c => c.subsubcategory == topic.linkedSubsubcategory);
+        }
+
+        if (filteredCards.length === 0) return alert("Nenhum card encontrado para esta associação.");
+
+        // Start session
+        simulationQueue = [...filteredCards.sort(() => 0.5 - Math.random())];
+        simulationResults = { correct: 0, wrong: 0, total: simulationQueue.length };
+        currentSimulationLog = { currentSessionTotal: simulationQueue.length, currentSessionDone: 0};
+
+        studyMode = 'simulation';
+        // NEW NAV INIT
+        currentCardIndex = 0;
+        sessionAnswers = {}; // Reset answers
+        
+        document.getElementById('study-content').classList.remove('hidden');
+        document.getElementById('simulation-result').classList.add('hidden');
+        document.getElementById('no-cards-msg').classList.add('hidden');
+
+        showCard(simulationQueue[0]);
+        switchTab('study');
+        switchStudyTab('practice');
+        
+        document.getElementById('due-count').innerText = simulationQueue.length;
+        document.getElementById('finish-review-btn').classList.remove('hidden'); // Show finish early
+    }
+
 
         function loadStudyView() {
             if (studyMode === 'simulation' && simulationQueue.length > 0) {
@@ -9951,7 +10447,7 @@ function deleteScheduleBlock() {
     
     // --- NOVOS CAMPOS ADICIONADOS AQUI ---
     const cargo = document.getElementById('input-cargo').value;
-    const banca = document.getElementById('input-banca').value;
+    const banca = normalizeBancaName(document.getElementById('input-banca').value);
     const ano = document.getElementById('input-ano').value;
     // -------------------------------------
 
@@ -10132,7 +10628,14 @@ function renderManageList() {
 
     // Pega valores
     const s = searchInput ? searchInput.value.toLowerCase() : '';
-    const catFilter = categorySelect ? categorySelect.value : 'all';
+    const catFilter    = categorySelect ? categorySelect.value : 'all';
+const subSelect    = document.getElementById('filter-subcategory');
+const subsubSelect = document.getElementById('filter-subsubcategory');
+const bancaSelect  = document.getElementById('filter-banca');
+const subFilter    = subSelect    ? subSelect.value    : 'all';
+const subsubFilter = subsubSelect ? subsubSelect.value : 'all';
+const bancaFilter  = bancaSelect  ? bancaSelect.value  : 'all';
+
     const sortFilter = sortSelect ? sortSelect.value : 'newest';
 
     // 1. Filtragem
@@ -10140,8 +10643,12 @@ function renderManageList() {
     let filtered = cards.filter(c => {
         const matchesSearch = c.question.toLowerCase().includes(s) ||
                               (c.category && c.category.toLowerCase().includes(s));
-        const matchesCat = catFilter === 'all' || c.category === catFilter;
-        return matchesSearch && matchesCat;
+        const matchesCat    = catFilter    === 'all' || c.category      === catFilter;
+const matchesSub    = subFilter    === 'all' || c.subcategory   === subFilter;
+const matchesSubsub = subsubFilter === 'all' || c.subsubcategory === subsubFilter;
+const matchesBanca  = bancaFilter  === 'all' || (c.banca && c.banca === bancaFilter);
+return matchesSearch && matchesCat && matchesSub && matchesSubsub && matchesBanca;
+
     });
 
     // Atualiza contador
@@ -10862,6 +11369,63 @@ function getLocalDateString() {
         showAlert("Erro", "Não foi possível carregar os cards.");
     }
 }
+
+
+function openReviewByCategoryModal() {
+  if (!sessionQueue || sessionQueue.length === 0) {
+    showAlert('Tudo em dia!', 'Você não tem nenhum card pendente para revisar agora.');
+    return;
+  }
+  const categories = {};
+  sessionQueue.forEach(c => {
+    const cat = c.category || 'Geral';
+    if (!categories[cat]) categories[cat] = 0;
+    categories[cat]++;
+  });
+  const list = document.getElementById('review-category-list');
+  list.innerHTML = Object.entries(categories)
+    .sort((a, b) => b[1] - a[1])
+    .map(([cat, count]) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:10px;background:var(--bg-body);">
+        <div>
+          <div style="font-weight:700;color:var(--text-main);font-size:1rem;">${cat}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">${count} card${count > 1 ? 's' : ''} para revisar</div>
+        </div>
+        <button class="action-btn" onclick="startReviewByCategory('${cat.replace(/'/g, "\\'")}');document.getElementById('review-category-modal').classList.add('hidden');" style="width:auto;font-size:0.85rem;padding:8px 16px;">
+          <i class="fas fa-play"></i> Revisar
+        </button>
+      </div>
+    `).join('');
+  document.getElementById('review-category-modal').classList.remove('hidden');
+}
+
+function startReviewByCategory(category) {
+  let queue;
+  if (category === null) {
+    queue = [...sessionQueue].sort(() => 0.5 - Math.random());
+  } else {
+    queue = sessionQueue.filter(c => (c.category || 'Geral') === category);
+  }
+  if (!queue || queue.length === 0) {
+    showAlert('Sem Cards', 'Não há cards pendentes para esta categoria.');
+    return;
+  }
+  studyMode = 'standard';
+  sessionQueue = queue;
+  currentSessionTotal = queue.length;
+  currentSessionDone = 0;
+  currentCardIndex = 0;
+  sessionAnswers = {};
+  const dueCountElement = document.getElementById('due-count');
+  if (dueCountElement) dueCountElement.innerText = queue.length;
+  document.getElementById('study-content').classList.remove('hidden');
+  document.getElementById('no-cards-msg').classList.add('hidden');
+  document.getElementById('simulation-result').classList.add('hidden');
+  document.getElementById('finish-review-btn').classList.remove('hidden');
+  showCard(queue[0]);
+}
+
+
 
 
 
@@ -12486,6 +13050,62 @@ function updateDailyProgress() {
     if (elAgendaText) elAgendaText.textContent = `${agendaPct}%`;
 }
 
+// Popula os filtros iniciais da biblioteca (categoria + banca)
+function populateLibraryFilters() {
+    const catSelect   = document.getElementById('filter-category');
+    const bancaSelect = document.getElementById('filter-banca');
+    if (!catSelect || !cards) return;
+
+    const currentCat   = catSelect.value;
+    const currentBanca = bancaSelect ? bancaSelect.value : 'all';
+
+    // Categorias
+    const cats = [...new Set(cards.map(c => c.category).filter(Boolean))].sort();
+    catSelect.innerHTML = '<option value="all">Todas</option>';
+    cats.forEach(c => {
+        catSelect.innerHTML += `<option value="${c}" ${c === currentCat ? 'selected' : ''}>${c}</option>`;
+    });
+
+    // Bancas
+    if (bancaSelect) {
+        const bancas = [...new Set(cards.map(c => c.banca).filter(Boolean))].sort();
+        bancaSelect.innerHTML = '<option value="all">Todas</option>';
+        bancas.forEach(b => {
+            bancaSelect.innerHTML += `<option value="${b}" ${b === currentBanca ? 'selected' : ''}>${b}</option>`;
+        });
+    }
+}
+
+// Atualiza subcategoria e sub-sub em cascata
+function updateLibrarySubFilters(level) {
+    const catVal = document.getElementById('filter-category').value;
+    const subSelect    = document.getElementById('filter-subcategory');
+    const subsubSelect = document.getElementById('filter-subsubcategory');
+
+    if (level === 'category') {
+        // Repopula subcategoria
+        subSelect.innerHTML = '<option value="all">Todas</option>';
+        if (catVal !== 'all') {
+            const subs = [...new Set(cards.filter(c => c.category === catVal && c.subcategory).map(c => c.subcategory))].sort();
+            subs.forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+        // Reseta sub-sub
+        subsubSelect.innerHTML = '<option value="all">Todos</option>';
+    }
+
+    if (level === 'subcategory') {
+        const subVal = subSelect.value;
+        subsubSelect.innerHTML = '<option value="all">Todos</option>';
+        if (catVal !== 'all' && subVal !== 'all') {
+            const subsubs = [...new Set(cards.filter(c =>
+                c.category === catVal && c.subcategory === subVal && c.subsubcategory
+            ).map(c => c.subsubcategory))].sort();
+            subsubs.forEach(s => subsubSelect.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+    }
+
+    renderManageList();
+}
 
 
 

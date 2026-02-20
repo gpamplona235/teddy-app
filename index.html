@@ -129,7 +129,6 @@
         }
 
         h1 {
-            /* VOLTOU PARA O TAMANHO ORIGINAL */
             font-size: 3.5rem; 
             line-height: 1.1;
             font-weight: 800;
@@ -226,7 +225,7 @@
             margin-top: auto;
             flex-wrap: wrap; 
         }
-        
+
         .stat-item h4 { font-size: 1.5rem; font-weight: 700; color: var(--dark); }
         .stat-item span { font-size: 0.85rem; color: var(--gray); }
 
@@ -235,7 +234,7 @@
             color: white;
             padding: 80px 5%;
         }
-        
+
         .features-grid {
             max-width: 1200px;
             margin: 0 auto;
@@ -248,17 +247,168 @@
         .feature p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
         .feature i { color: var(--primary); }
 
+        /* --- SEÇÃO FAQ (espelho do hero-split) --- */
+        .faq-split {
+            display: flex;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        /* LADO ESQUERDO: imagem */
+        .faq-visual {
+            width: 65%;
+            position: relative;
+            background-color: #f3f4f6;
+            overflow: hidden;
+        }
+
+        .faq-bg-img {
+            width: 120%;
+            height: 100%;
+            object-fit: cover;
+            object-position: left center;
+        }
+
+        /* gradiente espelhado: vai da direita para a esquerda */
+        .faq-overlay-gradient {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(270deg, #ffffff 0%, rgba(255,255,255,0) 20%);
+        }
+
+        /* LADO DIREITO: FAQ */
+        .faq-content {
+            width: 45%;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+            z-index: 2;
+            box-shadow: -20px 0 50px rgba(0,0,0,0.05);
+        }
+
+        .faq-content h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .faq-subtitle {
+            font-size: 1rem;
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .faq-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transition: box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--dark);
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            gap: 12px;
+        }
+
+        .faq-icon {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.2s ease;
+            padding: 0 20px;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 16px;
+        }
+
+        .faq-answer p {
+            font-size: 0.88rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* --- FOOTER --- */
+        .footer-section {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
         /* --- RESPONSIVO MOBILE --- */
         @media (max-width: 960px) {
-            
+
             .header-top {
                 justify-content: space-between;
                 margin-bottom: 30px;
             }
 
             .mobile-menu-btn { display: block; } 
-            
+
             .nav-menu {
                 display: none; 
                 flex-direction: column;
@@ -278,9 +428,9 @@
             .nav-menu.active { display: flex; }
 
             .nav-menu a { display: block; padding: 10px; font-size: 1.1rem; }
-            
+
             .hero-split { flex-direction: column; }
-            
+
             .hero-content { 
                 width: 100%; 
                 padding: 30px 20px 10px 20px; 
@@ -289,7 +439,7 @@
                 text-align: center; 
                 align-items: center; 
             }
-            
+
             .stats-row { display: none; }
 
             p.lead {
@@ -299,7 +449,6 @@
             }
 
             h1 { 
-                /* VOLTOU PARA O TAMANHO ORIGINAL MOBILE */
                 font-size: 2.5rem; 
             }
 
@@ -343,15 +492,65 @@
 
             .overlay-gradient { display: none; }
             .features-grid { grid-template-columns: 1fr; gap: 30px; }
+
+            /* FAQ mobile */
+            .faq-split { flex-direction: column; min-height: auto; }
+
+            .faq-visual {
+                width: 100%;
+                height: auto;
+                padding: 10px 20px 40px 20px;
+                background: white;
+                display: flex;
+                justify-content: center;
+            }
+
+            .faq-bg-img {
+                position: relative;
+                width: 100%;
+                max-width: 500px;
+                height: auto;
+                object-fit: contain;
+                border-radius: 12px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                border: 4px solid white;
+            }
+
+            .faq-overlay-gradient { display: none; }
+
+            .faq-content {
+                width: 100%;
+                padding: 40px 20px;
+                box-shadow: none;
+                text-align: center;
+                align-items: center;
+            }
+
+            .faq-question { text-align: left; }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            .footer-grid > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="hero-split">
-        
+
         <div class="hero-content">
-            
+
             <!-- HEADER -->
             <div class="header-top">
                 <a href="#" class="nav-brand">
@@ -363,18 +562,20 @@
                 </button>
 
                 <ul class="nav-menu" id="main-menu">
-          <li><span style="color: var(--gray); font-weight: 500;">🚧 Site em construção</span></li>
-        </ul>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                    <li><a href="#sobre">Sobre o Projeto</a></li>
+                </ul>
             </div>
 
             <div style="margin-top: auto; margin-bottom: auto; width: 100%;">
-                <span class="badge">Versão Beta 0.9.76.0</span>
+                <span class="badge">Versão Beta 0.9.82.0</span>
                 <!-- TÍTULO AJUSTADO: SEM O "O" e TAMANHO ORIGINAL -->
                 <h1>
                     Seu painel de <br>
                     <span id="typing-text" style="color: var(--primary);"></span><span class="typing-cursor"></span>
                 </h1>
-                
+
                 <p class="lead">
                     Uma plataforma de gestão de estudos que une planejamento,
                     execução e revisão em um único ambiente digital.
@@ -385,7 +586,7 @@
                     <a href="app/" class="btn-primary">
                         <i class="fa-solid fa-flask"></i> BETA WEB
                     </a>
-                    
+
                     <a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" class="btn-outline">
                         <i class="fa-brands fa-windows"></i> Baixar para Windows
                     </a>
@@ -449,11 +650,92 @@
         </div>
     </section>
 
+    <!-- SEÇÃO FAQ — espelho do hero-split -->
+    <div class="faq-split" id="faq">
+
+        <!-- LADO ESQUERDO: imagem -->
+        <div class="faq-visual">
+            <div class="faq-overlay-gradient"></div>
+            <img src="assets/app_print2.png" alt="Tela do TeddyApp" class="faq-bg-img">
+        </div>
+
+        <!-- LADO DIREITO: FAQ -->
+        <div class="faq-content">
+            <span class="badge">FAQ • Perguntas Frequentes</span>
+            <h2>Tudo que você precisa saber</h2>
+            <p class="faq-subtitle">
+                Tire suas dúvidas sobre o TeddyApp: como funciona, onde baixar, onde seus dados ficam e quem está por trás do projeto.
+            </p>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        O aplicativo é grátis?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim, o TeddyApp é 100% gratuito. Não há planos pagos, assinaturas ou anúncios. Todos os recursos estão disponíveis sem nenhum custo.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        O que é o TeddyApp e quais suas funcionalidades?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>O TeddyApp é um painel de aprendizado focado em planejamento, execução e revisão. Ele reúne em um único lugar: <strong>Pomodoro Timer</strong> para foco, <strong>Flashcards</strong> com repetição espaçada, <strong>Edital Vertical</strong> para controle de tópicos estudados e <strong>Analytics</strong> com gráficos detalhados do seu desempenho.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Onde posso usar ou baixar o TeddyApp?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Você pode acessar a versão web diretamente pelo navegador clicando em <strong><a href="app/" style="color: var(--primary); text-decoration: none; font-weight: 600;">BETA WEB</a></strong> nesta página. Para usar offline no Windows, baixe o instalador mais recente <a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">clicando aqui</a> ou acessando nosso GitHub. Versões para Android e Linux estão em desenvolvimento.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Onde meus dados de estudo ficam salvos?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>O TeddyApp usa <strong>LocalForage</strong>, uma tecnologia que salva tudo localmente no seu dispositivo, sem enviar nada para servidores. Na versão web, os dados ficam no armazenamento interno do navegador (podem ser perdidos se você limpar o cache). Na versão Windows, ficam em uma pasta local do seu computador. Em ambos os casos, é altamente recomendado fazer backup: vá em <strong>Configurações → Baixar Backup Completo</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Quem desenvolveu o TeddyApp?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>O TeddyApp foi criado por <strong>Guilherme Pamplona</strong>, engenheiro de software e concurseiro há mais de 3 anos. O projeto nasceu da própria necessidade de ter uma ferramenta de estudos que realmente funciona para quem leva a preparação a sério. Para dúvidas ou suporte, entre em contato pelo e-mail <strong><a href="mailto:gpamplona130@gmail.com" style="color: var(--primary); text-decoration: none; font-weight: 600;">gpamplona130@gmail.com</a></strong>.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
     <!-- SCRIPTS -->
     <script>
         function toggleMenu() {
             const menu = document.getElementById('main-menu');
             menu.classList.toggle('active');
+        }
+
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
         }
 
         const words = [
@@ -462,7 +744,7 @@
             "aprendizado interativo.",
             "aprovação."
         ];
-        
+
         let i = 0;
         let timer;
 
@@ -506,8 +788,69 @@
     </script>
 
 
-<footer style="background-color: var(--dark); padding: 20px 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.03);">
-    <p style="color: rgba(255,255,255,0.25); font-size: 0.8rem; margin: 0; font-weight: 500; letter-spacing: 0.5px;">Desenvolvido por Guilherme Olímpio</p>
+<footer id="sobre" class="footer-section">
+    <div class="footer-grid">
+
+        <!-- Coluna marca -->
+        <div>
+            <div style="font-size: 1.4rem; font-weight: 900; display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <i class="fa-solid fa-paw" style="color: var(--primary);"></i> TEDDY
+            </div>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.7; max-width: 320px;">
+                Uma plataforma de gestão de estudos que une planejamento, execução e revisão em um único ambiente digital. Gratuito, offline e open source.
+            </p>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <a href="https://github.com/gpamplona235/teddy-app" target="_blank"
+                   style="color: #94a3b8; font-size: 1.2rem; transition: color 0.2s;"
+                   onmouseover="this.style.color='#ed8432'" onmouseout="this.style.color='#94a3b8'">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a href="mailto:gpamplona130@gmail.com"
+                   style="color: #94a3b8; font-size: 1.2rem; transition: color 0.2s;"
+                   onmouseover="this.style.color='#ed8432'" onmouseout="this.style.color='#94a3b8'">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Coluna links -->
+        <div id="contato">
+            <p style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 18px;">Navegação</p>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; padding: 0;">
+                <li><a href="#faq" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">FAQ</a></li>
+                <li><a href="app/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Versão Web</a></li>
+                <li><a href="https://github.com/gpamplona235/teddy-app/releases" target="_blank" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Download Windows</a></li>
+                <li><a href="https://github.com/gpamplona235/teddy-app" target="_blank" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">GitHub</a></li>
+            </ul>
+        </div>
+
+        <!-- Coluna contato / sobre -->
+        <div>
+            <p style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 18px;">Sobre o Projeto</p>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.7;">
+                Desenvolvido por <strong style="color: white;">Guilherme Pamplona</strong>, engenheiro de software e concurseiro há mais de 3 anos.
+            </p>
+            <a href="mailto:gpamplona130@gmail.com"
+               style="display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--primary); font-size: 0.88rem; font-weight: 600; text-decoration: none;">
+                <i class="fa-solid fa-envelope"></i> gpamplona130@gmail.com
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Linha divisória -->
+    <div class="footer-bottom">
+        <p style="color: #475569; font-size: 0.82rem; margin: 0;">
+            © 2025 TeddyApp. Código aberto sob licença MIT.
+        </p>
+        <p style="color: #475569; font-size: 0.82rem; margin: 0;">
+            Feito com <span style="color: var(--primary);">♥</span> para concurseiros e estudantes.
+        </p>
+    </div>
 </footer>
 </body>
 </html>
