@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+
+    
     <style>
 
         :root {
@@ -4485,6 +4487,42 @@ select.lib-control {
 
 
 
+/* ====== CADERNO EM LISTA NO CELULAR ====== */
+@media (max-width: 768px) {
+
+  /* A grade de arquivos (cadernos) vira lista vertical */
+  .file-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Cada card de arquivo (caderno) vira uma linha: ícone à esquerda, texto à direita */
+  .file-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 10px 12px;
+    aspect-ratio: auto;       /* cancela o “quadradão” */
+  }
+
+  /* Ícone menor */
+  .file-icon {
+    font-size: 2rem;
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+
+  /* Texto ocupa o resto do espaço */
+  .file-name {
+    font-size: 0.95rem;
+    text-align: left;
+  }
+}
+
+
+
 </style>
 </head>
 <body>
@@ -5505,6 +5543,53 @@ select.lib-control {
     </span>
 </div>
 
+
+
+@media (max-width: 768px) {
+
+  /* container que segura os cadernos:
+     se hoje seus cadernos estiverem em grid, isso transforma em lista vertical */
+  .caderno-grid,
+  .caderno-lista,
+  .notebooks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* cada card de caderno vira um item em linha (ícone + título) */
+  .caderno-card,
+  .notebook-card,
+  .caderno-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px;
+    box-sizing: border-box;
+  }
+
+  /* ícone do caderno (diminui o tamanho) */
+  .caderno-card i,
+  .notebook-card i,
+  .caderno-item i {
+    font-size: 1.6rem;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  /* texto/título do caderno */
+  .caderno-card .title,
+  .notebook-card .title,
+  .caderno-item .title {
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+}
+
+
 <!-- Estilo da animação (mantido para garantir suavidade) -->
 <style>
 @keyframes slideDown {
@@ -6272,6 +6357,12 @@ select.lib-control {
                 <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
                 <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
             </div>
+
+
+
+
+
+
 
             <div class="card-box" style="margin-top:20px;">
                 <h3 style="color:var(--danger);">Zona de Perigo</h3>
@@ -12000,6 +12091,9 @@ function renderPerformanceView() {
     }
 }
 
+
+
+
         
         function openSimDetail(id) {
             const sim = simulationHistory.find(s => s.id === id);
@@ -13110,6 +13204,10 @@ function updateLibrarySubFilters(level) {
 
 
 </script>
+
+
+
+
 
 <!-- MODAL DE HISTÓRICO (Versão Tabela Elegante) -->
 <div id="history-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
