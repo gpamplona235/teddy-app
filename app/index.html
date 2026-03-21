@@ -5545,51 +5545,6 @@ select.lib-control {
 
 
 
-@media (max-width: 768px) {
-
-  /* container que segura os cadernos:
-     se hoje seus cadernos estiverem em grid, isso transforma em lista vertical */
-  .caderno-grid,
-  .caderno-lista,
-  .notebooks-container {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  /* cada card de caderno vira um item em linha (ícone + título) */
-  .caderno-card,
-  .notebook-card,
-  .caderno-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 100%;
-    padding: 8px 10px;
-    box-sizing: border-box;
-  }
-
-  /* ícone do caderno (diminui o tamanho) */
-  .caderno-card i,
-  .notebook-card i,
-  .caderno-item i {
-    font-size: 1.6rem;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-  }
-
-  /* texto/título do caderno */
-  .caderno-card .title,
-  .notebook-card .title,
-  .caderno-item .title {
-    font-size: 0.95rem;
-    line-height: 1.3;
-  }
-}
-
-
 <!-- Estilo da animação (mantido para garantir suavidade) -->
 <style>
 @keyframes slideDown {
