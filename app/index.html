@@ -4588,6 +4588,42 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
   stroke: var(--text-main) !important;
 }
 
+
+/* ====== CADERNO EM LISTA NO CELULAR ====== */
+@media (max-width: 768px) {
+
+  /* A grade de arquivos (cadernos) vira lista vertical */
+  .file-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Cada card de arquivo (caderno) vira uma linha: ícone à esquerda, texto à direita */
+  .file-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 10px 12px;
+    aspect-ratio: auto;       /* cancela o “quadradão” */
+  }
+
+  /* Ícone menor */
+  .file-icon {
+    font-size: 2rem;
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+
+  /* Texto ocupa o resto do espaço */
+  .file-name {
+    font-size: 0.95rem;
+    text-align: left;
+  }
+}
+
+
 </style>
 </head>
 <body>
