@@ -28,8 +28,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-
-    
     <style>
 
         :root {
@@ -4308,12 +4306,13 @@ select.lib-control {
 .ql-editor {
   background: transparent !important;
   color: var(--text-main) !important;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1.05rem !important; /* Adicionado !important para garantir a fonte */
+  line-height: 1.8 !important;   /* Adicionado !important para garantir o espaçamento */
   padding: 0 20px 100px 20px !important; /* Margens laterais menores e espaço extra no final da página */
   height: auto !important; /* Deixa esticar o quanto for necessário */
-  overflow: visible !important; /* Corta a rolagem interna, joga pra janela principal */
+  overflow-y: visible !important; /* Corta a rolagem interna, joga pra janela principal (Uso de overflow-y é mais seguro no Quill) */
 }
+
 
 .ql-editor.ql-blank::before {
   color: var(--text-muted) !important;
@@ -4365,28 +4364,30 @@ select.lib-control {
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Select de Pasta Estilo "Pílula Moderna" */
 .topbar-select-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  background: var(--bg-card);
+  /* Mudamos para o fundo do body e borda padrão */
+  background: var(--bg-body);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0; /* ZERADO: O espaço passa para o select, para ele esticar até as bordas */
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 .topbar-select-wrapper:hover {
-  border-color: var(--primary);
+  /* Em vez de laranja, escurece um pouquinho a borda */
+  border-color: var(--text-muted); 
+  background: var(--border); /* Dá um pequeno escurecimento no fundo */
 }
 
-/* O ícone da pasta passa a flutuar solto do lado esquerdo */
+/* Deixa o ícone de pasta cinza ao invés de laranja */
 .topbar-select-wrapper i.fa-folder-open {
   position: absolute;
-  left: 14px; /* Ajustado de 12px para 14px */
-  color: var(--primary);
-  font-size: 1rem; /* Ajustado de 0.9rem para 1rem */
+  left: 14px;
+  color: var(--text-muted); /* Mudado aqui */
+  font-size: 1rem;
   pointer-events: none;
   z-index: 2;
 }
@@ -4433,25 +4434,31 @@ select.lib-control {
   padding: 10px; /* Leve aumento nas opções do dropdown */
 }
 
-/* Botão de Revisão Inteligente */
 .btn-topbar-srs {
   display: flex;
   align-items: center;
-  gap: 10px; /* AUMENTADO de 8px para 10px */
-  background: rgba(245, 158, 11, 0.1); 
-  color: #d97706; 
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  gap: 10px;
+  /* Mudado para fundo neutro, sem o amarelo berrante */
+  background: transparent; 
+  color: var(--text-main); /* Texto escuro normal */
+  border: 1px solid var(--border); /* Borda cinza normal */
   border-radius: 8px;
-  padding: 12px 20px; /* AUMENTADO de 10px 16px para 12px 20px */
+  padding: 12px 20px;
   font-weight: 600;
-  font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+/* O ícone do cérebro fica cinza suave para não brigar com o texto */
+.btn-topbar-srs i {
+  color: var(--text-muted);
+}
+
 .btn-topbar-srs:hover {
-  background: #f59e0b; 
-  color: white;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+  /* Quando passa o mouse, fica sutilmente cinza, sem virar laranja */
+  background: var(--bg-body); 
+  border-color: var(--text-muted);
 }
 
 /* Botão Salvar */
@@ -4485,43 +4492,101 @@ select.lib-control {
   .topbar-select-wrapper select { min-width: 50px; }
 }
 
+/* ==========================================
+   CONFIGURAÇÃO DE FONTES DO QUILL
+========================================== */
 
+/* 1. Definindo o visual do texto no editor */
+.ql-font-inter { font-family: 'Inter', sans-serif; }
+.ql-font-arial { font-family: 'Arial', sans-serif; }
+.ql-font-verdana { font-family: 'Verdana', sans-serif; }
+.ql-font-tahoma { font-family: 'Tahoma', sans-serif; }
+.ql-font-trebuchet { font-family: 'Trebuchet MS', sans-serif; }
+.ql-font-times { font-family: 'Times New Roman', serif; }
+.ql-font-georgia { font-family: 'Georgia', serif; }
+.ql-font-garamond { font-family: 'Garamond', serif; }
+.ql-font-courier { font-family: 'Courier New', monospace; }
+.ql-font-comic { font-family: 'Comic Sans MS', cursive; }
+.ql-font-impact { font-family: 'Impact', sans-serif; }
 
-/* ====== CADERNO EM LISTA NO CELULAR ====== */
-@media (max-width: 768px) {
+/* 2. Definindo os Nomes no Menu Dropdown do Quill */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="inter"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="inter"]::before { content: 'Inter (Padrão)'; font-family: 'Inter', sans-serif; }
 
-  /* A grade de arquivos (cadernos) vira lista vertical */
-  .file-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: 'Arial', sans-serif; }
 
-  /* Cada card de arquivo (caderno) vira uma linha: ícone à esquerda, texto à direita */
-  .file-item {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: left;
-    padding: 10px 12px;
-    aspect-ratio: auto;       /* cancela o “quadradão” */
-  }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: 'Verdana', sans-serif; }
 
-  /* Ícone menor */
-  .file-icon {
-    font-size: 2rem;
-    margin-bottom: 0;
-    margin-right: 10px;
-  }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="tahoma"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before { content: 'Tahoma'; font-family: 'Tahoma', sans-serif; }
 
-  /* Texto ocupa o resto do espaço */
-  .file-name {
-    font-size: 0.95rem;
-    text-align: left;
-  }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="trebuchet"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet"]::before { content: 'Trebuchet MS'; font-family: 'Trebuchet MS', sans-serif; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times"]::before { content: 'Times New Roman'; font-family: 'Times New Roman', serif; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: 'Georgia', serif; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="garamond"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="garamond"]::before { content: 'Garamond'; font-family: 'Garamond', serif; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier"]::before { content: 'Courier New'; font-family: 'Courier New', monospace; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="comic"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic"]::before { content: 'Comic Sans'; font-family: 'Comic Sans MS', cursive; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="impact"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="impact"]::before { content: 'Impact'; font-family: 'Impact', sans-serif; }
+
+/* 3. Ajustando o tamanho da caixa de seleção de fontes para caber nomes longos */
+.ql-snow .ql-picker.ql-font {
+  width: 150px !important; /* Aumenta a largura da caixinha (o padrão é uns 100px) */
+}
+
+/* Garante que o texto dentro não vaze e fique alinhado */
+.ql-snow .ql-picker.ql-font .ql-picker-label {
+  padding-left: 8px;
+}
+
+/* 1. Faz o Quill ler o valor exato (10px, 12px...) e imprimir na tela */
+.ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  content: attr(data-value) !important;
+}
+
+/* 2. Caso seja o tamanho padrão (sem formatação), ele escreve "Normal" */
+.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
+  content: 'Normal' !important;
 }
 
 
+body.dark-mode .ql-snow .ql-picker-options {
+  background-color: var(--bg-card) !important; /* Fundo do menu aberto */
+  border-color: var(--border) !important;      /* Borda do menu */
+}
+
+/* Cor do texto dentro do menu (Fonte, Tamanho, etc) */
+body.dark-mode .ql-snow .ql-picker-item,
+body.dark-mode .ql-snow .ql-picker-label {
+  color: var(--text-main) !important; 
+}
+
+/* Cor do texto ao passar o mouse */
+body.dark-mode .ql-snow .ql-picker-item:hover,
+body.dark-mode .ql-snow .ql-picker-label:hover {
+  color: var(--primary) !important; 
+}
+
+/* Garante que o ícone da setinha do dropdown também fique visível */
+body.dark-mode .ql-snow .ql-picker-label polygon {
+  stroke: var(--text-main) !important;
+}
 
 </style>
 </head>
@@ -5543,8 +5608,6 @@ select.lib-control {
     </span>
 </div>
 
-
-
 <!-- Estilo da animação (mantido para garantir suavidade) -->
 <style>
 @keyframes slideDown {
@@ -6211,7 +6274,7 @@ select.lib-control {
             Ativar Sistema
         </label>
         <label class="switch-container">
-            <input type="checkbox" id="antiDistractionToggle">
+            <input type="checkbox" id="antiDistractionToggle" onchange="window.saveAntiDistractionConfig()">
             <span class="slider round"></span>
         </label>
     </div>
@@ -6313,12 +6376,6 @@ select.lib-control {
                 <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
             </div>
 
-
-
-
-
-
-
             <div class="card-box" style="margin-top:20px;">
                 <h3 style="color:var(--danger);">Zona de Perigo</h3>
                 <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">
@@ -6412,7 +6469,7 @@ select.lib-control {
             </div>
             
             <!-- Cores Expandidas -->
-                        <div>
+            <div>
                 <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Cor da Etiqueta</label>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; min-height: 42px;">
                     <!-- Padrões -->
@@ -6432,16 +6489,30 @@ select.lib-control {
                     <div class="color-chip" onclick="selectColor('#6366f1',this)" style="background:#6366f1;width:28px;height:28px;border-radius:50%;border:2px solid transparent; cursor:pointer;" title="Índigo"></div>
                 </div>
             </div>
-
         </div>
 
         <!-- Descrição (NOVO) -->
-        <div style="margin-bottom: 25px;">
+        <div style="margin-bottom: 12px;"> <!-- Margem inferior reduzida de 25px para 12px -->
             <label style="display:block; margin-bottom:6px; font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Descrição / Detalhes</label>
             <textarea id="schedule-block-desc" placeholder="Adicione notas, links ou detalhes sobre o estudo..." 
                       style="width:100%; height:80px; padding:12px; border-radius:8px; border:1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size:0.9rem; outline:none; resize:none; font-family: inherit; line-height: 1.4;"></textarea>
         </div>
         
+        <!-- MÓDULO CONCLUÍDO (NOVO SEM ÍCONE) -->
+        <div style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body);">
+          <div>
+            <!-- Removido o font-weight: 700; e ajustado para font-weight: 500; (peso normal) -->
+            <span style="display: block; font-weight: 500; font-size: 0.95rem; color: var(--text-main);">Atividade Concluída</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Riscar este horário na agenda</span>
+          </div>
+          <label class="switch-container" style="margin: 0;">
+            <input type="checkbox" id="schedule-block-done">
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+
+
         <!-- Botões -->
         <div style="display:flex; gap:12px;">
             <button class="action-btn" onclick="saveScheduleBlock()" style="flex:2; display:flex; justify-content:center; align-items:center; gap:8px;">
@@ -6456,6 +6527,7 @@ select.lib-control {
         </div>
     </div>
 </div>
+
 
 
     
@@ -10268,13 +10340,45 @@ function renderTasks() {
     salvarDados('ted_tasks', tasks); // <--- Corrigido para usar a mesma função de salvamento do resto do app
 }
 
-        window.createSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=''; document.getElementById('btn-delete-block').classList.add('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
-        window.editSch = (k) => { editingScheduleBlock=k; document.getElementById('schedule-block-title').value=scheduleData[k].title; selectedColor=scheduleData[k].color; document.getElementById('btn-delete-block').classList.remove('hidden'); document.getElementById('schedule-modal').classList.remove('hidden'); };
+        window.createSch = (k) => { 
+    editingScheduleBlock = k; 
+    document.getElementById('schedule-block-title').value = ''; 
+    
+    // NOVO: Limpa a descrição e a chave de concluído ao criar um novo agendamento
+    if (document.getElementById('schedule-block-desc')) {
+        document.getElementById('schedule-block-desc').value = '';
+    }
+    if (document.getElementById('schedule-block-done')) {
+        document.getElementById('schedule-block-done').checked = false;
+    }
 
+    document.getElementById('btn-delete-block').classList.add('hidden'); 
+    document.getElementById('schedule-modal').classList.remove('hidden'); 
+};
+
+window.editSch = (k) => { 
+    editingScheduleBlock = k; 
+    document.getElementById('schedule-block-title').value = scheduleData[k].title; 
+    selectedColor = scheduleData[k].color; 
+    
+    // NOVO: Carrega a descrição e a chave de concluído salvas neste agendamento
+    if (document.getElementById('schedule-block-desc')) {
+        document.getElementById('schedule-block-desc').value = scheduleData[k].desc || '';
+    }
+    if (document.getElementById('schedule-block-done')) {
+        document.getElementById('schedule-block-done').checked = scheduleData[k].done || false;
+    }
+
+    document.getElementById('btn-delete-block').classList.remove('hidden'); 
+    document.getElementById('schedule-modal').classList.remove('hidden'); 
+};
 
 function saveScheduleBlock() { 
     const titleInput = document.getElementById('schedule-block-title');
     if(!titleInput.value) return; 
+
+    const descInput = document.getElementById('schedule-block-desc') ? document.getElementById('schedule-block-desc').value : '';
+    const isDone = document.getElementById('schedule-block-done') ? document.getElementById('schedule-block-done').checked : false;
 
     // 1. Extrai o horário inicial da chave do bloco clicado (Ex: '2025-04-3-14')
     const parts = editingScheduleBlock.split('-');
@@ -10292,13 +10396,24 @@ function saveScheduleBlock() {
     }
 
     // 3. Loop: Salva o evento em TODOS os blocos entre o início e o fim
-    // Se começar às 14h e terminar às 16h, ele salva na chave das 14h e das 15h.
     for (let h = startHour; h < endHour; h++) {
         const key = `${year}-${week}-${day}-${h}`;
+
+        let blockDoneStatus = false;
+        if (key === editingScheduleBlock) {
+            blockDoneStatus = isDone;
+        } else if (scheduleData[key] && scheduleData[key].title === titleInput.value) {
+            // Se já existia um bloco igual na hora seguinte, mantém o estado concluído original dele
+            blockDoneStatus = scheduleData[key].done || false; 
+            // Porém, se o usuário DESMARCOU a caixa do bloco principal, desmarca de todos do mesmo evento
+            if (!isDone) blockDoneStatus = false;
+        }
         
         scheduleData[key] = {
             title: titleInput.value, 
-            color: selectedColor
+            color: selectedColor,
+            desc: descInput,
+            done: blockDoneStatus
         }; 
     }
     
@@ -10306,8 +10421,9 @@ function saveScheduleBlock() {
     document.getElementById('schedule-modal').classList.add('hidden'); 
     renderSchedule(); 
     
-    renderTasks(); // <--- Atualiza as metas instantaneamente ao salvar
+    if (typeof renderTasks === 'function') renderTasks(); 
 }
+
 
 
 function deleteScheduleBlock() { 
@@ -12046,9 +12162,6 @@ function renderPerformanceView() {
     }
 }
 
-
-
-
         
         function openSimDetail(id) {
             const sim = simulationHistory.find(s => s.id === id);
@@ -12163,28 +12276,107 @@ setTimeout(() => {
     }
 </script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<!-- BIBLIOTECA QUILL (Copie e cole isso) -->
+
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <script>
-    // Inicializa o Editor
-    var quill = new Quill('#editor-container', {
-      modules: {
-        toolbar: [
-  [{ 'size': ['small', false, 'large', 'huge'] }], // <--- LINHA NOVA (Tamanho)
-  ['bold', 'italic', 'underline'],                 // Mantém negrito, itálico...
-  [{ 'list': 'ordered'}, { 'list': 'bullet' }],    // Mantém listas
-  [{ 'indent': '-1'}, { 'indent': '+1' }],         // Mantém recuo
-  [{ 'color': [] }, { 'background': [] }],         // Mantém cores
-  ['formula']                                      // Mantém matemática
-]
-      },
-      placeholder: 'Digite sua anotação aqui...',
-      theme: 'snow'
-    });
+
+// 1. Registra as 11 novas fontes no sistema do Quill
+var Font = Quill.import('formats/font');
+Font.whitelist = [
+  'inter', 'arial', 'verdana', 'tahoma', 'trebuchet', 
+  'times', 'georgia', 'garamond', 'courier', 'comic', 'impact'
+];
+Quill.register(Font, true);
+
+
+var Size = Quill.import('attributors/style/size');
+Size.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px'];
+Quill.register(Size, true);
+
+// 2. Inicializa o Editor
+var quill = new Quill('#editor-container', {
+  modules: {
+    toolbar: [
+      // Bloco 1: Apenas as Fontes (Tamanho removido)
+      [{ 'font': Font.whitelist }],
+      
+[{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px'] }],
+      
+      // Bloco 3: Estilos básicos
+      ['bold', 'italic', 'underline', 'strike'],
+      
+      // Bloco 4: Cores
+      [{ 'color': [] }, { 'background': [] }],
+      
+      // Bloco 5: Sobrescrito, Subscrito, Citação e Código
+      [{ 'script': 'sub'}, { 'script': 'super' }, 'blockquote', 'code-block'],
+      
+      // Bloco 6: Listas e Indentação
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+      
+      // Bloco 7: Alinhamento
+      [{ 'align': [] }],
+      
+      // Bloco 8: Inserções Multimídia e Fórmulas
+      ['link', 'image', 'formula'],
+      
+
+    ]
+  },
+  placeholder: 'Digite sua anotação aqui...',
+  theme: 'snow'
+});
+
+// === CORREÇÃO DEFINITIVA DO SCROLL (SEM TREMIDINHA) ===
+quill.root.addEventListener('paste', function(e) {
+  // 1. Cancela totalmente o comportamento padrão do navegador que gera o pulo
+  e.preventDefault();
+  e.stopPropagation();
+
+  // 2. Acessa os dados que estão na sua área de transferência (o que você deu Ctrl+C)
+  const clipboardData = e.clipboardData || window.clipboardData;
+  if (!clipboardData) return;
+
+  // Pega a versão com formatação (HTML) e a versão em texto puro
+  const html = clipboardData.getData('text/html');
+  const text = clipboardData.getData('text/plain');
+
+  // 3. Descobre a posição exata onde o seu cursor está piscando no texto
+  const range = quill.getSelection(true);
+  const index = range ? range.index : 0;
+  const length = range ? range.length : 0; // Caso você tenha selecionado uma palavra para colar por cima
+
+  // 4. Salva o tamanho do documento antes da colagem
+  const tamanhoAntigo = quill.getLength();
+
+  // 5. Se você tinha selecionado um texto (sombreado), apagamos ele primeiro
+  if (length > 0) {
+    quill.deleteText(index, length);
+  }
+
+  // 6. Injeta o conteúdo copiado silenciosamente direto no motor do Quill (sem focar no topo da tela)
+  if (html) {
+    quill.clipboard.dangerouslyPasteHTML(index, html);
+  } else if (text) {
+    quill.insertText(index, text);
+  }
+
+  // 7. Coloca o seu cursor piscando exatamente no final do texto que acabou de ser colado
+  setTimeout(() => {
+    const tamanhoNovo = quill.getLength();
+    const textoAdicionado = tamanhoNovo - tamanhoAntigo + length;
+    quill.setSelection(index + textoAdicionado);
+  }, 10);
+
+}, true);
+// ============================================
+
+
+
 
     // TRUQUE: Conecta o Quill com seu sistema antigo de salvar notas
     // Quando você digitar, ele joga o texto pro lugar onde seu app espera encontrar
@@ -12447,14 +12639,7 @@ setTimeout(() => {
 
 <script>
 (function() {
-    let Config = { enabled: false, mouseOut: 30, inactivity: 5, resume: 10 };
-    
-    let state = { 
-        pausedBySystem: false, 
-        lastActivity: Date.now(), 
-        mouseTimer: null, 
-        resumeTimer: null 
-    };
+
 
         function loadConfig() {
     // Inicia carregamento assíncrono do localForage
@@ -12505,21 +12690,56 @@ setTimeout(() => {
 }
 
 
+// === SISTEMA ANTI-DISTRAÇÃO: ESTADOS E CONFIGURAÇÕES ===
+var state = {
+    mouseTimer: null,
+    resumeTimer: null,
+    lastActivity: Date.now(),
+    pausedBySystem: false
+};
 
-       window.saveAntiDistractionConfig = function() {
+// Aqui o padrão de fábrica nasce junto com o estado
+var Config = { 
+    enabled: false, 
+    mouseOut: 30, 
+    inactivity: 5, 
+    resume: 10 
+};
+// =======================================================
+
+
+// === FUNÇÃO DE SALVAMENTO BLINDADA ===
+window.saveAntiDistractionConfig = function() {
+    const isEnabled = document.getElementById('antiDistractionToggle').checked;
+    
+    const userMouseOut = parseInt(document.getElementById('mouseOutTime').value) || 30;
+    const userInactivity = parseInt(document.getElementById('inactivityTime').value) || 5;
+    const userResume = parseInt(document.getElementById('resumeCountdown').value) || 10;
+    
+    // Trava de segurança: Se desligado = infinito
     const newConfig = {
-        enabled: document.getElementById('antiDistractionToggle').checked,
-        mouseOut: parseInt(document.getElementById('mouseOutTime').value) || 30,
-        inactivity: parseInt(document.getElementById('inactivityTime').value) || 5,
-        resume: parseInt(document.getElementById('resumeCountdown').value) || 10
+        enabled: isEnabled,
+        mouseOut: isEnabled ? userMouseOut : 999999,
+        inactivity: isEnabled ? userInactivity : 999999,
+        resume: isEnabled ? userResume : 999999
     };
     
     Config = newConfig;
 
-    // MUDANÇA: Salvando com localForage
-    localforage.setItem('ad_settings', Config).then(function() {
-        // O código de feedback visual agora fica dentro do .then()
-        // Isso garante que o usuário só veja "Salvo!" quando realmente salvou.
+    // Faxina de timers
+    if (!isEnabled) {
+        if (state.mouseTimer) clearTimeout(state.mouseTimer);
+        if (state.resumeTimer) clearInterval(state.resumeTimer);
+        state.pausedBySystem = false;
+        
+        const toast = document.getElementById('ad-toast-container');
+        if (toast) toast.style.display = 'none';
+        
+        const overlay = document.querySelector('.ad-overlay');
+        if (overlay) overlay.remove();
+    }
+
+    localforage.setItem('adsettings', Config).then(function() {
         const status = document.getElementById('configStatus');
         if(status) {
             status.innerHTML = '<i class="fas fa-check"></i> Salvo!';
@@ -12527,10 +12747,8 @@ setTimeout(() => {
             setTimeout(() => status.innerHTML = "", 3000);
         }
         state.lastActivity = Date.now();
-        
     }).catch(function(err) {
-        console.error("Erro ao salvar configurações:", err);
-        // Opcional: Mostrar erro pro usuário
+        console.error("Erro ao salvar configurações adsettings:", err);
         const status = document.getElementById('configStatus');
         if(status) {
              status.innerHTML = '<i class="fas fa-times"></i> Erro!';
@@ -12538,6 +12756,9 @@ setTimeout(() => {
         }
     });
 };
+// =======================================================
+
+
 
 
 
@@ -13028,14 +13249,37 @@ window.editSch = (k) => {
     document.getElementById('schedule-block-title').value = scheduleData[k].title;
     selectedColor = scheduleData[k].color; 
     
+    // --- INÍCIO DAS NOVIDADES (CARREGA DESCRIÇÃO E CONCLUÍDO) ---
+    if (document.getElementById('schedule-block-desc')) {
+        document.getElementById('schedule-block-desc').value = scheduleData[k].desc || '';
+    }
+    if (document.getElementById('schedule-block-done')) {
+        document.getElementById('schedule-block-done').checked = scheduleData[k].done === true;
+    }
+    // --- FIM DAS NOVIDADES ---
+
     const parts = k.split('-');
     const startHour = parseInt(parts[3]);
     
     populateEndTimeSelect(startHour);
 
+    // --- NOVIDADE PARA MANTER O HORÁRIO FINAL CORRETO ---
+    let currentEndHour = startHour + 1;
+    let nextHourKey = `${parts[0]}-${parts[1]}-${parts[2]}-${currentEndHour}`;
+    // Vasculha para frente para ver se o evento se estendia
+    while (scheduleData[nextHourKey] && scheduleData[nextHourKey].title === scheduleData[k].title) {
+        currentEndHour++;
+        nextHourKey = `${parts[0]}-${parts[1]}-${parts[2]}-${currentEndHour}`;
+    }
+    if (document.getElementById('schedule-end-time')) {
+        document.getElementById('schedule-end-time').value = currentEndHour;
+    }
+    // --- FIM DA NOVIDADE DO HORÁRIO FINAL ---
+
     document.getElementById('btn-delete-block').classList.remove('hidden');
     document.getElementById('schedule-modal').classList.remove('hidden');
 };
+
 
 
 // --- NOVAS FUNÇÕES PARA O CRONOGRAMA ---
@@ -13159,10 +13403,6 @@ function updateLibrarySubFilters(level) {
 
 
 </script>
-
-
-
-
 
 <!-- MODAL DE HISTÓRICO (Versão Tabela Elegante) -->
 <div id="history-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
