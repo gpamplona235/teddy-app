@@ -4368,52 +4368,51 @@ select.lib-control {
   position: relative;
   display: flex;
   align-items: center;
-  /* Mudamos para o fundo do body e borda padrão */
-  background: var(--bg-body);
-  border: 1px solid var(--border);
+  background: var(--primary);
+  border: none;
   border-radius: 8px;
   padding: 0;
   transition: all 0.2s ease;
   cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .topbar-select-wrapper:hover {
-  /* Em vez de laranja, escurece um pouquinho a borda */
-  border-color: var(--text-muted); 
-  background: var(--border); /* Dá um pequeno escurecimento no fundo */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  filter: brightness(1.05);
 }
 
-/* Deixa o ícone de pasta cinza ao invés de laranja */
 .topbar-select-wrapper i.fa-folder-open {
   position: absolute;
   left: 14px;
-  color: var(--text-muted); /* Mudado aqui */
+  color: white;
   font-size: 1rem;
   pointer-events: none;
   z-index: 2;
+  opacity: 0.95;
 }
 
-/* O ícone da seta passa a flutuar solto do lado direito */
 .topbar-select-wrapper i.arrow-icon {
   position: absolute;
-  right: 14px; /* Ajustado de 12px para 14px */
-  color: var(--text-muted);
-  font-size: 0.8rem; /* Ajustado de 0.7rem para 0.8rem */
+  right: 14px;
+  color: white;
+  font-size: 0.8rem;
   pointer-events: none;
   z-index: 2;
+  opacity: 0.95;
 }
 
-/* O select agora ocupa TODO o fundo do botão e empurra o texto com paddings para não bater nos ícones */
 .topbar-select-wrapper select {
   position: relative;
   z-index: 1;
   width: 100%;
   border: none !important;
   background: transparent !important;
-  padding: 12px 34px 12px 38px !important; /* AUMENTADO o padding superior/inferior para 12px */
+  padding: 12px 34px 12px 38px !important;
   font-weight: 600;
-  font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
-  color: var(--text-main) !important;
-  appearance: none; 
+  font-size: 1rem;
+  color: white !important;
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
@@ -4429,37 +4428,32 @@ select.lib-control {
 }
 
 .topbar-select-wrapper select option {
-  background: var(--bg-card);
-  color: var(--text-main);
-  padding: 10px; /* Leve aumento nas opções do dropdown */
+  color: #111827;
+  background: white;
 }
 
 .btn-topbar-srs {
   display: flex;
   align-items: center;
   gap: 10px;
-  /* Mudado para fundo neutro, sem o amarelo berrante */
-  background: transparent; 
-  color: var(--text-main); /* Texto escuro normal */
-  border: 1px solid var(--border); /* Borda cinza normal */
+  background: var(--primary);
+  color: white;
+  border: none;
   border-radius: 8px;
-  padding: 12px 20px;
+  padding: 12px 24px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-/* O ícone do cérebro fica cinza suave para não brigar com o texto */
-.btn-topbar-srs i {
-  color: var(--text-muted);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .btn-topbar-srs:hover {
-  /* Quando passa o mouse, fica sutilmente cinza, sem virar laranja */
-  background: var(--bg-body); 
-  border-color: var(--text-muted);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  filter: brightness(1.05);
 }
+
 
 /* Botão Salvar */
 .btn-topbar-save {
@@ -4489,7 +4483,7 @@ select.lib-control {
 @media (max-width: 600px) {
   .btn-label { display: none; }
   .btn-topbar-srs, .btn-topbar-save { padding: 10px 14px; }
-  .topbar-select-wrapper select { min-width: 50px; }
+
 }
 
 /* ==========================================
@@ -6075,7 +6069,7 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
         </div>
     </div>
     
-    <input type="text" id="note-title" placeholder="Título da Anotação" style="font-size: 1.8rem; font-weight: 800; border: none; background: transparent; padding: 0; margin-bottom: 20px; color: var(--text-main);">
+  <textarea id="note-title" placeholder="Título da Anotação" rows="1" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="font-size: 1.8rem; font-weight: 800; border: none; background: transparent; padding: 0; margin-bottom: 20px; color: var(--text-main); width: 100%; resize: none; overflow: hidden; line-height: 1.3; font-family: inherit;"></textarea>
     
     <!-- O Quill vai nascer aqui dentro -->
     <div id="editor-container"></div>
@@ -6379,26 +6373,30 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
                     Defina a frequência com que os cards reaparecerão para revisão.
                 </p>
                 <div style="margin-bottom: 12px;">
-                    <select id="revision-level-select" onchange="changeRevisionLevel(this.value)">
-                        <option value="light">Leve (Intervalos Longos)</option>
-                        <option value="moderate">Moderada (Padrão)</option>
-                        <option value="intense">Intensa (Intervalos Curtos)</option>
-                    </select>
-                </div>
-                <div style="background: var(--bg-body); padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
-    <i class="fas fa-info-circle"></i> <strong>Nota:</strong> A nova intensidade será aplicada nas suas próximas revisões.
-    <ul style="margin: 12px 0 0 20px; padding: 0; color: var(--text-color);">
-        <li style="margin-bottom: 10px;">
-            <strong>Leve (x2.2):</strong> Intervalos longos. Menos revisões, ideal para revisão rápida.
-        </li>
-        <li style="margin-bottom: 10px;">
-            <strong>Moderada (x1.8):</strong> Equilibrado. Ritmo constante para fixação segura.
-        </li>
-        <li style="margin-bottom: 0;">
-            <strong>Intensa (x1.4):</strong> Intervalos curtos. Muitas repetições, foco total em não esquecer.
-        </li>
-    </ul>
-</div>
+                                        <select id="revision-level-select" onchange="changeRevisionLevel(this.value)">
+            <option value="level_3_0">Leve (x3.0 - Menos Revisões)</option>
+            <option value="level_2_0">Moderada (x2.0 - Normal)</option>
+            <option value="level_1_5">Intensa (x1.5 - Mais Revisões)</option>
+            <option value="level_1_2">Muito Intensa (x1.2 - Foco Total)</option>
+          </select>
+        </div>
+        <div style="background: var(--bg-body); padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
+          <i class="fas fa-info-circle"></i> <strong>Nota:</strong> A nova intensidade será aplicada nas suas próximas revisões.
+          <ul style="margin: 12px 0 0 20px; padding: 0; color: var(--text-color);">
+            <li style="margin-bottom: 10px;">
+              <strong>Leve (x3.0):</strong> Espaçamento longo. Menor volume de cards por dia, ideal para matérias que você já domina ou revisões de manutenção.
+            </li>
+            <li style="margin-bottom: 10px;">
+              <strong>Moderada (x2.0):</strong> Ritmo equilibrado. O intervalo cresce de forma natural, garantindo a memorização a médio/longo prazo sem sobrecarregar a rotina.
+            </li>
+            <li style="margin-bottom: 10px;">
+              <strong>Intensa (x1.5):</strong> Ritmo acelerado. Os cards voltam mais rápido, excelente para assuntos difíceis ou retas finais de estudo pré-edital.
+            </li>
+            <li style="margin-bottom: 0;">
+              <strong>Muito Intensa (x1.2):</strong> Bombardeio e foco total. Pouco espaço entre as revisões, ideal para véspera de prova e decoreba de curto prazo.
+            </li>
+          </ul>
+        </div>
 
             </div>
 
@@ -9273,6 +9271,8 @@ function deleteFolder(id) {
             // 3. Preenche o Editor
             document.getElementById('note-title').value = n ? n.title : ''; 
             quill.clipboard.dangerouslyPasteHTML(n ? n.content : "");
+// Limpa o histórico de "Desfazer" 10 milissegundos após carregar a nota
+setTimeout(() => quill.history.clear(), 10);
             
             // Populate folder dropdown
             const folderSelect = document.getElementById('note-folder-select');
@@ -9530,8 +9530,10 @@ function openNoteFromBanner(id) {
         
         document.getElementById('note-title').value = note.title;
         if (typeof quill !== 'undefined') {
-            quill.root.innerHTML = note.content;
-        }
+    // Usar dangerouslyPasteHTML em vez de innerHTML evita bugs de sincronia
+    quill.clipboard.dangerouslyPasteHTML(note.content || "");
+    setTimeout(() => quill.history.clear(), 10);
+}
         
         // Atualiza breadcrumb/botão voltar visualmente se necessário
         const backBtn = document.getElementById('editor-back-btn');
@@ -11465,10 +11467,13 @@ function saveCommentEdit() {
     
     if(isCor) {
         // Apply intensity logic
-        let multiplier = 1.8; 
-        const level = userData.revisionLevel || 'moderate';
-        if (level === 'light') multiplier = 2.2; 
-        if (level === 'intense') multiplier = 1.4; 
+                            const level = userData.revisionLevel || 'level_2_0';
+          let multiplier = 2.0; // Padrão
+
+          if (level === 'level_3_0' || level === 'light') multiplier = 3.0;
+          else if (level === 'level_2_0' || level === 'moderate' || level === 'level_2_5') multiplier = 2.0;
+          else if (level === 'level_1_5') multiplier = 1.5;
+          else if (level === 'level_1_2' || level === 'intense') multiplier = 1.2;
 
         const MAX_INTERVAL = 45; 
         let calculatedInterval = cards[idx].interval === 0 ? 1 : Math.ceil(cards[idx].interval * multiplier);
@@ -12364,7 +12369,9 @@ var quill = new Quill('#editor-container', {
     ]
   },
   placeholder: 'Digite sua anotação aqui...',
-  theme: 'snow'
+  theme: 'snow',
+  scrollingContainer: '.main-content',
+  bounds: '#editor-container'
 });
 
 // === CORREÇÃO DEFINITIVA DO SCROLL (SEM TREMIDINHA) ===
