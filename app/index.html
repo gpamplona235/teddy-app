@@ -52,6 +52,9 @@
             --border: #e2e8f0;
             --input-bg: #ffffff;
             
+
+            --app-font-scale: 1;
+
             --radius-lg: 20px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -192,7 +195,65 @@
             background: var(--primary-light);
         }
 
-        .view-section { max-width: 1100px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
+       .main-content {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 24px;
+  position: relative;
+}
+
+.view-section:not(#schedule-view) {
+  transform-origin: top center;
+  transform: none;
+  max-width: 1100px;
+}
+
+body.zoom-80 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 920px;
+}
+
+body.zoom-90 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1020px;
+}
+
+body.zoom-100 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1100px;
+}
+
+body.zoom-110 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1180px;
+}
+
+body.zoom-120 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1260px;
+}
+
+body.zoom-130 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1340px;
+}
+
+.view-section:not(#schedule-view) .hero-header-card,
+.view-section:not(#schedule-view) > .card-box:first-child {
+  width: 100%;
+  max-width: 100%;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+  display: none !important;
+}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .hidden { display: none !important; }
@@ -4618,6 +4679,287 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
 }
 
 
+.alternatives-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 20;
+}
+
+.inline-info-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #999;
+  opacity: 0.8;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.inline-info-tooltip:hover {
+  color: var(--primary);
+  opacity: 1;
+}
+
+.inline-info-tooltip i {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.inline-info-tooltip .custom-tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  background-color: #222;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 99999;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.inline-info-tooltip .custom-tooltip-text::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #222 transparent;
+}
+
+.inline-info-tooltip:hover .custom-tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.view-section {
+  transition: transform 0.25s ease, max-width 0.25s ease;
+}
+
+.view-section:not(#schedule-view) {
+  transform-origin: top center;
+}
+
+body.zoom-90 .view-section:not(#schedule-view) {
+  transform: scale(0.98);
+  max-width: 1040px;
+}
+
+body.zoom-100 .view-section:not(#schedule-view) {
+  transform: scale(1);
+  max-width: 1100px;
+}
+
+body.zoom-110 .view-section:not(#schedule-view) {
+  transform: scale(1.01);
+  max-width: 1180px;
+}
+
+body.zoom-120 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1260px;
+}
+
+body.zoom-130 .view-section:not(#schedule-view) {
+  transform: none;
+  max-width: 1340px;
+}
+
+#schedule-view {
+  transform: none !important;
+  max-width: none !important;
+}
+
+#schedule-view-container {
+  transform: none !important;
+}
+
+.zoom-fab-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  opacity: 0.8;
+  margin: 4px 0;
+}
+
+body.font-95 .zoom-fab-item[title="Fonte 95"] .zoom-fab-icon,
+body.font-100 .zoom-fab-item[title="Fonte 100"] .zoom-fab-icon,
+body.font-108 .zoom-fab-item[title="Fonte 108"] .zoom-fab-icon {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+body {
+  font-size: calc(16px * var(--app-font-scale));
+}
+
+.page-title-display {
+  font-size: calc(1.5rem * var(--app-font-scale));
+}
+
+.hero-title,
+.welcome-card h2 {
+  font-size: calc(1.3rem * var(--app-font-scale));
+}
+
+.hero-subtitle,
+#welcome-card p,
+.card-box p,
+.study-nav-btn,
+.action-btn,
+.btn-outline,
+.btn-sm,
+.banner-period-btn,
+input,
+select,
+textarea,
+.rich-editor,
+.option-btn,
+.question-text,
+.card-list-item,
+.nav-item,
+.bottom-nav-item,
+.file-name {
+  font-size: calc(1rem * var(--app-font-scale));
+}
+
+.card-badge,
+.next-review-badge,
+.create-label,
+.zoom-fab-label,
+.nav-item span {
+  font-size: calc(0.8rem * var(--app-font-scale));
+}
+
+.question-text {
+  font-size: calc(1.25rem * var(--app-font-scale));
+}
+
+.rich-editor {
+  font-size: calc(1.1rem * var(--app-font-scale));
+}
+
+
+.zoom-fab-container {
+  position: fixed;
+  bottom: 70px;
+  left: calc(var(--sidebar-width) + 18px);
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.zoom-fab-menu {
+  display: none;
+  grid-template-columns: repeat(2, minmax(58px, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-mode .zoom-fab-menu {
+  background: rgba(30, 41, 59, 0.92);
+}
+
+.zoom-fab-container.open .zoom-fab-menu {
+  display: grid;
+}
+
+.zoom-fab-item {
+  min-width: 58px;
+  height: 52px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zoom-fab-item--font {
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.zoom-fab-button {
+  width: 56px;
+  height: 56px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  box-shadow: var(--shadow-lg);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.zoom-fab-button:hover {
+  transform: scale(1.08);
+  background: var(--primary-hover);
+}
+
+.zoom-fab-button.active {
+  transform: rotate(45deg);
+}
+
+body.zoom-80 .zoom-fab-item[title="Zoom 80"],
+body.zoom-90 .zoom-fab-item[title="Zoom 90"],
+body.zoom-100 .zoom-fab-item[title="Zoom 100"],
+body.zoom-110 .zoom-fab-item[title="Zoom 110"],
+body.zoom-120 .zoom-fab-item[title="Zoom 120"],
+body.zoom-130 .zoom-fab-item[title="Zoom 130"],
+body.font-95 .zoom-fab-item[title="Fonte 95"],
+body.font-100 .zoom-fab-item[title="Fonte 100"],
+body.font-108 .zoom-fab-item[title="Fonte 108"],
+body.font-116 .zoom-fab-item[title="Fonte 116"] {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .zoom-fab-container {
+    left: 16px;
+    bottom: 85px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4862,7 +5204,7 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.82</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.86.0</div>
         </div>
 
     </nav>
@@ -5357,14 +5699,23 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
 
                            <div id="comment-edit-wrapper" class="hidden">
     <!-- BARRA DE FERRAMENTAS DA EDIÇÃO RÁPIDA -->
-    <div style="margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:0.9rem; font-weight:600; color:var(--text-muted)">Editando Explicação</span>
-        <div class="editor-toolbar" style="margin-bottom:0">
-            <button class="btn-outline btn-sm" onclick="formatCommentEditText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
-            <button class="btn-outline btn-sm" onclick="formatCommentEditText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
-            <button class="btn-outline btn-sm" onclick="formatCommentEditText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
-        </div>
-    </div>
+   <div style="margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
+  <span style="font-size:0.9rem; font-weight:600; color:var(--text-muted);">Editando Explicação</span>
+  <div class="editor-toolbar" style="margin-bottom:0;">
+    <button class="btn-outline btn-sm" onclick="formatCommentEditText('bold')" title="Negrito">
+      <i class="fas fa-bold"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatCommentEditText('italic')" title="Itálico">
+      <i class="fas fa-italic"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatCommentEditText('underline')" title="Sublinhado">
+      <i class="fas fa-underline"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="clearCommentEditFormat()" title="Limpar formatação">
+      <i class="fas fa-eraser"></i>
+    </button>
+  </div>
+</div>
 
     <!-- ÁREA EDITÁVEL RICA (DIV em vez de TEXTAREA) -->
     <div id="comment-edit-area" class="rich-editor" contenteditable="true" 
@@ -5653,43 +6004,62 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
 
         <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <label class="create-label" style="margin-bottom:0;">Pergunta</label>
-                <div class="editor-toolbar" style="margin-bottom:0;">
-                    <button class="btn-outline btn-sm" onclick="formatQuestionText('bold')"><i class="fas fa-bold"></i></button>
-                    <button class="btn-outline btn-sm" onclick="formatQuestionText('italic')"><i class="fas fa-italic"></i></button>
-                    <button class="btn-outline btn-sm" onclick="formatQuestionText('underline')"><i class="fas fa-underline"></i></button>
-                </div>
-            </div>
+  <label class="create-label" style="margin-bottom:0;">Pergunta</label>
+  <div class="editor-toolbar" style="margin-bottom:0;">
+    <button class="btn-outline btn-sm" onclick="formatQuestionText('bold')" title="Negrito">
+      <i class="fas fa-bold"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatQuestionText('italic')" title="Itálico">
+      <i class="fas fa-italic"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatQuestionText('underline')" title="Sublinhado">
+      <i class="fas fa-underline"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="clearQuestionFormat()" title="Limpar formatação">
+      <i class="fas fa-eraser"></i>
+    </button>
+  </div>
+</div>
             <div id="input-question" class="rich-editor" contenteditable="true" placeholder="Digite sua pergunta aqui..."></div>
         </div>
 
         <div class="answer-group">
-            <label class="create-label">Alternativas</label>
-            
-            <div class="answer-block correct-answer">
-                <i class="fas fa-check-circle answer-icon"></i>
-                <input type="text" id="input-opt-a" placeholder="Digite a resposta correta aqui">
-            </div>
-            
-            <div class="answer-block wrong-answer">
-                <i class="far fa-circle answer-icon"></i>
-                <input type="text" id="input-opt-b" placeholder="Alternativa incorreta 1">
-            </div>
-            
-            <div class="answer-block wrong-answer">
-                <i class="far fa-circle answer-icon"></i>
-                <input type="text" id="input-opt-c" placeholder="Alternativa incorreta 2">
-            </div>
-            
-            <div class="answer-block wrong-answer">
-                <i class="far fa-circle answer-icon"></i>
-                <input type="text" id="input-opt-d" placeholder="Alternativa incorreta 3">
-            </div>
-            <div class="answer-block wrong-answer">
-                <i class="far fa-circle answer-icon"></i>
-                <input type="text" id="input-opt-e" placeholder="Alternativa incorreta 4">
-            </div>
-        </div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+  <label class="create-label" style="margin-bottom:0;">Alternativas</label>
+
+  <div class="inline-info-tooltip">
+    <i class="fas fa-exclamation-circle"></i>
+    <span class="custom-tooltip-text" style="width: 280px;">
+      Mantenha a resposta correta sempre na primeira alternativa. Não precisa usar designação como A, B, C ou D. Exemplo: na primeira linha, digite a resposta certa; nas demais, apenas as incorretas. O aplicativo embaralha automaticamente as alternativas quando o card for exibido na aba de revisão.
+    </span>
+  </div>
+</div>
+
+  <div class="answer-block correct-answer">
+    <i class="fas fa-check-circle answer-icon"></i>
+    <input type="text" id="input-opt-a" placeholder="Digite a resposta correta aqui">
+  </div>
+
+  <div class="answer-block wrong-answer">
+    <i class="far fa-circle answer-icon"></i>
+    <input type="text" id="input-opt-b" placeholder="Alternativa incorreta 1">
+  </div>
+
+  <div class="answer-block wrong-answer">
+    <i class="far fa-circle answer-icon"></i>
+    <input type="text" id="input-opt-c" placeholder="Alternativa incorreta 2">
+  </div>
+
+  <div class="answer-block wrong-answer">
+    <i class="far fa-circle answer-icon"></i>
+    <input type="text" id="input-opt-d" placeholder="Alternativa incorreta 3">
+  </div>
+
+  <div class="answer-block wrong-answer">
+    <i class="far fa-circle answer-icon"></i>
+    <input type="text" id="input-opt-e" placeholder="Alternativa incorreta 4">
+  </div>
+</div>
 
         <!-- CAMPO FONTE -->
         <div style="margin-bottom: 12px;">
@@ -5699,16 +6069,22 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
 
         <div style="margin-bottom: 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <label class="create-label" style="margin-bottom:0">Explicação / Comentário (Opcional)</label>
-                
-                <!-- Barra de Ferramentas -->
-                <div class="editor-toolbar" style="margin-bottom:0">
-                    <button class="btn-outline btn-sm" onclick="formatCommentText('bold')" title="Negrito"><i class="fas fa-bold"></i></button>
-                    <button class="btn-outline btn-sm" onclick="formatCommentText('italic')" title="Itálico"><i class="fas fa-italic"></i></button>
-                    <button class="btn-outline btn-sm" onclick="formatCommentText('underline')" title="Sublinhado"><i class="fas fa-underline"></i></button>
-                </div>
-            </div>
-
+  <label class="create-label" style="margin-bottom:0;">Explicação / Comentário (Opcional)</label>
+  <div class="editor-toolbar" style="margin-bottom:0;">
+    <button class="btn-outline btn-sm" onclick="formatCommentText('bold')" title="Negrito">
+      <i class="fas fa-bold"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatCommentText('italic')" title="Itálico">
+      <i class="fas fa-italic"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="formatCommentText('underline')" title="Sublinhado">
+      <i class="fas fa-underline"></i>
+    </button>
+    <button class="btn-outline btn-sm" onclick="clearCommentFormat()" title="Limpar formatação">
+      <i class="fas fa-eraser"></i>
+    </button>
+  </div>
+</div>
             <!-- Área de Edição Rica -->
             <div id="input-comment" class="rich-editor" contenteditable="true" 
                  placeholder="Explicação que aparece após responder..." 
@@ -6427,7 +6803,27 @@ body.dark-mode .ql-snow .ql-picker-label polygon {
         <button class="bottom-nav-item" onclick="switchTab('pomodoro')"><i class="fas fa-stopwatch"></i>Pomodoro</button> 
         <button class="bottom-nav-item" onclick="switchTab('notes')"><i class="fas fa-sticky-note"></i>Caderno</button>
     </nav>
+<div class="zoom-fab-container" id="zoom-fab-container">
+  <div class="zoom-fab-menu">
 
+    <button class="zoom-fab-item" onclick="setAppZoom(0.8)" title="Zoom 80">80</button>
+    <button class="zoom-fab-item" onclick="setAppZoom(0.9)" title="Zoom 90">90</button>
+    <button class="zoom-fab-item" onclick="setAppZoom(1)" title="Zoom 100">100</button>
+    <button class="zoom-fab-item" onclick="setAppZoom(1.1)" title="Zoom 110">110</button>
+    <button class="zoom-fab-item" onclick="setAppZoom(1.2)" title="Zoom 120">120</button>
+    <button class="zoom-fab-item" onclick="setAppZoom(1.3)" title="Zoom 130">130</button>
+
+    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(0.95)" title="Fonte 95">A-</button>
+    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1)" title="Fonte 100">A</button>
+    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1.08)" title="Fonte 108">A+</button>
+    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1.16)" title="Fonte 116">A++</button>
+
+  </div>
+
+  <button class="zoom-fab-button" id="zoom-fab-button" onclick="toggleZoomFabMenu()">
+    <i class="fas fa-text-height"></i>
+  </button>
+</div>
     <!-- MODIFIED: FAB Container with upward expansion -->
     <div class="fab-container" id="fab-container">
         <div class="fab-menu" id="fab-menu">
@@ -8175,6 +8571,84 @@ function limparBancasDuplicadas() {
             document.getElementById('fab-container').classList.toggle('open');
             document.getElementById('fab-button').classList.toggle('active');
         }
+
+  function toggleZoomFabMenu() {
+  const fab = document.getElementById('zoom-fab-container');
+  const button = document.getElementById('zoom-fab-button');
+
+  if (!fab || !button) return;
+
+  fab.classList.toggle('open');
+  button.classList.toggle('active');
+}
+
+function setAppZoom(scale) {
+  document.body.classList.remove(
+    'zoom-80',
+    'zoom-90',
+    'zoom-100',
+    'zoom-110',
+    'zoom-120',
+    'zoom-130'
+  );
+
+  if (scale === 0.8) {
+    document.body.classList.add('zoom-80');
+  } else if (scale === 0.9) {
+    document.body.classList.add('zoom-90');
+  } else if (scale === 1.1) {
+    document.body.classList.add('zoom-110');
+  } else if (scale === 1.2) {
+    document.body.classList.add('zoom-120');
+  } else if (scale === 1.3) {
+    document.body.classList.add('zoom-130');
+  } else {
+    document.body.classList.add('zoom-100');
+  }
+
+  const fab = document.getElementById('zoom-fab-container');
+  const button = document.getElementById('zoom-fab-button');
+
+  if (fab) fab.classList.remove('open');
+  if (button) button.classList.remove('active');
+}
+
+
+function setFontScale(scale) {
+  document.body.classList.remove('font-95', 'font-100', 'font-108', 'font-116');
+
+  if (scale === 0.95) {
+    document.body.classList.add('font-95');
+    document.documentElement.style.setProperty('--app-font-scale', '0.95');
+  } else if (scale === 1.08) {
+    document.body.classList.add('font-108');
+    document.documentElement.style.setProperty('--app-font-scale', '1.08');
+  } else if (scale === 1.16) {
+    document.body.classList.add('font-116');
+    document.documentElement.style.setProperty('--app-font-scale', '1.16');
+  } else {
+    document.body.classList.add('font-100');
+    document.documentElement.style.setProperty('--app-font-scale', '1');
+  }
+
+  const fab = document.getElementById('zoom-fab-container');
+  const button = document.getElementById('zoom-fab-button');
+
+  if (fab) fab.classList.remove('open');
+  if (button) button.classList.remove('active');
+}
+
+document.addEventListener('click', function(e) {
+  const zoomFab = document.getElementById('zoom-fab-container');
+  const zoomButton = document.getElementById('zoom-fab-button');
+
+  if (!zoomFab || !zoomButton) return;
+
+  if (!zoomFab.contains(e.target)) {
+    zoomFab.classList.remove('open');
+    zoomButton.classList.remove('active');
+  }
+});
         
         function quickCreate(type) {
             toggleFabMenu(); // close menu
@@ -11361,6 +11835,37 @@ function toggleCommentSection() {
 function formatCommentEditText(command) {
     document.execCommand(command, false, null);
     document.getElementById('comment-edit-area').focus();
+}
+
+function clearEditorFormatting(editorId) {
+  const editor = document.getElementById(editorId);
+  if (!editor) return;
+
+  editor.focus();
+  document.execCommand('removeFormat', false, null);
+  document.execCommand('unlink', false, null);
+
+  editor.innerHTML = editor.innerHTML
+    .replace(/<span[^>]*>/gi, '')
+    .replace(/<\/span>/gi, '')
+    .replace(/<(b|strong)>/gi, '')
+    .replace(/<\/(b|strong)>/gi, '')
+    .replace(/<(i|em)>/gi, '')
+    .replace(/<\/(i|em)>/gi, '')
+    .replace(/<u>/gi, '')
+    .replace(/<\/u>/gi, '');
+}
+
+function clearQuestionFormat() {
+  clearEditorFormatting('input-question');
+}
+
+function clearCommentFormat() {
+  clearEditorFormatting('input-comment');
+}
+
+function clearCommentEditFormat() {
+  clearEditorFormatting('comment-edit-area');
 }
 
 function enableCommentEdit() {
