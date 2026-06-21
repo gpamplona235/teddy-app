@@ -5204,7 +5204,7 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             box-sizing: border-box;
         ">
             <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.85rem;">BETA</div>
-            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.86.0</div>
+            <div style="font-weight: 400; font-size: 0.7rem; opacity: 0.9;">v0.9.87.9</div>
         </div>
 
     </nav>
@@ -6478,143 +6478,312 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             </div>
         </section>
 
-        <!-- MODIFIED: Performance View Reformulated (Horizontal & Banner Buttons) -->
+        <!-- ============================================================= -->
+        <!-- DADOS DASHBOARD STYLES (Reformulado - tela cheia)             -->
+        <!-- ============================================================= -->
+        <style id="dados-dashboard-styles">
+            /* Tela cheia para a página DADOS */
+            #performance-view { max-width: 100% !important; width: 100%; margin: 0 auto; }
+
+            .dados-wrap { display: flex; flex-direction: column; gap: 18px; }
+
+            /* Hero motivacional */
+            .dados-hero {
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                color: #fff; border: none; position: relative; overflow: hidden;
+                border-radius: var(--radius-lg); padding: 26px 28px;
+                display: flex; justify-content: space-between; align-items: center;
+                flex-wrap: wrap; gap: 18px; box-shadow: var(--shadow-md);
+            }
+            .dados-hero::after {
+                content: ""; position: absolute; right: -40px; top: -60px;
+                width: 220px; height: 220px; background: rgba(255,255,255,0.10); border-radius: 50%;
+            }
+            .dados-hero::before {
+                content: ""; position: absolute; right: 80px; bottom: -90px;
+                width: 180px; height: 180px; background: rgba(255,255,255,0.07); border-radius: 50%;
+            }
+            .dados-hero-left { position: relative; z-index: 2; }
+            .dados-hero-eyebrow { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; text-transform: uppercase; }
+            .dados-hero-title { font-size: 1.8rem; font-weight: 800; margin: 4px 0 6px; line-height: 1.15; }
+            .dados-hero-sub { font-size: 0.98rem; opacity: 0.95; max-width: 560px; line-height: 1.5; }
+            .dados-hero-right { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+            .dados-period-tabs { display: inline-flex; background: rgba(255,255,255,0.15); padding: 5px; border-radius: 999px; gap: 4px; backdrop-filter: blur(4px); }
+            .dados-period-tabs .banner-period-btn {
+                background: transparent; border: none; color: #fff; padding: 8px 18px;
+                border-radius: 999px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; opacity: 0.85;
+            }
+            .dados-period-tabs .banner-period-btn:hover { opacity: 1; background: rgba(255,255,255,0.12); }
+            .dados-period-tabs .banner-period-btn.active { background: #fff; color: var(--primary-dark); opacity: 1; box-shadow: var(--shadow-sm); }
+            .dados-period-nav { display: inline-flex; align-items: center; gap: 14px; color: #fff; }
+            .dados-period-nav button {
+                width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4);
+                background: rgba(255,255,255,0.12); color: #fff; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+            }
+            .dados-period-nav button:hover { background: rgba(255,255,255,0.28); }
+            .dados-period-nav span { font-weight: 800; font-size: 1rem; min-width: 150px; text-align: center; }
+
+            /* Banner de insight motivacional */
+            .dados-motivation {
+                display: flex; align-items: center; gap: 16px; padding: 18px 22px;
+                border-radius: var(--radius-lg); border: 1px solid var(--border);
+                background: var(--bg-card); box-shadow: var(--shadow-sm);
+            }
+
+            /* Seletor segmentado (Matéria / Tópico / Detalhe) */
+            .dados-seg { display: inline-flex; background: var(--bg-body); border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px; }
+            .dados-seg button { border: none; background: transparent; color: var(--text-muted); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+            .dados-seg button.active { background: var(--primary); color: #fff; }
+            .dados-seg button:hover:not(.active) { color: var(--text-main); }
+            .dados-motivation .dm-icon {
+                width: 50px; height: 50px; min-width: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+                font-size: 1.5rem; background: var(--primary-light); color: var(--primary);
+            }
+            .dados-motivation .dm-text strong { display: block; font-size: 1.05rem; color: var(--text-main); margin-bottom: 2px; }
+            .dados-motivation .dm-text span { font-size: 0.92rem; color: var(--text-muted); line-height: 1.45; }
+
+            /* KPI grid */
+            .dados-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 14px; }
+            .dados-kpi {
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+                padding: 18px 18px 16px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+                transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; gap: 10px;
+            }
+            .dados-kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+            .dados-kpi-top { display: flex; align-items: center; justify-content: space-between; }
+            .dados-kpi-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; }
+            .dados-kpi-delta { font-size: 0.78rem; font-weight: 800; padding: 3px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; }
+            .dados-kpi-delta.up { color: var(--success); background: rgba(16,185,129,0.12); }
+            .dados-kpi-delta.down { color: var(--danger); background: rgba(239,68,68,0.12); }
+            .dados-kpi-delta.flat { color: var(--text-muted); background: var(--bg-body); }
+            .dados-kpi-value { font-size: 2rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+            .dados-kpi-label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+            /* Grids responsivos */
+            .dados-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+            .dados-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+
+            /* Cabeçalho de card padrão */
+            .dados-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+            .dados-card-head h3 { margin: 0; font-size: 1.08rem; display: flex; align-items: center; gap: 10px; }
+            .dados-card-head h3 i { color: var(--primary); }
+            .dados-card-head .dch-sub { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+
+            /* Lista de ranking (pontos fortes/fracos) */
+            .dados-rank-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+            .dados-rank-item:last-child { border-bottom: none; }
+            .dados-rank-badge { width: 30px; height: 30px; min-width: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
+            .dados-rank-body { flex: 1; min-width: 0; }
+            .dados-rank-name { font-weight: 700; font-size: 0.95rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .dados-rank-meta { font-size: 0.8rem; color: var(--text-muted); }
+            .dados-rank-bar { height: 7px; border-radius: 4px; background: var(--bg-body); overflow: hidden; margin-top: 6px; }
+            .dados-rank-bar > div { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+            .dados-rank-pct { font-weight: 800; font-size: 1.05rem; min-width: 52px; text-align: right; }
+
+            /* SRS / mini-stats */
+            .dados-mini-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
+            .dados-mini-stat { background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center; }
+            .dados-mini-stat .ms-val { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+            .dados-mini-stat .ms-lbl { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; margin-top: 6px; }
+
+            /* Barra empilhada (distribuição) */
+            .dados-stacked { display: flex; height: 14px; border-radius: 8px; overflow: hidden; background: var(--bg-body); margin-bottom: 12px; }
+            .dados-stacked > div { height: 100%; }
+            .dados-legend { display: flex; flex-wrap: wrap; gap: 14px; }
+            .dados-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+            .dados-legend span i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+            /* Itens de progresso (editais / cronograma) */
+            .dados-prog-item { margin-bottom: 16px; }
+            .dados-prog-item:last-child { margin-bottom: 0; }
+            .dados-prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.92rem; }
+            .dados-prog-top .pt-name { font-weight: 700; color: var(--text-main); }
+            .dados-prog-top .pt-val { font-weight: 800; color: var(--primary); }
+            .dados-prog-bar { height: 9px; border-radius: 5px; background: var(--bg-body); overflow: hidden; }
+            .dados-prog-bar > div { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); transition: width 0.6s ease; }
+
+            /* Plano de ação */
+            .dados-action { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--bg-body); border: 1px solid var(--border); margin-bottom: 12px; transition: all 0.2s; cursor: pointer; }
+            .dados-action:last-child { margin-bottom: 0; }
+            .dados-action:hover { border-color: var(--primary); transform: translateX(3px); }
+            .dados-action .da-icon { width: 40px; height: 40px; min-width: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+            .dados-action .da-body { flex: 1; }
+            .dados-action .da-title { font-weight: 700; font-size: 0.96rem; color: var(--text-main); }
+            .dados-action .da-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+            .dados-action .da-go { color: var(--text-muted); align-self: center; font-size: 0.9rem; }
+
+            /* Simulados */
+            .dados-sim-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+            .dados-sim-item:last-child { border-bottom: none; }
+            .dados-sim-score { width: 48px; height: 48px; min-width: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; border: 3px solid; }
+
+            .dados-empty { text-align: center; color: var(--text-muted); padding: 26px 10px; font-size: 0.92rem; }
+            .dados-empty i { font-size: 1.8rem; display: block; margin-bottom: 10px; opacity: 0.5; }
+
+            /* Gráfico de linha (precisão) */
+            #dados-precision-chart { width: 100%; height: 200px; }
+
+            @media (max-width: 980px) {
+                .dados-grid-2, .dados-grid-3 { grid-template-columns: 1fr; }
+                .dados-hero { flex-direction: column; align-items: flex-start; }
+                .dados-hero-right { align-items: flex-start; width: 100%; }
+                .dados-hero-title { font-size: 1.5rem; }
+            }
+        </style>
+
+        <!-- MODIFIED: Performance View Reformulated (Dashboard completo) -->
         <section id="performance-view" class="view-section hidden">
-            <div class="hero-header-card">
-                <i class="fas fa-chart-line hero-bg-icon"></i>
-                <div class="hero-content">
-                    <div>
-                        <h2 class="hero-title">Meu Desempenho</h2>
-                        <p class="hero-subtitle">Acompanhe sua evolução e métricas de estudo.</p>
+            <div class="dados-wrap">
+
+                <!-- HERO MOTIVACIONAL -->
+                <div class="dados-hero">
+                    <div class="dados-hero-left">
+                        <div class="dados-hero-eyebrow">Painel de Desempenho</div>
+                        <div class="dados-hero-title" id="dados-greeting">Vamos estudar!</div>
+                        <div class="dados-hero-sub" id="dados-hero-sub">Acompanhe sua evolução, identifique pontos fortes e fracos e mantenha o ritmo rumo à aprovação.</div>
                     </div>
-                    <div class="hero-actions">
-                        <button id="btn-week" class="banner-period-btn active" onclick="changePeriod('week')">Semana</button>
-                        <button id="btn-month" class="banner-period-btn" onclick="changePeriod('month')">Mês</button>
-                        <button id="btn-year" class="banner-period-btn" onclick="changePeriod('year')">Ano</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Date Display -->
-            <div style="text-align: center; margin-bottom: 24px; color: var(--text-main);">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-                    <button class="btn-outline btn-sm" style="width: 32px; padding: 0;" onclick="prevPeriod()"><i class="fas fa-chevron-left"></i></button>
-                    <span id="period-display" style="font-weight: 800; font-size: 1.1rem; min-width: 150px;">...</span>
-                    <button class="btn-outline btn-sm" style="width: 32px; padding: 0;" onclick="nextPeriod()"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-
-            <div class="performance-layout">
-                <!-- Row 1: Top Metrics (Full Width Stack) -->
-                <div class="performance-card">
-                    <h3 style="margin-bottom:20px;">Métricas Principais</h3>
-                    <div class="performance-metrics">
-                        <div class="metric-box">
-                            <div class="metric-value" id="total-reviews-count">0</div>
-                            <div class="metric-label">Revisões Feitas</div>
+                    <div class="dados-hero-right">
+                        <div class="dados-period-tabs">
+                            <button id="btn-week" class="banner-period-btn active" onclick="changePeriod('week')">Semana</button>
+                            <button id="btn-month" class="banner-period-btn" onclick="changePeriod('month')">Mês</button>
+                            <button id="btn-year" class="banner-period-btn" onclick="changePeriod('year')">Ano</button>
                         </div>
-                        <div class="metric-box">
-                            <div class="metric-value" id="accuracy-rate">0%</div>
-                            <div class="metric-label">Taxa de Acertos</div>
+                        <div class="dados-period-nav">
+                            <button onclick="prevPeriod()" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+                            <span id="period-display">...</span>
+                            <button onclick="nextPeriod()" title="Próximo"><i class="fas fa-chevron-right"></i></button>
                         </div>
-                        <div class="metric-box">
-                            <div class="metric-value" id="performance-streak">0</div>
-                            <div class="metric-label">Dias de Ofensiva</div>
-                        </div>
-                                                <div class="metric-box">
-                            <!-- O ID PRECISA SER reviews-today PARA O APP NÃO QUEBRAR -->
-                            <div class="metric-value" id="reviews-today">0</div>
-                            <div class="metric-label">Tempo de Estudo</div>
-                        </div>
-
-
                     </div>
                 </div>
 
-                <!-- === NOVO GRÁFICO: ACERTOS vs ERROS (Duas Colunas) === -->
-<div class="performance-card">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <h3 style="margin:0">Balanço: Acertos vs Erros</h3>
-    <div style="display:flex; gap:15px; font-size:0.8rem; font-weight:600;">
-         <div style="display:flex; align-items:center; gap:6px;">
-             <span style="width:12px; height:12px; background:#10b981; border-radius:2px;"></span> Acertos
-         </div>
-         <div style="display:flex; align-items:center; gap:6px;">
-             <span style="width:12px; height:12px; background:#ef4444; border-radius:2px;"></span> Erros
-         </div>
-    </div>
-  </div>
-  
-  <!-- GRÁFICO COM ROLAGEM RESPONSIVA -->
-<div id="accuracy-vs-error-chart" class="dash-mini-chart" 
-     style="
-        height: 200px; 
-        display: flex; 
-        align-items: flex-end; 
-        gap: 8px; 
-        overflow-x: auto; /* Permite rolagem lateral */
-        padding-bottom: 10px; /* Espaço para barra de rolagem não cobrir legendas */">
-</div>
-
-</div>
-
-
-<!-- GRÁFICO DE CARDS CRIADOS (NOVO) -->
-<div class="card-box" style="margin-bottom: 24px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main);">Evolução: Cards Criados</h3>
-        <div style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <div style="width: 10px; height: 10px; background: var(--primary); border-radius: 2px;"></div>
-                <span style="color: var(--text-muted);">Novos Cards</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Container do Gráfico (Com rolagem horizontal igual ao anterior) -->
-    <div id="cards-created-chart" class="dash-mini-chart" 
-         style="
-            height: 200px; 
-            display: flex; 
-            align-items: flex-end; 
-            gap: 8px; 
-            overflow-x: auto; 
-            padding-bottom: 10px;
-         ">
-         <!-- O JS vai preencher aqui -->
-    </div>
-</div>
-
-
-
-                <!-- Row 1.5 Study Time Chart (NOVO) -->
-<div class="performance-card">
-  <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
-    <h3 style="margin:0">Tempo de estudo</h3>
-    <span id="studytime-chart-subtitle"
-          style="font-size:0.85rem; color: var(--text-muted); font-weight:600;"></span>
-  </div>
-
-  <div id="studytime-chart" class="dash-mini-chart" style="height:180px;"></div>
-</div>
-
-
-                <!-- Row 2: Evolution Chart (Full Width) -->
-                <div class="performance-card">
-                    <h3 style="margin-bottom:20px;">Evolução Diária</h3>
-                    <div id="performance-chart" style="display: flex; flex-direction: column; gap: 12px; min-height: 200px;"></div>
+                <!-- BANNER DE INSIGHT MOTIVACIONAL (dinâmico) -->
+                <div class="dados-motivation" id="dados-motivation">
+                    <div class="dm-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="dm-text"><strong>Carregando insights...</strong><span>Analisando seu progresso.</span></div>
                 </div>
 
-                <!-- Row 3: Breakdown by Subject & Category (Full Width) -->
-                <div class="performance-card">
-                    <h3 style="margin-bottom:20px;">Desempenho por Matéria</h3>
-                    <div id="category-stats-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                <!-- KPIs PRINCIPAIS -->
+                <div class="dados-kpi-grid" id="dados-kpi-grid">
+                    <!-- Preenchido via JS. IDs legados mantidos abaixo para compatibilidade. -->
+                    <span id="total-reviews-count" style="display:none;"></span>
+                    <span id="accuracy-rate" style="display:none;"></span>
+                    <span id="performance-streak" style="display:none;"></span>
+                    <span id="reviews-today" style="display:none;"></span>
                 </div>
 
-                <div class="performance-card">
-                    <h3 style="margin-bottom:20px;">Progresso por Categoria</h3>
-                    <div class="category-progress-grid" id="category-progress-grid"></div>
+                <!-- LINHA 1 DE GRÁFICOS: Acertos vs Erros + Tempo de Estudo -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Acertos vs Erros</h3>
+                            <div class="dados-legend">
+                                <span><i style="background:#10b981;"></i> Acertos</span>
+                                <span><i style="background:#ef4444;"></i> Erros</span>
+                            </div>
+                        </div>
+                        <div id="accuracy-vs-error-chart" class="dash-mini-chart" style="height:200px; display:flex; align-items:flex-end; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+                    </div>
+
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Tempo de Estudo</h3>
+                            <span class="dch-sub" id="studytime-chart-subtitle"></span>
+                        </div>
+                        <div id="studytime-chart" class="dash-mini-chart" style="height:200px;"></div>
+                    </div>
                 </div>
+
+                <!-- LINHA 2 DE GRÁFICOS: Evolução da Precisão + Cards Criados -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Evolução da Precisão</h3>
+                            <span class="dch-sub" id="precision-trend-sub"></span>
+                        </div>
+                        <div id="dados-precision-chart"></div>
+                    </div>
+
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Cards Criados</h3>
+                            <div class="dados-legend"><span><i style="background:var(--primary);"></i> Novos cards</span></div>
+                        </div>
+                        <div id="cards-created-chart" class="dash-mini-chart" style="height:200px; display:flex; align-items:flex-end; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+                    </div>
+                </div>
+
+                <!-- PONTOS FORTES E FRACOS (com seletor de nível) -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Pontos Fortes</h3>
+                            <span class="dados-seg" id="seg-strengths"></span>
+                        </div>
+                        <div id="dados-strengths"></div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Pontos a Reforçar</h3>
+                            <span class="dados-seg" id="seg-weak"></span>
+                        </div>
+                        <div id="dados-weaknesses"></div>
+                    </div>
+                </div>
+
+                <!-- DESEMPENHO POR MATÉRIA (largura total) -->
+                <div class="performance-card">
+                    <div class="dados-card-head">
+                        <h3>Desempenho por Matéria</h3>
+                        <span class="dch-sub">Taxa de acerto por categoria no período</span>
+                    </div>
+                    <div id="category-stats-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+                </div>
+
+                <!-- SRS + CRONOGRAMA DA SEMANA -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Saúde da Revisão</h3>
+                            <span class="dch-sub">Sua coleção de cards</span>
+                        </div>
+                        <div id="dados-srs"></div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Cronograma da Semana</h3>
+                            <span class="dch-sub">Cumprimento do plano</span>
+                        </div>
+                        <div id="dados-schedule"></div>
+                    </div>
+                </div>
+
+                <!-- EDITAIS + SIMULADOS -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Progresso dos Editais</h3>
+                            <span class="dch-sub">Tópicos concluídos</span>
+                        </div>
+                        <div id="dados-editais"></div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Simulados Recentes</h3>
+                            <span class="dch-sub">Histórico de provas</span>
+                        </div>
+                        <div id="dados-simulados"></div>
+                    </div>
+                </div>
+
+                <!-- PLANO DE AÇÃO (largura total) -->
+                <div class="performance-card">
+                    <div class="dados-card-head">
+                        <h3>Plano de Ação Sugerido</h3>
+                        <span class="dch-sub">O que fazer agora para melhorar</span>
+                    </div>
+                    <div id="dados-actions"></div>
+                </div>
+
             </div>
         </section>
 
@@ -12001,9 +12170,10 @@ function saveCommentEdit() {
     // Adicionamos 'subcategory' aqui
     performanceData.push({
         date: getLocalDateString(), // <--- CORRIGIDO
-        correct: isCor, 
+        correct: isCor,
         category: currentCard.category || 'Geral',
-        subcategory: currentCard.subcategory || 'Sem Subtópico' 
+        subcategory: currentCard.subcategory || 'Sem Subtópico',
+        subsubcategory: currentCard.subsubcategory || '' // p/ análise por Detalhe/sub-sub
     });
 
     salvarDados('ted_performance', performanceData);
@@ -12519,193 +12689,602 @@ if (itemIndex !== -1) {
 
 
         /* --- FUNÇÃO PRINCIPAL DE DESEMPENHO (VERSÃO CORRIGIDA E SEGURA) --- */
-function renderPerformanceView() {
-    const display = document.getElementById('period-display');
-    const totalCountEl = document.getElementById('total-reviews-count');
-    const accuracyEl = document.getElementById('accuracy-rate');
-    const categoryList = document.getElementById('category-stats-list');
-    const chart = document.getElementById('performance-chart');
-    const categoryProgressGrid = document.getElementById('category-progress-grid');
-    const streakEl = document.getElementById('performance-streak');
-    const reviewsTodayEl = document.getElementById('reviews-today');
-
-    // 1. LIMPEZA DE TELA
-    if(categoryList) categoryList.innerHTML = '';
-    if(categoryProgressGrid) categoryProgressGrid.innerHTML = '';
-    if(chart) chart.innerHTML = '';
-    const studyChart = document.getElementById('studytime-chart');
-    if (studyChart) studyChart.innerHTML = '';
-
+/* ============================ HELPERS DO DASHBOARD ============================ */
+let dadosBreakdownLevel = 'category';   // 'category' | 'subcategory' | 'subsubcategory'
+let dadosPeriodDataCache = [];          // cache do período atual p/ re-render do seletor
+function dadosPctColor(pct) {
+    return pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
+}
+function dadosFmtMin(min) {
+    min = parseInt(min) || 0;
+    if (min <= 0) return '0m';
+    const h = Math.floor(min / 60), m = min % 60;
+    return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+}
+function dadosGetRange(period, index) {
     const now = new Date();
-    
-    // 2. DEFINIÇÃO DE DATAS (MÉTODO UTC SEGURO)
     let startDate, endDate;
-
-    if(currentPeriod === 'week') {
+    if (period === 'week') {
         startDate = new Date();
-        startDate.setDate(now.getDate() - (currentPeriodIndex * 7) - 6);
+        startDate.setDate(now.getDate() - (index * 7) - 6);
         startDate.setHours(0,0,0,0);
-        
         endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 6);
         endDate.setHours(23,59,59,999);
-        
-        display.innerText = `${startDate.toLocaleDateString('pt-BR')} - ${endDate.toLocaleDateString('pt-BR')}`;
-    } else if(currentPeriod === 'month') {
-        startDate = new Date(now.getFullYear(), now.getMonth() - currentPeriodIndex, 1);
+    } else if (period === 'month') {
+        startDate = new Date(now.getFullYear(), now.getMonth() - index, 1);
         startDate.setHours(0,0,0,0);
-        endDate = new Date(now.getFullYear(), now.getMonth() - currentPeriodIndex + 1, 0);
+        endDate = new Date(now.getFullYear(), now.getMonth() - index + 1, 0);
         endDate.setHours(23,59,59,999);
-        display.innerText = startDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     } else {
-        startDate = new Date(now.getFullYear() - currentPeriodIndex, 0, 1);
+        startDate = new Date(now.getFullYear() - index, 0, 1);
         startDate.setHours(0,0,0,0);
-        endDate = new Date(now.getFullYear() - currentPeriodIndex, 11, 31);
+        endDate = new Date(now.getFullYear() - index, 11, 31);
         endDate.setHours(23,59,59,999);
-        display.innerText = startDate.getFullYear();
+    }
+    return { startDate, endDate };
+}
+function dadosFilterPerf(start, end) {
+    const sTs = start.getTime(), eTs = end.getTime();
+    return performanceData.filter(p => {
+        const t = new Date(p.date + 'T12:00:00').getTime();
+        return t >= sTs && t <= eTs;
+    });
+}
+function dadosKpiCard(o) {
+    let deltaHtml = '';
+    if (o.delta && o.delta.show) {
+        const cls = o.delta.dir > 0 ? 'up' : o.delta.dir < 0 ? 'down' : 'flat';
+        const arrow = o.delta.dir > 0 ? 'fa-arrow-up' : o.delta.dir < 0 ? 'fa-arrow-down' : 'fa-minus';
+        deltaHtml = `<span class="dados-kpi-delta ${cls}"><i class="fas ${arrow}"></i> ${o.delta.text}</span>`;
+    }
+    return `<div class="dados-kpi">
+        <div class="dados-kpi-top">
+            <div class="dados-kpi-icon" style="background:${o.iconBg}; color:${o.iconColor};"><i class="fas ${o.icon}"></i></div>
+            ${deltaHtml}
+        </div>
+        <div class="dados-kpi-value">${o.value}</div>
+        <div class="dados-kpi-label">${o.label}</div>
+    </div>`;
+}
+function dadosEmpty(icon, msg) {
+    return `<div class="dados-empty"><i class="fas ${icon}"></i>${msg}</div>`;
+}
+
+/* --- FUNÇÃO PRINCIPAL DE DESEMPENHO (DASHBOARD REFORMULADO) --- */
+function renderPerformanceView() {
+    const display = document.getElementById('period-display');
+    const now = new Date();
+
+    // 1. DEFINIÇÃO DE DATAS (período atual e anterior, para comparativos)
+    const { startDate, endDate } = dadosGetRange(currentPeriod, currentPeriodIndex);
+    const prevRange = dadosGetRange(currentPeriod, currentPeriodIndex + 1);
+
+    if (display) {
+        if (currentPeriod === 'week') display.innerText = `${startDate.toLocaleDateString('pt-BR')} - ${endDate.toLocaleDateString('pt-BR')}`;
+        else if (currentPeriod === 'month') display.innerText = startDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        else display.innerText = startDate.getFullYear();
     }
 
-    // 3. FILTRAGEM SEGURA (EVITA BUGS DE FUSO)
-    // Converte tudo para timestamp numérico
-    const startTs = startDate.getTime();
-    const endTs = endDate.getTime();
+    // 2. FILTRAGEM SEGURA
+    const periodData = dadosFilterPerf(startDate, endDate);
+    const prevData = dadosFilterPerf(prevRange.startDate, prevRange.endDate);
 
-    const periodData = performanceData.filter(p => {
-        // Truque: Adiciona meio-dia para evitar que dia 01 vire dia 31 do mês anterior por fuso
-        const pDate = new Date(p.date + 'T12:00:00'); 
-        const pTs = pDate.getTime();
-        return pTs >= startTs && pTs <= endTs;
-    });
+    // 3. GRÁFICOS EXISTENTES
+    if (typeof renderStudyTimeBarChart === 'function') renderStudyTimeBarChart(startDate, endDate);
+    if (typeof renderAccuracyChart === 'function') renderAccuracyChart(startDate, endDate);
+    if (typeof renderCreatedCardsChart === 'function') renderCreatedCardsChart(startDate, endDate);
+    renderPrecisionTrend(startDate, endDate, periodData);
 
-    // Renderiza Gráficos Novos
-    if(typeof renderStudyTimeBarChart === 'function') renderStudyTimeBarChart(startDate, endDate);
-    if(typeof renderAccuracyChart === 'function') renderAccuracyChart(startDate, endDate);
-    if(typeof renderCreatedCardsChart === 'function') renderCreatedCardsChart(startDate, endDate);
-
-
-
-    // 4. ATUALIZA MÉTRICAS DO BANNER
+    // 4. MÉTRICAS DO PERÍODO
     const totalReviews = periodData.length;
     const totalCorrect = periodData.filter(p => p.correct).length;
-    const accuracy = totalReviews ? Math.round((totalCorrect/totalReviews)*100) : 0;
-
-    // A) Total e Taxa
-    if(totalCountEl) totalCountEl.innerText = totalReviews;
-    if(accuracyEl) accuracyEl.innerText = accuracy + '%';
-
-    // B) Dias Estudados (Substitui Ofensiva Fixa)
+    const accuracy = totalReviews ? Math.round((totalCorrect / totalReviews) * 100) : 0;
     const uniqueDays = [...new Set(periodData.map(p => p.date))].length;
-    if(streakEl) streakEl.innerText = uniqueDays;
 
-    // C) Tempo de Estudo (Cálculo do Pomodoro Integrado)
-    try {
-        const ph = pomoHistory || [];
-        // Filtra sessões dentro do período
-        const periodPomo = ph.filter(s => {
-            const sDate = new Date(s.date || s.timestamp || s.endTime);
-            return sDate.getTime() >= startTs && sDate.getTime() <= endTs;
-        });
-        
-        const pTotal = periodPomo.reduce((acc, curr) => acc + (parseInt(curr.duration) || 0), 0);
-        
-        let pText = "0m";
-        if (pTotal > 0) {
-            const h = Math.floor(pTotal / 60);
-            const m = pTotal % 60;
-            pText = h > 0 ? `${h}h ${m}m` : `${m}m`;
-        }
-        
-        if(reviewsTodayEl) {
-            reviewsTodayEl.innerText = pText;
-            reviewsTodayEl.style.color = "var(--primary)";
-        }
-    } catch(e) { console.error("Erro Pomo Stats:", e); }
+    const prevTotal = prevData.length;
+    const prevCorrect = prevData.filter(p => p.correct).length;
+    const prevAccuracy = prevTotal ? Math.round((prevCorrect / prevTotal) * 100) : 0;
 
+    // Tempo de estudo (pomodoro) no período
+    const sTs = startDate.getTime(), eTs = endDate.getTime();
+    const pomoIn = (range) => (pomoHistory || []).filter(s => {
+        const d = new Date(s.date || s.timestamp || s.endTime || s.startTime);
+        return !isNaN(d) && d.getTime() >= range.startDate.getTime() && d.getTime() <= range.endDate.getTime();
+    }).reduce((a, c) => a + (parseInt(c.duration) || 0), 0);
+    const studyMin = pomoIn({ startDate, endDate });
+    const prevStudyMin = pomoIn(prevRange);
 
-    // 5. GRÁFICO DIÁRIO (APENAS MODO SEMANA)
-    if(currentPeriod === 'week' && chart) {
-        for(let i=0; i<7; i++) {
-            const d = new Date(startDate);
-            d.setDate(startDate.getDate()+i);
-            const ds = d.toISOString().split('T')[0];
-            const recs = periodData.filter(p => p.date === ds);
-            const total = recs.length;
-            const corr = recs.filter(r => r.correct).length;
-            const pct = total ? (corr/total)*100 : 0;
-            const dayName = d.toLocaleDateString('pt-BR', {weekday: 'long'});
+    // Cards a revisar hoje (global)
+    const nowMs = Date.now();
+    const endToday = new Date(); endToday.setHours(23,59,59,999);
+    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime()).length;
 
-            chart.innerHTML += `
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="width:100px; font-size:0.9rem; font-weight:600; color:var(--text-muted); text-transform:capitalize;">${dayName}</div>
-                    <div style="flex:1;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                            <span style="font-size:0.85rem; color:var(--text-main);">${corr}/${total} acertos</span>
-                            <span style="font-size:0.85rem; font-weight:bold; color:${pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)'}">${pct.toFixed(0)}%</span>
-                        </div>
-                        <div style="background:var(--bg-body); height:12px; border-radius:6px; overflow:hidden;">
-                            <div style="width:${pct}%; background:${pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)'}; height:100%;"></div>
-                        </div>
-                    </div>
-                </div>`;
-        }
-    } else if (chart) {
-        chart.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--text-muted); font-style:italic;">Visualize os gráficos detalhados acima (Acertos vs Erros).</div>`;
+    // Estudou hoje?
+    const todayStr = (typeof getLocalDateString === 'function') ? getLocalDateString() : new Date().toISOString().split('T')[0];
+    const studiedToday = performanceData.some(p => p.date === todayStr) ||
+        (pomoHistory || []).some(s => { const d = new Date(s.date || s.timestamp || s.endTime || s.startTime); return !isNaN(d) && d.toISOString().split('T')[0] === todayStr; });
+
+    // Manter spans legados sincronizados (compatibilidade)
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+    setTxt('total-reviews-count', totalReviews);
+    setTxt('accuracy-rate', accuracy + '%');
+    setTxt('performance-streak', uniqueDays);
+    setTxt('reviews-today', dadosFmtMin(studyMin));
+
+    // 5. KPIs
+    const grid = document.getElementById('dados-kpi-grid');
+    if (grid) {
+        const accDelta = accuracy - prevAccuracy;
+        const revDelta = totalReviews - prevTotal;
+        const timeDelta = studyMin - prevStudyMin;
+        grid.innerHTML = `
+            <span id="total-reviews-count" style="display:none;">${totalReviews}</span>
+            <span id="accuracy-rate" style="display:none;">${accuracy}%</span>
+            <span id="performance-streak" style="display:none;">${uniqueDays}</span>
+            <span id="reviews-today" style="display:none;">${dadosFmtMin(studyMin)}</span>
+        ` +
+            dadosKpiCard({ icon: 'fa-bullseye', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: accuracy + '%', label: 'Taxa de Acerto', delta: { show: prevTotal > 0, dir: Math.sign(accDelta), text: (accDelta >= 0 ? '+' : '') + accDelta + ' pts' } }) +
+            dadosKpiCard({ icon: 'fa-list-check', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: totalReviews, label: 'Questões Resolvidas', delta: { show: prevTotal > 0, dir: Math.sign(revDelta), text: (revDelta >= 0 ? '+' : '') + revDelta } }) +
+            dadosKpiCard({ icon: 'fa-clock', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: dadosFmtMin(studyMin), label: 'Tempo de Estudo', delta: { show: prevStudyMin > 0, dir: Math.sign(timeDelta), text: (timeDelta >= 0 ? '+' : '') + dadosFmtMin(Math.abs(timeDelta)) } }) +
+            dadosKpiCard({ icon: 'fa-calendar-check', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: uniqueDays, label: 'Dias Estudados' }) +
+            dadosKpiCard({ icon: 'fa-fire', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: (userData.streak || 0), label: 'Dias de Ofensiva' }) +
+            dadosKpiCard({ icon: 'fa-layer-group', iconBg: 'var(--primary-light)', iconColor: 'var(--primary)', value: dueToday, label: 'Cards p/ Revisar Hoje' });
     }
 
-    // 6. ESTATÍSTICAS POR MATÉRIA E CATEGORIA
-    const cats = [...new Set(cards.map(c => c.category || 'Geral'))];
-    
-    if (periodData.length === 0) {
-        if(categoryList) categoryList.innerHTML = "<div style='text-align:center;color:var(--text-muted);padding:20px;'>Nenhum dado registrado neste período.</div>";
-        if(categoryProgressGrid) categoryProgressGrid.innerHTML = "<div style='text-align:center;color:var(--text-muted);padding:20px;'>Nenhum dado registrado neste período.</div>";
+    // 6. BANNER MOTIVACIONAL
+    renderDadosMotivation({ accuracy, totalReviews, studiedToday, streak: userData.streak || 0, studyMin });
+
+    // 7. CATEGORIAS (matéria) — período
+    const catMap = {};
+    periodData.forEach(p => {
+        const c = p.category || 'Geral';
+        if (!catMap[c]) catMap[c] = { name: c, total: 0, correct: 0 };
+        catMap[c].total++;
+        if (p.correct) catMap[c].correct++;
+    });
+    const catArr = Object.values(catMap).map(c => ({ ...c, pct: c.total ? Math.round(c.correct / c.total * 100) : 0 }));
+
+    renderDadosCategoryList(catArr);
+    dadosPeriodDataCache = periodData;
+    renderDadosStrengthsWeaknesses();
+
+    // 8. DADOS CRUZADOS (independentes do período)
+    renderDadosSRS();
+    renderDadosSchedule();
+    renderDadosEditais();
+    renderDadosSimulados();
+
+    // 9. PLANO DE AÇÃO
+    renderDadosActions({ catArr, dueToday, studiedToday, accuracy, totalReviews });
+}
+
+/* --- GRÁFICO DE LINHA: EVOLUÇÃO DA PRECISÃO --- */
+function renderPrecisionTrend(start, end, periodData) {
+    const container = document.getElementById('dados-precision-chart');
+    const sub = document.getElementById('precision-trend-sub');
+    if (!container) return;
+
+    // Monta buckets conforme o período
+    const buckets = [];
+    if (currentPeriod === 'year') {
+        if (sub) sub.innerText = 'por mês';
+        for (let m = 0; m < 12; m++) {
+            const label = new Date(start.getFullYear(), m, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+            const data = periodData.filter(p => new Date(p.date + 'T12:00:00').getMonth() === m);
+            buckets.push(makeBucket(label, data));
+        }
+    } else {
+        if (sub) sub.innerText = currentPeriod === 'week' ? 'por dia' : 'por dia do mês';
+        let loop = new Date(start);
+        let safety = 0;
+        while (loop <= end && safety < 40) {
+            const ds = loop.toISOString().split('T')[0];
+            const data = periodData.filter(p => p.date === ds);
+            const label = currentPeriod === 'week'
+                ? loop.toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3)
+                : String(loop.getDate());
+            buckets.push(makeBucket(label, data));
+            loop.setDate(loop.getDate() + 1);
+            safety++;
+        }
+    }
+    function makeBucket(label, data) {
+        const total = data.length;
+        const correct = data.filter(p => p.correct).length;
+        return { label, total, pct: total ? Math.round(correct / total * 100) : null };
+    }
+
+    const withData = buckets.filter(b => b.pct !== null);
+    if (withData.length === 0) {
+        container.innerHTML = dadosEmpty('fa-chart-line', 'Sem dados de precisão neste período.');
         return;
     }
 
-    let hasDataForCats = false;
-    cats.forEach(c => {
-        const data = periodData.filter(p => p.category === c);
-        const total = data.length;
-        
-        if (total > 0) {
-            hasDataForCats = true;
-            const correct = data.filter(p => p.correct).length;
-            const pct = Math.round((correct/total)*100);
-            
-            // Render Lista
-            if(categoryList) {
-                categoryList.innerHTML += `
-                    <div class="category-stat-item">
-                        <div class="cat-name">${c}</div>
-                        <div style="flex:1;margin:0 10px;">
-                            <div class="cat-bar-bg">
-                                <div class="cat-bar-fill" style="width:${pct}%; background:${pct>=70?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'}"></div>
-                            </div>
-                        </div>
-                        <div class="cat-percent" style="color:${pct>=70?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'}">${pct}%</div>
-                    </div>`;
-            }
+    const W = Math.max(container.clientWidth || 600, 320);
+    const H = 200;
+    const padL = 34, padR = 14, padT = 18, padB = 26;
+    const innerW = W - padL - padR, innerH = H - padT - padB;
+    const n = buckets.length;
+    const xFor = i => padL + (n === 1 ? innerW / 2 : (innerW * i) / (n - 1));
+    const yFor = v => padT + innerH * (1 - v / 100);
 
-            // Render Grid
-            if(categoryProgressGrid) {
-                categoryProgressGrid.innerHTML += `
-                    <div class="category-progress-item">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                            <span style="font-weight:600;font-size:1rem;">${c}</span>
-                            <span style="font-size:1rem;font-weight:bold;color:${pct>=70?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'}">${pct}%</span>
-                        </div>
-                        <div style="background:rgba(0,0,0,0.05);height:10px;border-radius:5px;overflow:hidden; margin-bottom:8px;">
-                            <div style="width:${pct}%;height:100%;background:${pct>=70?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'}"></div>
-                        </div>
-                        <div style="font-size:0.85rem;color:var(--text-muted);">${correct} acertos de ${total} tentativas</div>
-                    </div>`;
-            }
-        }
+    // Gridlines 0/50/100
+    let grid = '';
+    [0, 50, 100].forEach(v => {
+        const y = yFor(v);
+        grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 4"/>`;
+        grid += `<text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="9" fill="var(--text-muted)">${v}</text>`;
     });
 
-    if (!hasDataForCats) {
-        if(categoryList) categoryList.innerHTML = "<div style='text-align:center;color:var(--text-muted);padding:20px;'>Sem atividades nestas matérias para o período.</div>";
-        if(categoryProgressGrid) categoryProgressGrid.innerHTML = "<div style='text-align:center;color:var(--text-muted);padding:20px;'>Sem atividades nestas matérias para o período.</div>";
+    // Pontos conectados (apenas buckets com dados)
+    const pts = buckets.map((b, i) => ({ x: xFor(i), y: b.pct === null ? null : yFor(b.pct), b, i })).filter(p => p.y !== null);
+    const lineD = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
+    const areaD = `${lineD} L ${pts[pts.length - 1].x.toFixed(1)} ${(padT + innerH).toFixed(1)} L ${pts[0].x.toFixed(1)} ${(padT + innerH).toFixed(1)} Z`;
+
+    const dots = pts.map(p => `
+        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2"><title>${p.b.label}: ${p.b.pct}% (${p.b.total} questões)</title></circle>
+        <text x="${p.x.toFixed(1)}" y="${(p.y - 9).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="var(--text-main)">${p.b.pct}%</text>
+    `).join('');
+
+    // Labels do eixo X
+    const xLabels = buckets.map((b, i) => `<text x="${xFor(i).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="9" fill="var(--text-muted)">${b.label}</text>`).join('');
+
+    container.innerHTML = `
+    <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <linearGradient id="precGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        ${grid}
+        <path d="${areaD}" fill="url(#precGrad)"/>
+        <path d="${lineD}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}
+        ${xLabels}
+    </svg>`;
+}
+
+/* --- BANNER MOTIVACIONAL DINÂMICO --- */
+function renderDadosMotivation(o) {
+    const el = document.getElementById('dados-motivation');
+    const greetEl = document.getElementById('dados-greeting');
+    if (greetEl) {
+        const h = new Date().getHours();
+        const greet = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+        greetEl.innerText = `${greet}! ${o.studiedToday ? 'Bom te ver de novo.' : 'Pronto para estudar?'}`;
     }
+    if (!el) return;
+
+    let icon = 'fa-bolt', color = 'var(--primary)', bg = 'var(--primary-light)', title, sub;
+    if (o.totalReviews === 0 && o.studyMin === 0) {
+        icon = 'fa-seedling'; color = 'var(--success)'; bg = 'rgba(16,185,129,0.12)';
+        title = 'Comece a registrar seu progresso!';
+        sub = 'Faça suas primeiras revisões neste período e veja seus gráficos ganharem vida.';
+    } else if (o.studiedToday && o.streak >= 3) {
+        icon = 'fa-fire'; color = '#f97316'; bg = 'rgba(249,115,22,0.14)';
+        title = `${o.streak} dias seguidos de estudo!`;
+        sub = 'Consistência é o que aprova. Não quebre a corrente — continue firme hoje!';
+    } else if (o.accuracy >= 80 && o.totalReviews >= 5) {
+        icon = 'fa-star'; color = '#f59e0b'; bg = 'rgba(245,158,11,0.14)';
+        title = `Desempenho excelente: ${o.accuracy}% de acerto!`;
+        sub = 'Você está dominando o conteúdo. Aproveite o ritmo para avançar em novos tópicos.';
+    } else if (o.accuracy > 0 && o.accuracy < 60) {
+        icon = 'fa-dumbbell'; color = 'var(--danger)'; bg = 'rgba(239,68,68,0.12)';
+        title = `Hora de reforçar: ${o.accuracy}% de acerto`;
+        sub = 'Foque nos "Pontos a Reforçar" abaixo. Errar agora é aprender para a prova.';
+    } else if (!o.studiedToday) {
+        icon = 'fa-mug-hot'; color = 'var(--primary)'; bg = 'var(--primary-light)';
+        title = 'Você ainda não estudou hoje';
+        sub = 'Que tal uma sessão rápida agora? Pequenos passos diários levam à aprovação.';
+    } else {
+        icon = 'fa-bolt'; color = 'var(--primary)'; bg = 'var(--primary-light)';
+        title = 'Continue evoluindo!';
+        sub = `${o.totalReviews} questões resolvidas e ${o.accuracy}% de acerto neste período. Siga em frente!`;
+    }
+    el.innerHTML = `
+        <div class="dm-icon" style="background:${bg}; color:${color};"><i class="fas ${icon}"></i></div>
+        <div class="dm-text"><strong>${title}</strong><span>${sub}</span></div>`;
+}
+
+/* --- LISTA: DESEMPENHO POR MATÉRIA --- */
+function renderDadosCategoryList(catArr) {
+    const el = document.getElementById('category-stats-list');
+    if (!el) return;
+    if (!catArr.length) { el.innerHTML = dadosEmpty('fa-book', 'Nenhuma matéria estudada neste período.'); return; }
+    const sorted = [...catArr].sort((a, b) => b.total - a.total);
+    el.innerHTML = sorted.map(c => {
+        const color = dadosPctColor(c.pct);
+        return `<div class="category-stat-item" style="border-radius:10px; margin-bottom:2px;">
+            <div style="min-width:130px;">
+                <div class="cat-name">${c.name}</div>
+                <div class="dados-rank-meta">${c.correct}/${c.total} acertos</div>
+            </div>
+            <div style="flex:1;margin:0 14px;">
+                <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${c.pct}%; background:${color}"></div></div>
+            </div>
+            <div class="cat-percent" style="color:${color}; font-size:1.05rem;">${c.pct}%</div>
+        </div>`;
+    }).join('');
+}
+
+/* --- PONTOS FORTES E FRACOS (com nível: Matéria / Tópico / Detalhe) --- */
+function setDadosBreakdown(level) {
+    dadosBreakdownLevel = level;
+    renderDadosStrengthsWeaknesses();
+}
+function dadosGroupPerf(data, level) {
+    const map = {};
+    data.forEach(p => {
+        const cat = p.category || 'Geral';
+        const sub = p.subcategory || 'Sem subtópico';
+        const subsub = (p.subsubcategory || '').trim();
+        let key, name, parent;
+        if (level === 'category') { key = cat; name = cat; parent = ''; }
+        else if (level === 'subcategory') { key = cat + ' ' + sub; name = sub; parent = cat; }
+        else { if (!subsub) return; key = cat + ' ' + sub + ' ' + subsub; name = subsub; parent = sub; }
+        if (!map[key]) map[key] = { name, parent, total: 0, correct: 0 };
+        map[key].total++;
+        if (p.correct) map[key].correct++;
+    });
+    return Object.values(map).map(g => ({ ...g, pct: g.total ? Math.round(g.correct / g.total * 100) : 0 }));
+}
+function renderDadosStrengthsWeaknesses() {
+    const strongEl = document.getElementById('dados-strengths');
+    const weakEl = document.getElementById('dados-weaknesses');
+    const level = dadosBreakdownLevel;
+
+    // Seletor segmentado (renderizado nos dois cabeçalhos, sincronizado)
+    const segHtml = `
+        <button class="${level === 'category' ? 'active' : ''}" onclick="setDadosBreakdown('category')">Matéria</button>
+        <button class="${level === 'subcategory' ? 'active' : ''}" onclick="setDadosBreakdown('subcategory')">Tópico</button>
+        <button class="${level === 'subsubcategory' ? 'active' : ''}" onclick="setDadosBreakdown('subsubcategory')">Detalhe</button>`;
+    const segS = document.getElementById('seg-strengths'); if (segS) segS.innerHTML = segHtml;
+    const segW = document.getElementById('seg-weak'); if (segW) segW.innerHTML = segHtml;
+
+    const minSample = level === 'category' ? 3 : 2;
+    const groups = dadosGroupPerf(dadosPeriodDataCache, level);
+    const qualified = groups.filter(g => g.total >= minSample);
+
+    const rankRow = (c, rank, kind) => {
+        const color = kind === 'strong' ? 'var(--success)' : dadosPctColor(c.pct);
+        const badgeBg = kind === 'strong' ? 'rgba(16,185,129,0.14)' : 'rgba(239,68,68,0.12)';
+        const meta = (c.parent ? c.parent + ' · ' : '') + `${c.correct}/${c.total} acertos`;
+        return `<div class="dados-rank-item">
+            <div class="dados-rank-badge" style="background:${badgeBg}; color:${color};">${rank}</div>
+            <div class="dados-rank-body">
+                <div class="dados-rank-name">${c.name}</div>
+                <div class="dados-rank-bar"><div style="width:${c.pct}%; background:${color};"></div></div>
+                <div class="dados-rank-meta">${meta}</div>
+            </div>
+            <div class="dados-rank-pct" style="color:${color};">${c.pct}%</div>
+        </div>`;
+    };
+
+    const emptyMsg = level === 'category'
+        ? 'Resolva mais questões (mín. 3 por matéria) para ver este ranking.'
+        : level === 'subcategory'
+            ? 'Sem dados por tópico ainda. Estude cards com subtópico definido.'
+            : 'Sem dados de detalhe ainda. Defina o 3º nível (sub-sub) nos seus cards.';
+
+    if (strongEl) {
+        if (!qualified.length) strongEl.innerHTML = dadosEmpty('fa-trophy', emptyMsg);
+        else {
+            const top = [...qualified].sort((a, b) => b.pct - a.pct || b.total - a.total).slice(0, 5);
+            strongEl.innerHTML = top.map((c, i) => rankRow(c, i + 1, 'strong')).join('');
+        }
+    }
+    if (weakEl) {
+        if (!qualified.length) weakEl.innerHTML = dadosEmpty('fa-triangle-exclamation', emptyMsg);
+        else {
+            const bottom = [...qualified].sort((a, b) => a.pct - b.pct || b.total - a.total).slice(0, 5);
+            weakEl.innerHTML = bottom.map((c, i) => rankRow(c, i + 1, 'weak')).join('');
+        }
+    }
+}
+
+/* --- SAÚDE DA REVISÃO (SRS) --- */
+function renderDadosSRS() {
+    const el = document.getElementById('dados-srs');
+    if (!el) return;
+    const total = cards.length;
+    if (!total) { el.innerHTML = dadosEmpty('fa-layer-group', 'Você ainda não criou nenhum card. Comece sua coleção!'); return; }
+
+    const startToday = new Date(); startToday.setHours(0,0,0,0);
+    const endToday = new Date(); endToday.setHours(23,59,59,999);
+    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime()).length;
+    const overdue = cards.filter(c => (c.nextReview || 0) < startToday.getTime()).length;
+    const next7 = cards.filter(c => { const nr = c.nextReview || 0; return nr > endToday.getTime() && nr <= endToday.getTime() + 7 * 86400000; }).length;
+
+    const novos = cards.filter(c => !c.reviewsCount).length;
+    const aprendendo = cards.filter(c => c.reviewsCount && (c.interval || 0) < 7).length;
+    const revisando = cards.filter(c => (c.interval || 0) >= 7 && (c.interval || 0) < 30).length;
+    const dominado = cards.filter(c => (c.interval || 0) >= 30).length;
+    const pctSeg = (v) => total ? (v / total * 100) : 0;
+    const dominioPct = Math.round((dominado + revisando) / total * 100);
+
+    el.innerHTML = `
+        <div class="dados-mini-stats">
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--primary);">${dueToday}</div><div class="ms-lbl">Para revisar hoje</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:${overdue > 0 ? 'var(--danger)' : 'var(--text-main)'};">${overdue}</div><div class="ms-lbl">Atrasados</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--text-main);">${next7}</div><div class="ms-lbl">Próximos 7 dias</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--success);">${total}</div><div class="ms-lbl">Total de cards</div></div>
+        </div>
+        <div style="font-size:0.85rem; font-weight:600; color:var(--text-muted); margin-bottom:8px;">Maturidade da coleção · ${dominioPct}% consolidado</div>
+        <div class="dados-stacked">
+            <div style="width:${pctSeg(novos)}%; background:#94a3b8;" title="Novos: ${novos}"></div>
+            <div style="width:${pctSeg(aprendendo)}%; background:var(--warning);" title="Aprendendo: ${aprendendo}"></div>
+            <div style="width:${pctSeg(revisando)}%; background:#3b82f6;" title="Revisando: ${revisando}"></div>
+            <div style="width:${pctSeg(dominado)}%; background:var(--success);" title="Dominado: ${dominado}"></div>
+        </div>
+        <div class="dados-legend">
+            <span><i style="background:#94a3b8;"></i> Novos (${novos})</span>
+            <span><i style="background:var(--warning);"></i> Aprendendo (${aprendendo})</span>
+            <span><i style="background:#3b82f6;"></i> Revisando (${revisando})</span>
+            <span><i style="background:var(--success);"></i> Dominado (${dominado})</span>
+        </div>`;
+}
+
+/* --- CRONOGRAMA DA SEMANA (adesão) --- */
+function renderDadosSchedule() {
+    const el = document.getElementById('dados-schedule');
+    if (!el) return;
+    const today = new Date();
+    const year = today.getFullYear();
+    const week = (typeof getWeekNumber === 'function') ? getWeekNumber(today) : 0;
+
+    let totalBlocks = 0, doneBlocks = 0;
+    Object.keys(scheduleData || {}).forEach(k => {
+        const parts = k.split('-');
+        if (parts.length === 4 && parseInt(parts[0]) === year && parseInt(parts[1]) === week) {
+            const item = scheduleData[k];
+            if (item && item.title) { totalBlocks++; if (item.done) doneBlocks++; }
+        }
+    });
+    const tasksTotal = (tasks || []).length;
+    const tasksDone = (tasks || []).filter(t => t.done).length;
+
+    if (totalBlocks === 0 && tasksTotal === 0) {
+        el.innerHTML = dadosEmpty('fa-calendar-week', 'Sem blocos de estudo ou metas nesta semana. Monte seu cronograma!');
+        return;
+    }
+
+    const adesao = totalBlocks ? Math.round(doneBlocks / totalBlocks * 100) : 0;
+    const metasPct = tasksTotal ? Math.round(tasksDone / tasksTotal * 100) : 0;
+
+    el.innerHTML = `
+        <div class="dados-mini-stats">
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--primary);">${totalBlocks}h</div><div class="ms-lbl">Horas planejadas</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--success);">${doneBlocks}h</div><div class="ms-lbl">Horas cumpridas</div></div>
+        </div>
+        <div class="dados-prog-item">
+            <div class="dados-prog-top"><span class="pt-name">Adesão ao cronograma</span><span class="pt-val" style="color:${dadosPctColor(adesao)};">${adesao}%</span></div>
+            <div class="dados-prog-bar"><div style="width:${adesao}%; background:${dadosPctColor(adesao)};"></div></div>
+        </div>
+        <div class="dados-prog-item">
+            <div class="dados-prog-top"><span class="pt-name">Metas concluídas (${tasksDone}/${tasksTotal})</span><span class="pt-val">${metasPct}%</span></div>
+            <div class="dados-prog-bar"><div style="width:${metasPct}%;"></div></div>
+        </div>`;
+}
+
+/* --- PROGRESSO DOS EDITAIS --- */
+function renderDadosEditais() {
+    const el = document.getElementById('dados-editais');
+    if (!el) return;
+    if (!editais || !editais.length) {
+        el.innerHTML = dadosEmpty('fa-list-check', 'Nenhum edital cadastrado. Adicione um na aba Editais para acompanhar aqui.');
+        return;
+    }
+    let gTotal = 0, gDone = 0;
+    const per = editais.map(e => {
+        let t = 0, d = 0;
+        (e.subjects || []).forEach(s => (s.topics || []).forEach(tp => { t++; if (tp.done) d++; }));
+        gTotal += t; gDone += d;
+        return { title: e.title, total: t, done: d, pct: t ? Math.round(d / t * 100) : 0 };
+    });
+    const overall = gTotal ? Math.round(gDone / gTotal * 100) : 0;
+
+    const top = per.sort((a, b) => b.total - a.total).slice(0, 4);
+    el.innerHTML = `
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
+            <div style="position:relative; width:78px; height:78px; min-width:78px; border-radius:50%; background:conic-gradient(var(--primary) ${overall * 3.6}deg, var(--bg-body) 0deg); display:flex; align-items:center; justify-content:center;">
+                <div style="width:58px; height:58px; border-radius:50%; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:var(--text-main);">${overall}%</div>
+            </div>
+            <div>
+                <div style="font-weight:800; font-size:1.05rem; color:var(--text-main);">Domínio geral do conteúdo</div>
+                <div style="font-size:0.88rem; color:var(--text-muted);">${gDone} de ${gTotal} tópicos concluídos em ${editais.length} edital(is)</div>
+            </div>
+        </div>
+        ${top.map(e => `
+            <div class="dados-prog-item">
+                <div class="dados-prog-top"><span class="pt-name">${e.title}</span><span class="pt-val">${e.pct}%</span></div>
+                <div class="dados-prog-bar"><div style="width:${e.pct}%;"></div></div>
+                <div class="dados-rank-meta" style="margin-top:4px;">${e.done}/${e.total} tópicos</div>
+            </div>`).join('')}`;
+}
+
+/* --- SIMULADOS RECENTES --- */
+function renderDadosSimulados() {
+    const el = document.getElementById('dados-simulados');
+    if (!el) return;
+    const hist = simulationHistory || [];
+    if (!hist.length) {
+        el.innerHTML = dadosEmpty('fa-file-pen', 'Você ainda não fez simulados. Faça um pelo modo de estudo para acompanhar a evolução.');
+        return;
+    }
+    const pcts = hist.map(s => s.total ? s.score / s.total * 100 : 0);
+    const best = Math.round(Math.max(...pcts));
+    const avg = Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+    const recent = hist.slice(0, 5);
+
+    el.innerHTML = `
+        <div class="dados-mini-stats" style="grid-template-columns:repeat(3,1fr);">
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--text-main);">${hist.length}</div><div class="ms-lbl">Realizados</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:${dadosPctColor(avg)};">${avg}%</div><div class="ms-lbl">Média</div></div>
+            <div class="dados-mini-stat"><div class="ms-val" style="color:var(--success);">${best}%</div><div class="ms-lbl">Melhor</div></div>
+        </div>
+        ${recent.map(s => {
+            const pct = s.total ? Math.round(s.score / s.total * 100) : 0;
+            const color = dadosPctColor(pct);
+            const dateStr = new Date(s.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+            return `<div class="dados-sim-item" onclick="openSimDetail(${s.id})" style="cursor:pointer;">
+                <div class="dados-sim-score" style="border-color:${color}; color:${color};">${pct}%</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700; color:var(--text-main); font-size:0.95rem;">${s.score}/${s.total} acertos</div>
+                    <div class="dados-rank-meta">${dateStr}</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color:var(--text-muted); font-size:0.8rem;"></i>
+            </div>`;
+        }).join('')}`;
+}
+
+/* --- PLANO DE AÇÃO SUGERIDO --- */
+function renderDadosActions(o) {
+    const el = document.getElementById('dados-actions');
+    if (!el) return;
+    const actions = [];
+
+    // 1. Cards atrasados/para hoje
+    if (o.dueToday > 0) {
+        actions.push({ icon: 'fa-clock', color: 'var(--primary)', bg: 'var(--primary-light)', title: `Revisar ${o.dueToday} card(s) hoje`, desc: 'Você tem cards aguardando revisão. Mantê-los em dia é o segredo da memorização.', tab: 'study' });
+    }
+    // 2. Ponto mais fraco
+    const qualified = o.catArr.filter(c => c.total >= 3);
+    const weakest = qualified.sort((a, b) => a.pct - b.pct)[0];
+    if (weakest && weakest.pct < 70) {
+        actions.push({ icon: 'fa-dumbbell', color: 'var(--danger)', bg: 'rgba(239,68,68,0.12)', title: `Reforçar "${weakest.name}"`, desc: `Apenas ${weakest.pct}% de acerto (${weakest.correct}/${weakest.total}). Crie mais cards e revise este tema.`, tab: 'study' });
+    }
+    // 3. Edital incompleto
+    if (editais && editais.length) {
+        const per = editais.map(e => {
+            let t = 0, d = 0;
+            (e.subjects || []).forEach(s => (s.topics || []).forEach(tp => { t++; if (tp.done) d++; }));
+            return { title: e.title, total: t, done: d, pct: t ? Math.round(d / t * 100) : 0 };
+        }).filter(e => e.total > 0 && e.pct < 100).sort((a, b) => a.pct - b.pct);
+        if (per[0]) {
+            actions.push({ icon: 'fa-list-check', color: 'var(--warning)', bg: 'rgba(245,158,11,0.14)', title: `Avançar em "${per[0].title}"`, desc: `${per[0].done}/${per[0].total} tópicos concluídos (${per[0].pct}%). Marque o próximo tópico a estudar.`, tab: 'syllabus' });
+        }
+    }
+    // 4. Não estudou hoje
+    if (!o.studiedToday) {
+        actions.push({ icon: 'fa-fire', color: '#f97316', bg: 'rgba(249,115,22,0.14)', title: 'Manter a ofensiva ativa', desc: 'Você ainda não estudou hoje. Uma sessão de Pomodoro já conta — não quebre a sequência!', tab: 'pomodoro' });
+    }
+
+    if (!actions.length) {
+        el.innerHTML = `<div class="dados-action" style="cursor:default; border-color:var(--success);">
+            <div class="da-icon" style="background:rgba(16,185,129,0.12); color:var(--success);"><i class="fas fa-circle-check"></i></div>
+            <div class="da-body"><div class="da-title">Tudo em dia!</div><div class="da-desc">Sem pendências urgentes. Que tal avançar em um novo tópico ou fazer um simulado?</div></div>
+        </div>`;
+        return;
+    }
+
+    el.innerHTML = actions.slice(0, 5).map(a => `
+        <div class="dados-action" onclick="switchTab('${a.tab}')">
+            <div class="da-icon" style="background:${a.bg}; color:${a.color};"><i class="fas ${a.icon}"></i></div>
+            <div class="da-body"><div class="da-title">${a.title}</div><div class="da-desc">${a.desc}</div></div>
+            <i class="fas fa-chevron-right da-go"></i>
+        </div>`).join('');
 }
 
         
