@@ -3230,6 +3230,17 @@ body.dark-mode .ql-snow .ql-picker { color: var(--text-main) !important; }
     margin-bottom: 20px;
 }
 
+#explore-toggle-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    transition: opacity 0.15s;
+}
+#explore-toggle-all:hover {
+    opacity: 0.75;
+}
+
 .library-filters-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -3784,6 +3795,12 @@ select.lib-control {
     color: var(--primary);
 }
 
+/* O botão de Desativar/Ativar mantém sua própria cor (vermelho/verde) mesmo no hover */
+#btn-popover-toggle-disabled:hover {
+    background: var(--bg-body);
+    color: inherit;
+}
+
 /* Ícone dentro do item (opcional, mas recomendado para alinhar) */
 .popover-item i {
     width: 20px;
@@ -4316,6 +4333,8 @@ select.lib-control {
   top: 16px; /* Descola um pouco do teto */
   margin-bottom: 24px; /* Espaço entre a barra e o texto */
   z-index: 100;
+  width: fit-content; /* Encolhe a barra para o tamanho do conteúdo */
+  max-width: 100%; /* Mas nunca ultrapassa a largura da tela/container */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   background: rgba(var(--bg-card-rgb, 255,255,255), 0.75) !important;
@@ -4548,76 +4567,90 @@ select.lib-control {
 }
 
 /* ==========================================
-   CONFIGURAÇÃO DE FONTES DO QUILL
+   FORMATO DE TEXTO (TÍTULOS) DO QUILL
+   Substitui a antiga configuração de Fonte e Tamanho em px.
 ========================================== */
 
-/* 1. Definindo o visual do texto no editor */
-.ql-font-inter { font-family: 'Inter', sans-serif; }
-.ql-font-arial { font-family: 'Arial', sans-serif; }
-.ql-font-verdana { font-family: 'Verdana', sans-serif; }
-.ql-font-tahoma { font-family: 'Tahoma', sans-serif; }
-.ql-font-trebuchet { font-family: 'Trebuchet MS', sans-serif; }
-.ql-font-times { font-family: 'Times New Roman', serif; }
-.ql-font-georgia { font-family: 'Georgia', serif; }
-.ql-font-garamond { font-family: 'Garamond', serif; }
-.ql-font-courier { font-family: 'Courier New', monospace; }
-.ql-font-comic { font-family: 'Comic Sans MS', cursive; }
-.ql-font-impact { font-family: 'Impact', sans-serif; }
-
-/* 2. Definindo os Nomes no Menu Dropdown do Quill */
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="inter"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="inter"]::before { content: 'Inter (Padrão)'; font-family: 'Inter', sans-serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: 'Arial', sans-serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: 'Verdana', sans-serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="tahoma"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before { content: 'Tahoma'; font-family: 'Tahoma', sans-serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="trebuchet"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet"]::before { content: 'Trebuchet MS'; font-family: 'Trebuchet MS', sans-serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times"]::before { content: 'Times New Roman'; font-family: 'Times New Roman', serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: 'Georgia', serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="garamond"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="garamond"]::before { content: 'Garamond'; font-family: 'Garamond', serif; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier"]::before { content: 'Courier New'; font-family: 'Courier New', monospace; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="comic"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic"]::before { content: 'Comic Sans'; font-family: 'Comic Sans MS', cursive; }
-
-.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="impact"]::before,
-.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="impact"]::before { content: 'Impact'; font-family: 'Impact', sans-serif; }
-
-/* 3. Ajustando o tamanho da caixa de seleção de fontes para caber nomes longos */
-.ql-snow .ql-picker.ql-font {
-  width: 150px !important; /* Aumenta a largura da caixinha (o padrão é uns 100px) */
+/* Nomes amigáveis no dropdown de Títulos (H1, H2, H3, Normal) */
+.ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item::before {
+  content: 'Normal';
 }
-
-/* Garante que o texto dentro não vaze e fique alinhado */
-.ql-snow .ql-picker.ql-font .ql-picker-label {
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+  content: 'Título 1';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+  content: 'Título 2';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+  content: 'Título 3';
+}
+.ql-snow .ql-picker.ql-header {
+  width: 130px !important;
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label {
   padding-left: 8px;
 }
 
-/* 1. Faz o Quill ler o valor exato (10px, 12px...) e imprimir na tela */
-.ql-snow .ql-picker.ql-size .ql-picker-label::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item::before {
-  content: attr(data-value) !important;
+/* ==========================================
+   MENU "MAIS FERRAMENTAS" (3 PONTOS) DA TOOLBAR
+========================================== */
+
+/* Botão de 3 pontos */
+.ql-more-wrapper {
+  position: relative;
 }
 
-/* 2. Caso seja o tamanho padrão (sem formatação), ele escreve "Normal" */
-.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
-  content: 'Normal' !important;
+.ql-more-toggle {
+  width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ql-more-toggle:hover,
+.ql-more-toggle.ql-active-more {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Painel flutuante que aparece abaixo do ícone de 3 pontos */
+.ql-more-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  max-width: 280px;
+  z-index: 500;
+}
+
+.ql-more-popover.hidden {
+  display: none;
+}
+
+/* Dentro do popover, cada grupo de ferramentas quebra linha normalmente */
+.ql-more-popover .ql-formats {
+  margin-right: 0 !important;
 }
 
 
@@ -5822,6 +5855,13 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
 
 <!-- NOVA VISÃO EXPLORAR (Sem Título) -->
 <div id="sub-view-explore" class="hidden">
+    <div class="library-header">
+        <div></div>
+        <div id="explore-toggle-all" onclick="toggleExploreExpandAll()" style="font-weight: 600; color: var(--primary); cursor: pointer; user-select: none;">
+            <i id="explore-toggle-all-icon" class="fas fa-compress-alt"></i>
+            <span id="explore-toggle-all-text">Recolher tudo</span>
+        </div>
+    </div>
     <div class="card-box">
         <!-- Título removido daqui -->
         <div id="explore-tree-container"></div>
@@ -7631,6 +7671,11 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
 
         let confirmCallback = null;
 
+        // --- TÓPICOS DESATIVADOS (Categorias/Subcategorias que não entram mais em revisão) ---
+        // categories: array de nomes de categoria desativados (ex: ["Direito Penal"])
+        // subcategories: array de chaves "Categoria|||Subcategoria" desativadas
+        let disabledTopics = { categories: [], subcategories: [] };
+
         // --- FUNÇÃO DE INICIALIZAÇÃO (A Nova "Chave de Ignição") ---
         async function iniciarApp() {
             try {
@@ -7650,6 +7695,8 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
                 scheduleTemplates = await carregarDados('ted_schedule_templates', []);
                 
                 userData = await carregarDados('ted_userdata', { streak: 0, lastStudyDate: null, theme: 'light', revisionLevel: 'moderate' });
+                
+                disabledTopics = await carregarDados('ted_disabled_topics', { categories: [], subcategories: [] });
                 
                 pomoSettings = await carregarDados('ted_pomo_settings', { focus: 25, short: 5, long: 15 });
                 pomoHistory = await carregarDados('ted_pomo_history', []);
@@ -8176,6 +8223,7 @@ function showTreeMenu(event, type, catName, subName) {
     
     const menu = document.getElementById('tree-popover');
     const renameBtn = document.getElementById('btn-popover-rename');
+    const toggleBtn = document.getElementById('btn-popover-toggle-disabled');
     const clickedBtn = event.currentTarget; // O botão da engrenagem que foi clicado
 
     // 1. Configurar a Ação do Botão Renomear
@@ -8192,7 +8240,27 @@ function showTreeMenu(event, type, catName, subName) {
         }
     };
 
-    // 2. Calcular Posição (Ao lado ou abaixo do botão)
+    // 2. Configurar a Ação do Botão Desativar/Ativar
+    const isDisabled = (type === 'category')
+        ? isCategoryDisabled(catName)
+        : isSubcategoryDisabled(catName, subName);
+
+    const newToggleBtn = toggleBtn.cloneNode(true);
+    toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
+
+    newToggleBtn.textContent = isDisabled ? 'Ativar' : 'Desativar';
+    newToggleBtn.style.color = isDisabled ? 'var(--success)' : 'var(--danger)';
+
+    newToggleBtn.onclick = () => {
+        closePopover();
+        if (type === 'category') {
+            toggleCategoryDisabled(catName);
+        } else {
+            toggleSubcategoryDisabled(catName, subName);
+        }
+    };
+
+    // 3. Calcular Posição (Ao lado ou abaixo do botão)
     const rect = clickedBtn.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
@@ -8201,7 +8269,7 @@ function showTreeMenu(event, type, catName, subName) {
     menu.style.top = `${rect.bottom + scrollTop + 5}px`; 
     menu.style.left = `${rect.left + scrollLeft - 140}px`; // -140px puxa para a esquerda para não sair da tela
 
-    // 3. Mostrar o Menu
+    // 4. Mostrar o Menu
     menu.classList.add('visible');
     
     // Pequeno atraso para não registrar o clique atual como "clique fora"
@@ -8321,10 +8389,19 @@ function renderExploreTree() {
             ? `<div class="percent-pill" style="background-color:${percentColor};">${catPercent}%</div>`
             : `<div class="percent-pill" style="background-color:#f0f0f0; color:#bbb;">-</div>`;
 
+        const catIsDisabled = isCategoryDisabled(cat);
+        const catNameStyle = catIsDisabled
+            ? 'font-weight:600; color: var(--danger); text-decoration: line-through;'
+            : 'font-weight:600;';
+        const disabledBadge = catIsDisabled
+            ? `<span style="font-size:0.7rem; font-weight:700; color: var(--danger); border:1px solid var(--danger); border-radius:6px; padding:1px 6px;">Desativada</span>`
+            : '';
+
         header.innerHTML = `
             <div class="tree-content">
                 <i class="fas fa-chevron-right tree-toggle-icon fa-rotate-90"></i>
-                <span style="font-weight:600;">${cat}</span>
+                <span style="${catNameStyle}">${cat}</span>
+                ${disabledBadge}
             </div>
             
             <div class="tree-stats-group">
@@ -8375,8 +8452,19 @@ function renderExploreTree() {
             const hasSubSubs = tree[cat].subs[sub].subsubs.size > 0 && !(tree[cat].subs[sub].subsubs.size === 1 && tree[cat].subs[sub].subsubs.has('Outros'));
             
             const expandIcon = hasSubSubs 
-                ? `<i class="fas fa-chevron-right sub-toggle-icon" style="font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; width:12px;"></i>` 
+                ? `<i class="fas fa-chevron-right sub-toggle-icon" style="font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; width:12px; transform: rotate(90deg);"></i>` 
                 : `<i class="fas fa-circle" style="font-size: 0.3rem; color: var(--text-muted); opacity:0.3; width:12px; text-align:center;"></i>`;
+
+            // Considera desativada se a SUBCATEGORIA em si estiver desativada,
+            // OU se a CATEGORIA pai estiver desativada (herda o estado visual)
+            const subOwnDisabled = isSubcategoryDisabled(cat, sub);
+            const subIsDisabled = catIsDisabled || subOwnDisabled;
+            const subNameStyle = subIsDisabled
+                ? 'font-weight: 500; color: var(--danger); text-decoration: line-through;'
+                : 'font-weight: 500;';
+            const subDisabledBadge = subIsDisabled
+                ? `<span style="font-size:0.65rem; font-weight:700; color: var(--danger); border:1px solid var(--danger); border-radius:6px; padding:0px 5px; margin-left:4px;">${subOwnDisabled ? 'Desativada' : 'Categoria desativada'}</span>`
+                : '';
 
             subDiv.innerHTML = `
                 <div style="width: 100%;">
@@ -8386,7 +8474,8 @@ function renderExploreTree() {
                             ${expandIcon}
                             <!-- ÍCONE DE PASTA RESTAURADO -->
                             <i class="far fa-folder-open" style="font-size:0.9rem; color:var(--text-muted);"></i>
-                            <span style="font-weight: 500;">${sub}</span>
+                            <span style="${subNameStyle}">${sub}</span>
+                            ${subDisabledBadge}
                         </div>
 
                         <div style="display:flex; align-items:center; gap:15px;">
@@ -8406,7 +8495,7 @@ function renderExploreTree() {
                     </div>
 
                     <!-- CONTAINER SUB-SUBCATEGORIAS (Nível 3) -->
-                    <div class="subsub-container hidden" style="padding-left: 28px; border-left: 1px dashed var(--border); margin-left: 5px; margin-top: 2px;">
+                    <div class="subsub-container" style="padding-left: 28px; border-left: 1px dashed var(--border); margin-left: 5px; margin-top: 2px;">
                         ${Array.from(tree[cat].subs[sub].subsubs).sort().map(subsub => {
                             if (subsub === 'Outros' && tree[cat].subs[sub].subsubs.size === 1) return ''; 
                             
@@ -8416,11 +8505,17 @@ function renderExploreTree() {
                                 (c.subsubcategory === subsub || (subsub === 'Outros' && !c.subsubcategory))
                             ).length;
 
+                            // A sub-subcategoria não tem desativação própria: ela herda
+                            // o estado visual da subcategoria/categoria pai.
+                            const subsubNameStyle = subIsDisabled
+                                ? 'color: var(--danger); text-decoration: line-through;'
+                                : '';
+
                             return `
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding: 6px 0; font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px solid rgba(0,0,0,0.03);">
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         <i class="fas fa-angle-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
-                                        <span>${subsub}</span>
+                                        <span style="${subsubNameStyle}">${subsub}</span>
                                     </div>
                                     <span style="background: var(--bg-body); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">
                                         ${count}
@@ -8471,6 +8566,73 @@ function renderExploreTree() {
         wrapper.appendChild(childrenContainer);
         container.appendChild(wrapper);
     });
+
+    // Sincroniza o texto/ícone do botão "Expandir tudo / Recolher tudo"
+    // com o estado real da árvore recém-renderizada (ela nasce toda expandida).
+    const toggleAllText = document.getElementById('explore-toggle-all-text');
+    const toggleAllIcon = document.getElementById('explore-toggle-all-icon');
+    if (toggleAllText && toggleAllIcon) {
+        toggleAllText.textContent = 'Recolher tudo';
+        toggleAllIcon.classList.remove('fa-expand-alt');
+        toggleAllIcon.classList.add('fa-compress-alt');
+    }
+}
+
+// Expande ou recolhe TODAS as categorias e sub-subcategorias da árvore de Explorar de uma só vez.
+function toggleExploreExpandAll() {
+    const container = document.getElementById('explore-tree-container');
+    if (!container) return;
+
+    const toggleAllText = document.getElementById('explore-toggle-all-text');
+    const toggleAllIcon = document.getElementById('explore-toggle-all-icon');
+
+    // Decide a ação com base no texto atual do botão
+    const shouldExpand = toggleAllText && toggleAllText.textContent.trim() === 'Expandir tudo';
+
+    // 1. Categorias (nível 1)
+    container.querySelectorAll('.tree-item').forEach(wrapper => {
+        const header = wrapper.querySelector('.tree-header');
+        const childrenContainer = wrapper.querySelector('.tree-children');
+        const icon = header ? header.querySelector('.tree-toggle-icon') : null;
+        if (!childrenContainer) return;
+
+        if (shouldExpand) {
+            wrapper.classList.add('expanded');
+            childrenContainer.style.display = 'block';
+            if (icon) icon.classList.add('fa-rotate-90');
+        } else {
+            wrapper.classList.remove('expanded');
+            childrenContainer.style.display = 'none';
+            if (icon) icon.classList.remove('fa-rotate-90');
+        }
+    });
+
+    // 2. Sub-subcategorias (nível 3)
+    container.querySelectorAll('.subsub-container').forEach(subContainer => {
+        const subDiv = subContainer.closest('.tree-sub-item');
+        const icon = subDiv ? subDiv.querySelector('.sub-toggle-icon') : null;
+
+        if (shouldExpand) {
+            subContainer.classList.remove('hidden');
+            if (icon) icon.style.transform = 'rotate(90deg)';
+        } else {
+            subContainer.classList.add('hidden');
+            if (icon) icon.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    // 3. Atualiza o texto/ícone do botão
+    if (toggleAllText && toggleAllIcon) {
+        if (shouldExpand) {
+            toggleAllText.textContent = 'Recolher tudo';
+            toggleAllIcon.classList.remove('fa-expand-alt');
+            toggleAllIcon.classList.add('fa-compress-alt');
+        } else {
+            toggleAllText.textContent = 'Expandir tudo';
+            toggleAllIcon.classList.remove('fa-compress-alt');
+            toggleAllIcon.classList.add('fa-expand-alt');
+        }
+    }
 }
 
 
@@ -8503,6 +8665,57 @@ function startSpecificReview(cat, sub, subsub) {
 
 
 
+
+// --- FUNÇÕES DE DESATIVAR CATEGORIAS/SUBCATEGORIAS ---
+// Quando desativada, a categoria/subcategoria:
+// 1. Não entra mais nas filas de revisão (Praticar, Aleatório, Cards para Hoje, etc.)
+// 2. Sua progressão (nextReview) fica congelada, pois ela nunca é avaliada de novo.
+
+function makeSubKey(category, subcategory) {
+    return `${category}|||${subcategory}`;
+}
+
+function isCategoryDisabled(category) {
+    return disabledTopics.categories.includes(category);
+}
+
+function isSubcategoryDisabled(category, subcategory) {
+    return disabledTopics.subcategories.includes(makeSubKey(category, subcategory));
+}
+
+// Um card só está ativo se NEM a categoria NEM a subcategoria dele estiverem desativadas
+function isCardActive(c) {
+    const cat = c.category || 'Sem Categoria';
+    const sub = c.subcategory || 'Geral';
+    if (isCategoryDisabled(cat)) return false;
+    if (isSubcategoryDisabled(cat, sub)) return false;
+    return true;
+}
+
+function toggleCategoryDisabled(category) {
+    const idx = disabledTopics.categories.indexOf(category);
+    if (idx === -1) {
+        disabledTopics.categories.push(category);
+    } else {
+        disabledTopics.categories.splice(idx, 1);
+    }
+    salvarDados('ted_disabled_topics', disabledTopics);
+    renderExploreTree();
+    if (typeof renderDashboard === 'function') renderDashboard();
+}
+
+function toggleSubcategoryDisabled(category, subcategory) {
+    const key = makeSubKey(category, subcategory);
+    const idx = disabledTopics.subcategories.indexOf(key);
+    if (idx === -1) {
+        disabledTopics.subcategories.push(key);
+    } else {
+        disabledTopics.subcategories.splice(idx, 1);
+    }
+    salvarDados('ted_disabled_topics', disabledTopics);
+    renderExploreTree();
+    if (typeof renderDashboard === 'function') renderDashboard();
+}
 
 // --- FUNÇÕES DE RENOMEAR CATEGORIAS/SUBCATEGORIAS ---
 
@@ -10291,7 +10504,7 @@ async function saveNotesData() {
     // --- 1. Atualiza Contadores (Cards para Hoje) ---
     // Verifica se 'cards' existe para evitar erros
     if (typeof cards !== 'undefined') {
-        const due = cards.filter(c => c.nextReview <= now).length;
+        const due = cards.filter(c => c.nextReview <= now && isCardActive(c)).length;
         const dueEl = document.getElementById('dash-due-count');
         if (dueEl) dueEl.innerText = due;
 
@@ -11806,10 +12019,10 @@ function loadStudySession() {
     document.getElementById('simulation-result').classList.add('hidden');
     document.getElementById('study-content').classList.remove('hidden');
     
-    // Filtra cards vencidos (nextReview <= agora)
+    // Filtra cards vencidos (nextReview <= agora) e que não estejam em categorias/subcategorias desativadas
     // Dica: Adicionei uma ordenação simples para priorizar os mais atrasados
     sessionQueue = cards
-        .filter(c => c.nextReview <= Date.now())
+        .filter(c => c.nextReview <= Date.now() && isCardActive(c))
         .sort((a, b) => a.nextReview - b.nextReview); 
 
     currentSessionTotal = sessionQueue.length;
@@ -12229,7 +12442,7 @@ function getLocalDateString() {
 
     studyMode = 'random';
     
-    randomReviewQueue = [...cards].sort(() => 0.5 - Math.random()).slice(0, 10);
+    randomReviewQueue = cards.filter(isCardActive).sort(() => 0.5 - Math.random()).slice(0, 10);
         
     currentSessionTotal = randomReviewQueue.length;
     currentSessionDone = 0;
@@ -12244,7 +12457,7 @@ function getLocalDateString() {
     if (randomReviewQueue.length > 0) {
         showCard(randomReviewQueue[0]);
     } else {
-        showAlert("Erro", "Não foi possível carregar os cards.");
+        showAlert("Sem Cards Ativos", "Todas as suas categorias/tópicos estão desativados no momento. Reative algum em Explorar para poder revisar.");
     }
 }
 
@@ -12798,7 +13011,7 @@ function renderPerformanceView() {
     // Cards a revisar hoje (global)
     const nowMs = Date.now();
     const endToday = new Date(); endToday.setHours(23,59,59,999);
-    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime()).length;
+    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime() && isCardActive(c)).length;
 
     // Estudou hoje?
     const todayStr = (typeof getLocalDateString === 'function') ? getLocalDateString() : new Date().toISOString().split('T')[0];
@@ -13093,9 +13306,9 @@ function renderDadosSRS() {
 
     const startToday = new Date(); startToday.setHours(0,0,0,0);
     const endToday = new Date(); endToday.setHours(23,59,59,999);
-    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime()).length;
-    const overdue = cards.filter(c => (c.nextReview || 0) < startToday.getTime()).length;
-    const next7 = cards.filter(c => { const nr = c.nextReview || 0; return nr > endToday.getTime() && nr <= endToday.getTime() + 7 * 86400000; }).length;
+    const dueToday = cards.filter(c => (c.nextReview || 0) <= endToday.getTime() && isCardActive(c)).length;
+    const overdue = cards.filter(c => (c.nextReview || 0) < startToday.getTime() && isCardActive(c)).length;
+    const next7 = cards.filter(c => { const nr = c.nextReview || 0; return nr > endToday.getTime() && nr <= endToday.getTime() + 7 * 86400000 && isCardActive(c); }).length;
 
     const novos = cards.filter(c => !c.reviewsCount).length;
     const aprendendo = cards.filter(c => c.reviewsCount && (c.interval || 0) < 7).length;
@@ -13409,46 +13622,36 @@ setTimeout(() => {
 
 <script>
 
-// 1. Registra as 11 novas fontes no sistema do Quill
-var Font = Quill.import('formats/font');
-Font.whitelist = [
-  'inter', 'arial', 'verdana', 'tahoma', 'trebuchet', 
-  'times', 'georgia', 'garamond', 'courier', 'comic', 'impact'
-];
-Quill.register(Font, true);
-
-
-var Size = Quill.import('attributors/style/size');
-Size.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px'];
-Quill.register(Size, true);
-
-// 2. Inicializa o Editor
+// 1. Inicializa o Editor
+// (Fonte e Tamanho em px foram removidos. Agora usamos Títulos (H1, H2, H3...) no lugar.)
 var quill = new Quill('#editor-container', {
   modules: {
     toolbar: [
-      // Bloco 1: Apenas as Fontes (Tamanho removido)
-      [{ 'font': Font.whitelist }],
-      
-[{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px', '48px'] }],
-      
-      // Bloco 3: Estilos básicos
+      // Bloco 1: Títulos / Formato de Texto (substitui Fonte e Tamanho)
+      [{ 'header': [1, 2, 3, false] }],
+
+      // Bloco 2: Estilos básicos (sempre visíveis)
       ['bold', 'italic', 'underline', 'strike'],
-      
-      // Bloco 4: Cores
+
+      // Bloco 3: Listas (sempre visíveis)
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+
+      // Bloco 4: Cores (sempre visível)
       [{ 'color': [] }, { 'background': [] }],
-      
-      // Bloco 5: Sobrescrito, Subscrito, Citação e Código
-      [{ 'script': 'sub'}, { 'script': 'super' }, 'blockquote', 'code-block'],
-      
-      // Bloco 6: Listas e Indentação
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-      
-      // Bloco 7: Alinhamento
+
+      // Bloco 5: Alinhamento — centralizar, justificar, etc. (sempre visível)
       [{ 'align': [] }],
-      
+
+      // ---- A partir daqui, os grupos ficam ocultos no menu "⋯" ----
+
+      // Bloco 6: Sobrescrito, Subscrito, Citação e Código
+      [{ 'script': 'sub'}, { 'script': 'super' }, 'blockquote', 'code-block'],
+
+      // Bloco 7: Indentação
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+
       // Bloco 8: Inserções Multimídia e Fórmulas
       ['link', 'image', 'formula'],
-      
 
     ]
   },
@@ -13457,6 +13660,78 @@ var quill = new Quill('#editor-container', {
   scrollingContainer: '.main-content',
   bounds: '#editor-container'
 });
+
+// 2. Reorganiza a Toolbar: mantém os 5 primeiros blocos visíveis
+//    e move o restante para dentro de um menu "⋯" (3 pontos) com popover.
+(function setupToolbarOverflowMenu() {
+  var toolbar = document.querySelector('.ql-toolbar.ql-snow');
+  if (!toolbar) return;
+
+  var groups = Array.prototype.slice.call(toolbar.querySelectorAll('.ql-formats'));
+  var VISIBLE_COUNT = 5; // Título, Estilos básicos, Listas, Cores e Alinhamento ficam sempre visíveis
+
+  var hiddenGroups = groups.slice(VISIBLE_COUNT);
+  if (hiddenGroups.length === 0) return;
+
+  // Cria o botão de 3 pontos
+  var moreBtn = document.createElement('button');
+  moreBtn.type = 'button';
+  moreBtn.className = 'ql-more-toggle';
+  moreBtn.setAttribute('aria-label', 'Mais ferramentas');
+  moreBtn.title = 'Mais ferramentas';
+  moreBtn.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+
+  // Cria o container do popover e move os grupos ocultos para dentro dele
+  var popover = document.createElement('div');
+  popover.className = 'ql-more-popover hidden';
+  hiddenGroups.forEach(function (g) {
+    popover.appendChild(g);
+  });
+
+  var moreWrapper = document.createElement('span');
+  moreWrapper.className = 'ql-formats ql-more-wrapper';
+  moreWrapper.appendChild(moreBtn);
+  moreWrapper.appendChild(popover);
+
+  toolbar.appendChild(moreWrapper);
+
+  function closePopover() {
+    popover.classList.add('hidden');
+    moreBtn.classList.remove('ql-active-more');
+  }
+
+  moreBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var isHidden = popover.classList.contains('hidden');
+    if (isHidden) {
+      popover.classList.remove('hidden');
+      moreBtn.classList.add('ql-active-more');
+    } else {
+      closePopover();
+    }
+  });
+
+  // Fecha o popover ao clicar fora dele
+  document.addEventListener('click', function (e) {
+    if (!moreWrapper.contains(e.target)) {
+      closePopover();
+    }
+  });
+
+  // Fecha o popover ao pressionar ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closePopover();
+  });
+
+  // Fecha o popover depois de escolher uma opção simples (bold, blockquote, link, etc.)
+  popover.addEventListener('click', function (e) {
+    var target = e.target.closest('button, .ql-picker');
+    if (target && !target.classList.contains('ql-picker')) {
+      setTimeout(closePopover, 80);
+    }
+  });
+})();
 
 // === CORREÇÃO DEFINITIVA DO SCROLL (SEM TREMIDINHA) ===
 quill.root.addEventListener('paste', function(e) {
@@ -14570,6 +14845,9 @@ function updateLibrarySubFilters(level) {
 <div id="tree-popover" class="tree-popover-menu">
     <button id="btn-popover-rename" class="popover-item" style="justify-content: flex-start; padding-left: 15px; font-weight: 400;">
         Renomear
+    </button>
+    <button id="btn-popover-toggle-disabled" class="popover-item" style="justify-content: flex-start; padding-left: 15px; font-weight: 400;">
+        Desativar
     </button>
 </div>
 
