@@ -6890,26 +6890,23 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
     </div>
 </div>
 
-<!-- MODAL DE CONFLITO DE SINCRONIZAÇÃO COM O GOOGLE DRIVE -->
+<!-- MODAL DE SINCRONIZAÇÃO COM O GOOGLE DRIVE (combina dados de dois dispositivos) -->
 <div class="radar-modal-overlay" id="gdrive-conflict-modal">
     <div class="radar-modal-box" style="width:min(480px,100%); padding: 26px;">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
             <div style="width:42px; height:42px; min-width:42px; border-radius:12px; background:#fff7ed; display:flex; align-items:center; justify-content:center;">
-                <i class="fas fa-cloud-arrow-down" style="color:#ea580c; font-size:1.2rem;"></i>
+                <i class="fas fa-code-merge" style="color:#ea580c; font-size:1.2rem;"></i>
             </div>
-            <h3 style="margin:0;">Versão diferente encontrada</h3>
+            <h3 style="margin:0;">Combinar dados dos dois dispositivos</h3>
         </div>
         <p id="gdrive-conflict-desc" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:22px; line-height:1.5;"></p>
         <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="action-btn" onclick="gdriveResolveConflictUseRemote()">
-                <i class="fas fa-cloud-arrow-down"></i> Usar a versão do Drive neste dispositivo
-            </button>
-            <button class="btn-outline action-btn" onclick="gdriveResolveConflictKeepLocal()">
-                <i class="fas fa-desktop"></i> Manter os dados deste dispositivo e enviar ao Drive
+            <button class="action-btn" onclick="gdriveApplyMerge()">
+                <i class="fas fa-check"></i> Combinar e continuar
             </button>
         </div>
         <p style="color:var(--text-muted); font-size:0.78rem; margin-top:16px; text-align:center;">
-            Dica: para evitar isso, sincronize antes de começar a estudar em outro lugar.
+            Nenhum dado é descartado: itens exclusivos de cada dispositivo são preservados.
         </p>
     </div>
 </div>
@@ -7153,15 +7150,29 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                                 <div id="gdrive-email-text" style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
                             </div>
                         </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem;" onclick="gdriveManualSyncClick()"><i class="fas fa-sync"></i> Sincronizar agora</button>
-                            <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
-                        </div>
+                        <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
                     </div>
 
-                    <div id="gdrive-conflict-banner" style="display:none; align-items:center; gap:10px; background:#fff7ed; border:1px solid #fdba74; color:#9a3412; border-radius:10px; padding:10px 14px; margin-top:10px; font-size:0.82rem; font-weight:600;">
-                        <i class="fas fa-triangle-exclamation"></i>
-                        <span>Toque em "Sincronizar agora" para revisar a versão mais recente encontrada no Drive.</span>
+                    <!-- Indica qual lado tem dados mais recentes, para ajudar a decidir a direção -->
+                    <div id="gdrive-compare-info" style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                        <button id="gdrive-upload-btn" class="action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualUpload()">
+                            <i class="fas fa-cloud-arrow-up"></i> Enviar para o Drive
+                        </button>
+                        <button id="gdrive-download-btn" class="btn-outline action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualDownload()">
+                            <i class="fas fa-cloud-arrow-down"></i> Baixar do Drive
+                        </button>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:8px;">
+                        <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo()">
+                            <i class="fas fa-rotate"></i> Verificar novamente
+                        </button>
+                        <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveManualMerge()" title="Combina os dois lados em vez de substituir um pelo outro">
+                            <i class="fas fa-code-merge"></i> Combinar os dois
+                        </button>
                     </div>
                 </div>
             </div>
@@ -12854,14 +12865,17 @@ function saveSimulationResult() {
 }
 
         // Monta o objeto único com todos os dados do app (usado pelo backup manual E pela sincronização com o Drive)
-        function buildBackupObject() {
+        async function buildBackupObject() {
+    const lastModified = (typeof gdriveGetDataLastModified === 'function')
+        ? await gdriveGetDataLastModified()
+        : Date.now(); // fallback se o módulo de sincronização ainda não carregou
     return {
         cards, performanceData, folders, notes,
         scheduleData, tasks, userData, editais,
         pomoSettings, pomoHistory, simulationHistory,
         taskTemplates, scheduleTemplates,
         disabledTopics,
-        _lastModified: Date.now()
+        _lastModified: lastModified
     };
 }
 
@@ -12884,8 +12898,8 @@ async function applyBackupObject(d) {
     if (d.disabledTopics) await salvarDados('ted_disabled_topics', d.disabledTopics);
 }
 
-        function exportAllData() { 
-    const d = buildBackupObject();
+        async function exportAllData() { 
+    const d = await buildBackupObject();
     
     const a = document.createElement('a'); 
     a.href = URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'})); 
@@ -14128,14 +14142,44 @@ setTimeout(() => {
     });
 
     // Função AUXILIAR para salvar (substitui o setItem)
+    // Chaves que representam DADOS DE ESTUDO (cards, notas, cronograma, etc.) — sempre que uma
+    // delas é salva, é porque algo realmente mudou, e por isso atualizamos um timestamp próprio
+    // (ted_data_last_modified). Isso é o que a sincronização com o Drive usa para saber se este
+    // dispositivo tem mudanças reais, em vez de usar "agora" toda vez que o backup é montado.
+    const DATA_KEYS_FOR_SYNC = new Set([
+        'ted_flashcards', 'ted_performance', 'ted_folders', 'ted_notes', 'ted_schedule',
+        'ted_tasks', 'ted_editais', 'ted_userdata', 'ted_pomo_settings', 'ted_pomo_history',
+        'ted_simulation_history', 'ted_task_templates', 'ted_schedule_templates', 'ted_disabled_topics'
+    ]);
+    let _dataLastModifiedCache = null; // cache em memória para não ler do localforage a cada chamada
+
     async function salvarDados(chave, valor) {
         try {
             await localforage.setItem(chave, valor);
             // Mantemos no localStorage APENAS coisas pequenas se precisar,
             // mas para o seu backup grande, o localforage resolve.
+
+            if (DATA_KEYS_FOR_SYNC.has(chave)) {
+                _dataLastModifiedCache = Date.now();
+                localforage.setItem('ted_data_last_modified', _dataLastModifiedCache).catch(() => {});
+            }
         } catch (erro) {
             console.error("Erro ao salvar:", erro);
         }
+    }
+
+    // Retorna quando os dados deste dispositivo realmente mudaram por último (não "agora").
+    // Se nunca foi registrado (app antigo, antes desta marca existir), usa a hora atual como
+    // fallback seguro na primeira vez, e a partir daí passa a refletir mudanças reais.
+    async function gdriveGetDataLastModified() {
+        if (_dataLastModifiedCache != null) return _dataLastModifiedCache;
+        try {
+            const saved = await localforage.getItem('ted_data_last_modified');
+            if (saved != null) { _dataLastModifiedCache = saved; return saved; }
+        } catch (e) { /* ignora */ }
+        _dataLastModifiedCache = Date.now();
+        localforage.setItem('ted_data_last_modified', _dataLastModifiedCache).catch(() => {});
+        return _dataLastModifiedCache;
     }
 
     // Função AUXILIAR para carregar (substitui o getItem)
@@ -14330,7 +14374,7 @@ setTimeout(() => {
             await gdriveFetchUserEmail();
             await gdriveSavePersistedState();
             gdriveUpdateUI();
-            await gdriveSyncNow(); // já sincroniza uma vez ao conectar
+            await gdriveRefreshCompareInfo(); // só verifica e mostra qual lado está mais atualizado
             gdriveStartAutoSync();
         } catch (err) {
             console.error('Erro ao conectar ao Google Drive:', err);
@@ -14355,104 +14399,294 @@ setTimeout(() => {
         gdriveUpdateUI();
     }
 
-    // O coração da sincronização: compara local x remoto e decide a ação mais segura,
-    // nunca sobrescrevendo silenciosamente uma versão mais nova sem avisar o usuário.
-    async function gdriveSyncNow(opts) {
-        opts = opts || {};
-        if (gdriveSyncing) return;
-        if (typeof appDataReady !== 'undefined' && !appDataReady) {
-            // Os dados do app ainda não terminaram de carregar do localforage; espera um pouco e tenta de novo
-            setTimeout(() => gdriveSyncNow(opts), 1000);
-            return;
-        }
-        gdriveSyncing = true;
-        gdriveSetStatus('Sincronizando...', false);
+    // Consulta o Drive e mostra qual lado (local ou Drive) está mais atualizado,
+    // SEM alterar nada em nenhum dos dois lados. É chamada automaticamente a cada
+    // poucos minutos e sempre que a tela de Configurações é aberta, só para te
+    // ajudar a decidir entre Enviar ou Baixar.
+    async function gdriveRefreshCompareInfo() {
+        const infoEl = document.getElementById('gdrive-compare-info');
+        const uploadBtn = document.getElementById('gdrive-upload-btn');
+        const downloadBtn = document.getElementById('gdrive-download-btn');
+        if (infoEl) infoEl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...';
+
         try {
             await gdriveEnsureToken(false);
-
-            const local = buildBackupObject();
+            const local = await buildBackupObject();
             const { remoteData, remoteModifiedTime } = await gdriveReadRemote();
 
             if (!remoteData) {
-                // Primeira sincronização deste dispositivo/usuário: sobe o que já existe localmente
-                await gdriveWriteRemote(local);
-                gdriveSetStatus('Backup enviado ao Drive agora mesmo.', false);
+                if (infoEl) infoEl.innerHTML = '<i class="fas fa-info-circle"></i> Você ainda não enviou nenhum backup deste dispositivo ao Drive.';
+                if (uploadBtn) uploadBtn.disabled = false;
+                if (downloadBtn) downloadBtn.disabled = true;
                 return;
             }
 
             const remoteTime = remoteData._lastModified || (remoteModifiedTime ? new Date(remoteModifiedTime).getTime() : 0);
             const localTime = local._lastModified;
+            const remoteWhen = new Date(remoteTime).toLocaleString('pt-BR');
 
-            // Versões praticamente iguais (diferença pequena) -> nada a fazer
             if (Math.abs(remoteTime - localTime) < 2000) {
-                gdriveSetStatus('Já está tudo sincronizado.', false);
-                return;
+                if (infoEl) infoEl.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success);"></i> Este dispositivo e o Drive estão sincronizados (última vez: ${remoteWhen}).`;
+            } else if (localTime > remoteTime) {
+                if (infoEl) infoEl.innerHTML = `<i class="fas fa-arrow-up" style="color:var(--primary);"></i> Este dispositivo tem dados mais recentes que o Drive (Drive: ${remoteWhen}). Considere <b>Enviar</b>.`;
+            } else {
+                if (infoEl) infoEl.innerHTML = `<i class="fas fa-arrow-down" style="color:#ea580c;"></i> O Drive tem uma versão mais recente (${remoteWhen}) do que este dispositivo. Considere <b>Baixar</b>.`;
             }
+            if (uploadBtn) uploadBtn.disabled = false;
+            if (downloadBtn) downloadBtn.disabled = false;
 
-            if (remoteTime > localTime) {
-                // O Drive tem uma versão mais recente que a deste dispositivo.
-                if (opts.silent) {
-                    // Sincronização automática em segundo plano: não decide por conta própria, só avisa.
-                    gdriveSetStatus('Há uma versão mais recente no Drive. Restaure para atualizar este dispositivo.', true, true);
-                } else {
-                    gdriveShowConflictPrompt(remoteData, remoteTime);
+        } catch (err) {
+            console.error('Erro ao comparar com o Drive:', err);
+            if (infoEl) infoEl.innerHTML = '<i class="fas fa-triangle-exclamation" style="color:var(--danger);"></i> Não foi possível verificar agora. Tente de novo.';
+        }
+    }
+
+    // Envia o backup deste dispositivo para o Drive, SUBSTITUINDO o que está lá.
+    // Sempre pede confirmação, avisando se isso vai sobrescrever algo mais recente.
+    async function gdriveManualUpload() {
+        if (typeof appDataReady !== 'undefined' && !appDataReady) {
+            gdriveSetStatus('Aguarde o app terminar de carregar e tente novamente.', true);
+            return;
+        }
+        gdriveSetStatus('Verificando antes de enviar...', false);
+        try {
+            await gdriveEnsureToken(false);
+            const local = await buildBackupObject();
+            const { remoteData, remoteModifiedTime } = await gdriveReadRemote();
+
+            let confirmMsg = 'Enviar o backup deste dispositivo para o Drive?';
+            if (remoteData) {
+                const remoteTime = remoteData._lastModified || (remoteModifiedTime ? new Date(remoteModifiedTime).getTime() : 0);
+                if (remoteTime > local._lastModified) {
+                    const when = new Date(remoteTime).toLocaleString('pt-BR');
+                    confirmMsg = `Atenção: o Drive tem uma versão mais recente (${when}) do que este dispositivo. Enviar agora vai SUBSTITUIR esses dados mais novos pelos deste dispositivo. Continuar?`;
                 }
-                return;
             }
+            if (!confirm(confirmMsg)) { gdriveSetStatus('Envio cancelado.', false); return; }
 
-            // Versão local é mais nova -> envia pro Drive
+            gdriveSetStatus('Enviando para o Drive...', false);
             await gdriveWriteRemote(local);
             gdriveSetStatus('Backup enviado ao Drive agora mesmo.', false);
-
+            gdriveRefreshCompareInfo();
         } catch (err) {
-            console.error('Erro na sincronização com o Drive:', err);
-            gdriveSetStatus('Falha ao sincronizar. Verifique sua conexão.', true);
-        } finally {
-            gdriveSyncing = false;
+            console.error('Erro ao enviar para o Drive:', err);
+            gdriveSetStatus('Falha ao enviar para o Drive. Verifique sua conexão.', true);
         }
     }
 
-    // Mostra um aviso claro perguntando se o usuário quer baixar a versão mais nova do Drive,
-    // em vez de sobrescrever silenciosamente o que está no dispositivo atual.
-    function gdriveShowConflictPrompt(remoteData, remoteTime) {
-        const when = new Date(remoteTime).toLocaleString('pt-BR');
-        gdriveSetStatus(`Encontramos uma versão mais recente no Drive (${when}).`, true, true);
+    // Baixa o backup do Drive e SUBSTITUI os dados deste dispositivo.
+    // Sempre pede confirmação, já que é uma ação destrutiva localmente.
+    async function gdriveManualDownload() {
+        gdriveSetStatus('Buscando backup no Drive...', false);
+        try {
+            await gdriveEnsureToken(false);
+            const { remoteData, remoteModifiedTime } = await gdriveReadRemote();
+
+            if (!remoteData) {
+                gdriveSetStatus('Ainda não existe nenhum backup salvo no Drive.', true);
+                return;
+            }
+
+            const remoteTime = remoteData._lastModified || (remoteModifiedTime ? new Date(remoteModifiedTime).getTime() : 0);
+            const when = new Date(remoteTime).toLocaleString('pt-BR');
+            const local = await buildBackupObject();
+
+            if (local._lastModified > remoteTime + 2000) {
+                if (!confirm(`Atenção: este dispositivo tem dados mais recentes do que o backup do Drive (${when}). Baixar agora vai SUBSTITUIR os dados deste dispositivo pelos do Drive, podendo perder o que você fez aqui. Continuar?`)) {
+                    gdriveSetStatus('Download cancelado.', false);
+                    return;
+                }
+            } else {
+                if (!confirm(`Baixar o backup do Drive (${when}) e substituir os dados deste dispositivo?`)) {
+                    gdriveSetStatus('Download cancelado.', false);
+                    return;
+                }
+            }
+
+            await applyBackupObject(remoteData);
+            gdriveSetStatus('Backup do Drive restaurado. Recarregando...', false);
+            setTimeout(() => location.reload(), 800);
+        } catch (err) {
+            console.error('Erro ao baixar do Drive:', err);
+            gdriveSetStatus('Falha ao baixar do Drive. Verifique sua conexão.', true);
+        }
+    }
+
+    // Opção avançada: combina os dois lados em vez de escolher um (não perde nada de nenhum lado).
+    // Disponível para quem prefere essa abordagem em vez de Enviar/Baixar diretos.
+    async function gdriveManualMerge() {
+        if (typeof appDataReady !== 'undefined' && !appDataReady) {
+            gdriveSetStatus('Aguarde o app terminar de carregar e tente novamente.', true);
+            return;
+        }
+        gdriveSetStatus('Comparando e combinando dados...', false);
+        try {
+            await gdriveEnsureToken(false);
+            const local = await buildBackupObject();
+            const { remoteData } = await gdriveReadRemote();
+
+            if (!remoteData) {
+                await gdriveWriteRemote(local);
+                gdriveSetStatus('Backup enviado ao Drive agora mesmo.', false);
+                return;
+            }
+
+            const merged = mergeBackupObjects(local, remoteData);
+            const novosItens = Math.max(0, (merged.cards || []).length - (local.cards || []).length)
+                + Math.max(0, (merged.notes || []).length - (local.notes || []).length);
+
+            gdriveShowMergePrompt(merged, novosItens);
+        } catch (err) {
+            console.error('Erro ao combinar dados:', err);
+            gdriveSetStatus('Falha ao combinar dados. Verifique sua conexão.', true);
+        }
+    }
+
+    // Mostra um resumo do merge antes de aplicar, já que recarregar a página é
+    // necessário para refletir os dados combinados na tela.
+    function gdriveShowMergePrompt(merged, novosItens) {
         const modal = document.getElementById('gdrive-conflict-modal');
         const desc = document.getElementById('gdrive-conflict-desc');
-        if (desc) desc.textContent = `O backup salvo no Google Drive é mais recente (${when}) do que os dados deste dispositivo. O que você deseja fazer?`;
+        const text = novosItens > 0
+            ? `Encontramos dados de outro dispositivo. Vamos combinar tudo: ${novosItens} item(ns) novo(s) serão adicionados aos seus dados atuais. Nada será perdido.`
+            : `Os dados foram comparados e já estão equivalentes nos dois lados.`;
+        if (desc) desc.textContent = text;
         if (modal) {
             modal.classList.add('visible');
-            modal._pendingRemoteData = remoteData;
+            modal._pendingMergedData = merged;
         }
     }
 
-    async function gdriveResolveConflictUseRemote() {
+    async function gdriveApplyMerge() {
         const modal = document.getElementById('gdrive-conflict-modal');
-        const remoteData = modal ? modal._pendingRemoteData : null;
+        const merged = modal ? modal._pendingMergedData : null;
         if (modal) modal.classList.remove('visible');
-        if (!remoteData) return;
-        await applyBackupObject(remoteData);
-        gdriveSetStatus('Backup do Drive restaurado. Recarregando...', false);
-        setTimeout(() => location.reload(), 900);
-    }
-
-    async function gdriveResolveConflictKeepLocal() {
-        const modal = document.getElementById('gdrive-conflict-modal');
-        if (modal) modal.classList.remove('visible');
+        if (!merged) return;
         try {
-            await gdriveWriteRemote(buildBackupObject());
-            gdriveSetStatus('Seus dados locais foram enviados ao Drive.', false);
+            await applyBackupObject(merged);
+            await gdriveWriteRemote(merged);
+            gdriveSetStatus('Dados combinados com sucesso. Recarregando...', false);
+            setTimeout(() => location.reload(), 900);
         } catch (err) {
             console.error(err);
-            gdriveSetStatus('Falha ao enviar para o Drive.', true);
+            gdriveSetStatus('Falha ao concluir a sincronização.', true);
         }
+    }
+
+
+    // localWins: quando o mesmo id existe nos dois lados com conteúdo diferente
+    // e não há outro critério de desempate, decide quem fica.
+    function mergeListById(localList, remoteList, idKey, localWins) {
+        idKey = idKey || 'id';
+        localList = Array.isArray(localList) ? localList : [];
+        remoteList = Array.isArray(remoteList) ? remoteList : [];
+
+        const map = new Map();
+        remoteList.forEach(item => { if (item && item[idKey] != null) map.set(item[idKey], item); });
+
+        localList.forEach(item => {
+            if (!item || item[idKey] == null) return;
+            const existing = map.get(item[idKey]);
+            if (!existing) {
+                map.set(item[idKey], item); // só existe localmente -> mantém
+                return;
+            }
+            // Existe nos dois lados: se forem iguais, não importa qual fica.
+            // Se forem diferentes, usa o critério de desempate (localWins) e mantém esse.
+            const sameContent = JSON.stringify(existing) === JSON.stringify(item);
+            if (sameContent) return;
+            if (localWins) map.set(item[idKey], item);
+            // se !localWins, mantém o remoto que já está no map
+        });
+
+        return Array.from(map.values());
+    }
+
+    // Une dois logs (ex: respostas de revisão) removendo duplicatas idênticas.
+    // Usa uma "assinatura" do conteúdo do item para detectar duplicatas, já que
+    // este tipo de dado não tem um id próprio.
+    function mergeLogArrays(localList, remoteList) {
+        localList = Array.isArray(localList) ? localList : [];
+        remoteList = Array.isArray(remoteList) ? remoteList : [];
+        const seen = new Set();
+        const result = [];
+        [...remoteList, ...localList].forEach(item => {
+            const sig = JSON.stringify(item);
+            if (!seen.has(sig)) { seen.add(sig); result.push(item); }
+        });
+        return result;
+    }
+
+    // Merge de objetos tipo dicionário (ex: { 'Segunda': [...], 'Terca': [...] }),
+    // combinando chave a chave. Quando o valor de uma chave é uma lista de itens
+    // com id, usa mergeListById; senão, usa o critério localWins simples.
+    function mergeKeyedObject(localObj, remoteObj, localWins) {
+        localObj = localObj && typeof localObj === 'object' ? localObj : {};
+        remoteObj = remoteObj && typeof remoteObj === 'object' ? remoteObj : {};
+        const keys = new Set([...Object.keys(localObj), ...Object.keys(remoteObj)]);
+        const result = {};
+        keys.forEach(k => {
+            const lv = localObj[k], rv = remoteObj[k];
+            if (Array.isArray(lv) || Array.isArray(rv)) {
+                const sample = (Array.isArray(lv) ? lv[0] : null) || (Array.isArray(rv) ? rv[0] : null);
+                if (sample && typeof sample === 'object' && sample.id != null) {
+                    result[k] = mergeListById(lv, rv, 'id', localWins);
+                } else {
+                    // lista simples (sem id) -> une e remove duplicatas exatas
+                    result[k] = mergeLogArrays(lv, rv);
+                }
+            } else if (lv !== undefined && rv !== undefined && JSON.stringify(lv) !== JSON.stringify(rv)) {
+                result[k] = localWins ? lv : rv;
+            } else {
+                result[k] = lv !== undefined ? lv : rv;
+            }
+        });
+        return result;
+    }
+
+    // Orquestra o merge de TODOS os dados do app. localWins decide o desempate
+    // só para os casos de "mesmo id, conteúdo diferente nos dois lados" — ou seja,
+    // afeta apenas itens realmente conflitantes, nunca os exclusivos de um lado.
+    function mergeBackupObjects(local, remote) {
+        const localWins = (local._lastModified || 0) >= (remote._lastModified || 0);
+
+        return {
+            cards: mergeListById(local.cards, remote.cards, 'id', localWins),
+            folders: mergeListById(local.folders, remote.folders, 'id', localWins),
+            notes: mergeListById(local.notes, remote.notes, 'id', localWins),
+            tasks: mergeListById(local.tasks, remote.tasks, 'id', localWins),
+            editais: mergeListById(local.editais, remote.editais, 'id', localWins),
+            taskTemplates: mergeListById(local.taskTemplates, remote.taskTemplates, 'id', localWins),
+            scheduleTemplates: mergeListById(local.scheduleTemplates, remote.scheduleTemplates, 'id', localWins),
+
+            // Logs: nunca perdem itens, só removem duplicatas idênticas
+            performanceData: mergeLogArrays(local.performanceData, remote.performanceData),
+            pomoHistory: mergeLogArrays(local.pomoHistory, remote.pomoHistory),
+            simulationHistory: mergeLogArrays(local.simulationHistory, remote.simulationHistory),
+
+            // Dicionários por chave
+            scheduleData: mergeKeyedObject(local.scheduleData, remote.scheduleData, localWins),
+            disabledTopics: {
+                categories: Array.from(new Set([...(local.disabledTopics?.categories || []), ...(remote.disabledTopics?.categories || [])])),
+                subcategories: Array.from(new Set([...(local.disabledTopics?.subcategories || []), ...(remote.disabledTopics?.subcategories || [])]))
+            },
+
+            // Configuração simples: o backup mais recente como um todo decide estes campos isolados
+            userData: localWins ? (local.userData || remote.userData) : (remote.userData || local.userData),
+            pomoSettings: localWins ? (local.pomoSettings || remote.pomoSettings) : (remote.pomoSettings || local.pomoSettings),
+
+            _lastModified: Date.now()
+        };
     }
 
     // Sincronização automática em segundo plano, enquanto a aba estiver aberta.
+    // Em vez de sincronizar sozinho (o que poderia subir/baixar sem você decidir),
+    // só atualizamos periodicamente a INFORMAÇÃO de qual lado está mais recente.
+    // A ação de enviar ou baixar é sempre uma escolha sua, pelos botões.
     function gdriveStartAutoSync() {
         gdriveStopAutoSync();
         gdriveAutoSyncTimer = setInterval(() => {
-            if (gdriveFileId || gdriveUserEmail) gdriveSyncNow({ silent: true });
+            if (gdriveFileId || gdriveUserEmail) gdriveRefreshCompareInfo();
         }, GDRIVE_AUTO_SYNC_INTERVAL_MS);
     }
     function gdriveStopAutoSync() {
@@ -14460,14 +14694,12 @@ setTimeout(() => {
     }
 
     // Atualiza o texto/status na tela de Configurações
-    function gdriveSetStatus(msg, isWarning, isConflict) {
+    function gdriveSetStatus(msg, isWarning) {
         const el = document.getElementById('gdrive-status-text');
         if (el) {
             el.textContent = msg;
             el.style.color = isWarning ? 'var(--danger)' : 'var(--text-muted)';
         }
-        const banner = document.getElementById('gdrive-conflict-banner');
-        if (banner) banner.style.display = isConflict ? 'flex' : 'none';
     }
 
     function gdriveUpdateUI() {
@@ -14483,19 +14715,8 @@ setTimeout(() => {
         if (emailEl) emailEl.textContent = gdriveUserEmail || 'Conta Google conectada';
     }
 
-    // Botão manual "Sincronizar agora" dentro da tela de Configurações
-    async function gdriveManualSyncClick() {
-        try {
-            await gdriveEnsureToken(false);
-        } catch (e) {
-            // token expirou e não renovou silenciosamente -> pede login de novo
-            await gdriveEnsureToken(true).catch(() => {});
-        }
-        gdriveSyncNow({ silent: false });
-    }
-
     // Ao carregar o app, recupera o estado salvo (fileId/email) e, se já havia conectado antes,
-    // tenta renovar o token silenciosamente para já deixar a sincronização automática ativa.
+    // tenta renovar o token silenciosamente para já deixar a comparação automática ativa.
     (async function gdriveInit() {
         await gdriveLoadPersistedState();
         if (gdriveUserEmail) {
@@ -14506,9 +14727,9 @@ setTimeout(() => {
                     try {
                         await gdriveEnsureToken(false);
                         gdriveStartAutoSync();
-                        gdriveSetStatus('Conectado. Sincronizando em segundo plano.', false);
+                        await gdriveRefreshCompareInfo();
                     } catch (e) {
-                        gdriveSetStatus('Faça login novamente para retomar a sincronização automática.', true);
+                        gdriveSetStatus('Faça login novamente para ver o status de sincronização.', true);
                     }
                 }
             }, 300);
