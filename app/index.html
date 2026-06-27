@@ -6571,10 +6571,77 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             }
 
             /* Seletor segmentado (Matéria / Tópico / Detalhe) */
-            .dados-seg { display: inline-flex; background: var(--bg-body); border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px; }
-            .dados-seg button { border: none; background: transparent; color: var(--text-muted); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+            .dados-seg { display: inline-flex; background: var(--bg-body); border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+            .dados-seg button { border: none; background: transparent; color: var(--text-muted); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
             .dados-seg button.active { background: var(--primary); color: #fff; }
             .dados-seg button:hover:not(.active) { color: var(--text-main); }
+
+            /* Mapa de Desempenho + Ranking lado a lado */
+            .radar-grid-2 { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
+            @media (max-width: 980px) { .radar-grid-2 { grid-template-columns: 1fr; } }
+
+            .radar-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center; }
+            .dados-seg-metric { margin-left: 4px; padding-left: 10px; border-left: 2px solid var(--border); }
+            .dados-seg-metric button.active { background: var(--text-main); }
+            body.dark-mode .dados-seg-metric button.active { background: var(--primary); }
+
+            /* Dropdown customizado do drill-down "dentro de qual matéria" — mesma altura/estilo das pills ao lado */
+            .radar-cat-dropdown { position: relative; }
+            .radar-cat-dropdown-btn {
+                display: inline-flex; align-items: center; gap: 6px;
+                background: var(--primary-light); color: var(--primary); border: none;
+                border-radius: 999px; padding: 5px 12px; font-size: 0.76rem; font-weight: 700;
+                cursor: pointer; transition: opacity 0.2s; white-space: nowrap; max-width: 170px;
+            }
+            .radar-cat-dropdown-btn:hover { opacity: 0.8; }
+            .radar-cat-dropdown-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .radar-cat-dropdown-btn i.fa-chevron-down { font-size: 0.6rem; transition: transform 0.2s; }
+            .radar-cat-dropdown-btn.open i.fa-chevron-down { transform: rotate(180deg); }
+            .radar-cat-dropdown-menu {
+                position: absolute; top: calc(100% + 6px); left: 0; min-width: 200px; max-height: 260px; overflow-y: auto;
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+                box-shadow: var(--shadow-lg); padding: 6px; z-index: 400; display: none;
+            }
+            .radar-cat-dropdown-menu.visible { display: block; }
+            .radar-cat-dropdown-menu button {
+                display: block; width: 100%; text-align: left; background: none; border: none;
+                padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+                color: var(--text-main); cursor: pointer; transition: background 0.15s;
+            }
+            .radar-cat-dropdown-menu button:hover { background: var(--bg-body); }
+            .radar-cat-dropdown-menu button.active { color: var(--primary); background: var(--primary-light); }
+
+            /* Ícone discreto de expandir o Mapa de Desempenho em um modal */
+            .radar-expand-btn {
+                width: 30px; height: 30px; min-width: 30px; display: flex; align-items: center; justify-content: center;
+                border-radius: 8px; background: transparent; border: none; color: var(--text-muted);
+                cursor: pointer; transition: background 0.15s, color 0.15s; font-size: 0.85rem;
+            }
+            .radar-expand-btn:hover { background: var(--bg-body); color: var(--primary); }
+
+            /* Modal de detalhes do Mapa de Desempenho */
+            .radar-modal-overlay {
+                position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 2000;
+                display: none; align-items: center; justify-content: center; padding: 20px;
+                backdrop-filter: blur(2px);
+            }
+            .radar-modal-overlay.visible { display: flex; }
+            .radar-modal-box {
+                background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+                width: min(1480px, 100%); max-height: 92vh; overflow-y: auto; padding: 30px 34px;
+                border: 1px solid var(--border);
+            }
+            .radar-modal-close {
+                width: 34px; height: 34px; border-radius: 10px; border: none; background: var(--bg-body);
+                color: var(--text-main); font-size: 1rem; cursor: pointer; transition: background 0.15s;
+            }
+            .radar-modal-close:hover { background: var(--border); }
+
+            /* No modal, o radar precisa de mais respiro lateral pra não cortar os rótulos das pontas */
+            .radar-modal-chart-col { min-width: 0; overflow: visible; padding: 0 36px; }
+            .radar-modal-rank-col { padding-right: 14px; }
+
+            #dados-radar-rank { max-height: 420px; overflow-y: auto; padding-right: 10px; }
             .dados-motivation .dm-icon {
                 width: 50px; height: 50px; min-width: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
                 font-size: 1.5rem; background: var(--primary-light); color: var(--primary);
@@ -6612,6 +6679,8 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             /* Lista de ranking (pontos fortes/fracos) */
             .dados-rank-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
             .dados-rank-item:last-child { border-bottom: none; }
+            .dados-rank-item-empty { opacity: 0.45; }
+            .dados-rank-item-empty .dados-rank-bar { background: var(--bg-body); }
             .dados-rank-badge { width: 30px; height: 30px; min-width: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
             .dados-rank-body { flex: 1; min-width: 0; }
             .dados-rank-name { font-weight: 700; font-size: 0.95rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -6770,14 +6839,81 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                     </div>
                 </div>
 
-                <!-- DESEMPENHO POR MATÉRIA (largura total) -->
-                <div class="performance-card">
-                    <div class="dados-card-head">
-                        <h3>Desempenho por Matéria</h3>
-                        <span class="dch-sub">Taxa de acerto por categoria no período</span>
-                    </div>
-                    <div id="category-stats-list" style="display:flex; flex-direction:column; gap:4px;"></div>
-                </div>
+                <!-- MAPA DE DESEMPENHO (GRÁFICO DE TEIA / RADAR) + RANKING — lado a lado, interativos e sincronizados -->
+<div class="dados-grid-2 radar-grid-2">
+    <div class="performance-card">
+        <div class="dados-card-head" style="flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h3>Mapa de Desempenho</h3>
+                <span class="dch-sub" id="radar-metric-sub">Taxa de acerto no período</span>
+            </div>
+            <button class="radar-expand-btn" title="Ver em detalhes" onclick="openRadarModal()">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+        <div class="radar-controls">
+            <span class="dados-seg" id="seg-radar-level"></span>
+            <span id="radar-category-filter-wrap" style="display:none;"></span>
+            <span class="dados-seg dados-seg-metric" id="seg-radar-metric"></span>
+        </div>
+        <div id="dados-radar-chart"></div>
+    </div>
+
+    <div class="performance-card">
+        <div class="dados-card-head">
+            <h3>Ranking</h3>
+            <span class="dch-sub" id="radar-rank-sub">Mesma classificação do mapa ao lado</span>
+        </div>
+        <div id="dados-radar-rank"></div>
+    </div>
+</div>
+
+<!-- MODAL DE DETALHES DO MAPA DE DESEMPENHO -->
+<div class="radar-modal-overlay" id="radar-modal-overlay" onclick="if(event.target===this) closeRadarModal()">
+    <div class="radar-modal-box">
+        <div class="dados-card-head" style="margin-bottom: 22px;">
+            <div>
+                <h3>Mapa de Desempenho — Detalhado</h3>
+                <span class="dch-sub" id="radar-modal-sub">Taxa de acerto no período</span>
+            </div>
+            <button class="radar-modal-close" onclick="closeRadarModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="radar-controls">
+            <span class="dados-seg" id="seg-radar-level-modal"></span>
+            <span id="radar-category-filter-wrap-modal" style="display:none;"></span>
+            <span class="dados-seg dados-seg-metric" id="seg-radar-metric-modal"></span>
+        </div>
+        <div class="dados-grid-2" style="align-items:start; margin-top: 18px; grid-template-columns: 1.3fr 1fr;">
+            <div id="dados-radar-chart-modal" class="radar-modal-chart-col"></div>
+            <div id="dados-radar-rank-modal" class="radar-modal-rank-col" style="max-height: 540px; overflow-y:auto;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONFLITO DE SINCRONIZAÇÃO COM O GOOGLE DRIVE -->
+<div class="radar-modal-overlay" id="gdrive-conflict-modal">
+    <div class="radar-modal-box" style="width:min(480px,100%); padding: 26px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="width:42px; height:42px; min-width:42px; border-radius:12px; background:#fff7ed; display:flex; align-items:center; justify-content:center;">
+                <i class="fas fa-cloud-arrow-down" style="color:#ea580c; font-size:1.2rem;"></i>
+            </div>
+            <h3 style="margin:0;">Versão diferente encontrada</h3>
+        </div>
+        <p id="gdrive-conflict-desc" style="color:var(--text-muted); font-size:0.9rem; margin-bottom:22px; line-height:1.5;"></p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="action-btn" onclick="gdriveResolveConflictUseRemote()">
+                <i class="fas fa-cloud-arrow-down"></i> Usar a versão do Drive neste dispositivo
+            </button>
+            <button class="btn-outline action-btn" onclick="gdriveResolveConflictKeepLocal()">
+                <i class="fas fa-desktop"></i> Manter os dados deste dispositivo e enviar ao Drive
+            </button>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.78rem; margin-top:16px; text-align:center;">
+            Dica: para evitar isso, sincronize antes de começar a estudar em outro lugar.
+        </p>
+    </div>
+</div>
+
 
                 <!-- SRS + CRONOGRAMA DA SEMANA -->
                 <div class="dados-grid-2">
@@ -6993,6 +7129,40 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                 <button class="action-btn" onclick="exportAllData()"><i class="fas fa-download"></i> Baixar Backup Completo</button>
                 <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
                 <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
+            </div>
+
+            <div class="card-box" style="margin-top:20px;">
+                <h3><i class="fab fa-google-drive" style="color:var(--primary);"></i> Sincronização com o Google Drive</h3>
+                <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">
+                    Conecte sua conta Google para manter seu backup disponível em qualquer computador ou celular. O app salva apenas um arquivo próprio no seu Drive — nunca acessa o resto dos seus arquivos.
+                </p>
+
+                <button id="gdrive-connect-btn" class="action-btn" onclick="gdriveConnect()">
+                    <i class="fab fa-google"></i> Conectar ao Google Drive
+                </button>
+
+                <div id="gdrive-connected-box" style="display:none;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:var(--bg-body); border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
+                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                            <i class="fas fa-check-circle" style="color:var(--success); font-size:1.1rem;"></i>
+                            <div style="min-width:0;">
+                                <div style="font-weight:700; font-size:0.85rem;">Conectado</div>
+                                <div id="gdrive-email-text" style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem;" onclick="gdriveManualSyncClick()"><i class="fas fa-sync"></i> Sincronizar agora</button>
+                            <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
+                        </div>
+                    </div>
+
+                    <div id="gdrive-conflict-banner" style="display:none; align-items:center; gap:10px; background:#fff7ed; border:1px solid #fdba74; color:#9a3412; border-radius:10px; padding:10px 14px; margin-top:10px; font-size:0.82rem; font-weight:600;">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <span>Toque em "Sincronizar agora" para revisar a versão mais recente encontrada no Drive.</span>
+                    </div>
+
+                    <div id="gdrive-status-text" style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;"></div>
+                </div>
             </div>
 
             <div class="card-box" style="margin-top:20px;">
@@ -7611,6 +7781,7 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
         let performanceData = [];
         let editais = [];
         let simulationHistory = [];
+        let appDataReady = false; // true depois que iniciarApp() termina de carregar tudo do localforage
         
         // Templates State
         let taskTemplates = [];
@@ -7705,6 +7876,7 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
                 pomoTimeLeft = pomoSettings.focus * 60;
 
                 console.log("Banco de dados carregado com sucesso!");
+                appDataReady = true;
                 
                 // --- AQUI COMEÇA O RESTO DO SEU APP ---
                 // Se você tiver uma função que desenha a tela inicial (ex: renderDashboard ou updateUI),
@@ -12380,13 +12552,16 @@ function saveCommentEdit() {
     }
     
    if(studyMode !== 'simulation') {
-    // Adicionamos 'subcategory' aqui
+    // Adicionamos 'subcategory', 'banca', 'cargo' e 'ano' aqui (usados no Gráfico de Teia da aba Dados)
     performanceData.push({
         date: getLocalDateString(), // <--- CORRIGIDO
         correct: isCor,
         category: currentCard.category || 'Geral',
         subcategory: currentCard.subcategory || 'Sem Subtópico',
-        subsubcategory: currentCard.subsubcategory || '' // p/ análise por Detalhe/sub-sub
+        subsubcategory: currentCard.subsubcategory || '', // p/ análise por Detalhe/sub-sub
+        banca: currentCard.banca || '',
+        cargo: currentCard.cargo || '',
+        ano: currentCard.ano || ''
     });
 
     salvarDados('ted_performance', performanceData);
@@ -12677,13 +12852,39 @@ function saveSimulationResult() {
     }
 }
 
+        // Monta o objeto único com todos os dados do app (usado pelo backup manual E pela sincronização com o Drive)
+        function buildBackupObject() {
+    return {
+        cards, performanceData, folders, notes,
+        scheduleData, tasks, userData, editais,
+        pomoSettings, pomoHistory, simulationHistory,
+        taskTemplates, scheduleTemplates,
+        disabledTopics,
+        _lastModified: Date.now()
+    };
+}
+
+// Aplica um objeto de backup (do arquivo .json OU do Google Drive) nas chaves do localforage
+async function applyBackupObject(d) {
+    await salvarDados('ted_flashcards', d.cards || []);
+    await salvarDados('ted_performance', d.performanceData || []);
+    await salvarDados('ted_folders', d.folders || []);
+    await salvarDados('ted_notes', d.notes || []);
+    await salvarDados('ted_schedule', d.scheduleData || {});
+    await salvarDados('ted_tasks', d.tasks || []);
+    await salvarDados('ted_editais', d.editais || []);
+
+    if (d.userData) await salvarDados('ted_userdata', d.userData);
+    if (d.pomoSettings) await salvarDados('ted_pomo_settings', d.pomoSettings);
+    if (d.pomoHistory) await salvarDados('ted_pomo_history', d.pomoHistory);
+    if (d.simulationHistory) await salvarDados('ted_simulation_history', d.simulationHistory);
+    if (d.taskTemplates) await salvarDados('ted_task_templates', d.taskTemplates);
+    if (d.scheduleTemplates) await salvarDados('ted_schedule_templates', d.scheduleTemplates);
+    if (d.disabledTopics) await salvarDados('ted_disabled_topics', d.disabledTopics);
+}
+
         function exportAllData() { 
-    const d = { 
-        cards, performanceData, folders, notes, 
-        scheduleData, tasks, userData, editais, 
-        pomoSettings, pomoHistory, simulationHistory, 
-        taskTemplates, scheduleTemplates 
-    }; 
+    const d = buildBackupObject();
     
     const a = document.createElement('a'); 
     a.href = URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'})); 
@@ -12706,21 +12907,7 @@ function saveSimulationResult() {
             
             if(!confirm("Isso apagará seus dados atuais. Continuar?")) return;
 
-            // Salvando tudo no banco ilimitado
-            await salvarDados('ted_flashcards', d.cards || []);
-            await salvarDados('ted_performance', d.performanceData || []);
-            await salvarDados('ted_folders', d.folders || []);
-            await salvarDados('ted_notes', d.notes || []);
-            await salvarDados('ted_schedule', d.scheduleData || {});
-            await salvarDados('ted_tasks', d.tasks || []);
-            await salvarDados('ted_editais', d.editais || []);
-            
-            if(d.userData) await salvarDados('ted_userdata', d.userData);
-            if(d.pomoSettings) await salvarDados('ted_pomo_settings', d.pomoSettings);
-            if(d.pomoHistory) await salvarDados('ted_pomo_history', d.pomoHistory);
-            if(d.simulationHistory) await salvarDados('ted_simulation_history', d.simulationHistory);
-            if(d.taskTemplates) await salvarDados('ted_task_templates', d.taskTemplates);
-            if(d.scheduleTemplates) await salvarDados('ted_schedule_templates', d.scheduleTemplates);
+            await applyBackupObject(d);
 
             alert('Backup restaurado com sucesso!');
             location.reload();
@@ -12905,6 +13092,9 @@ if (itemIndex !== -1) {
 /* ============================ HELPERS DO DASHBOARD ============================ */
 let dadosBreakdownLevel = 'category';   // 'category' | 'subcategory' | 'subsubcategory'
 let dadosPeriodDataCache = [];          // cache do período atual p/ re-render do seletor
+let dadosRadarLevel = 'category';       // classificação atual do Gráfico de Teia (Mapa de Desempenho)
+let dadosRadarMetric = 'pct';            // métrica atual do radar: 'pct' (taxa de acerto) | 'total' (nº de questões)
+let dadosRadarFilterCategory = null;     // quando o nível é 'subcategory'/'subsubcategory', filtra só dentro desta matéria (null = todas)
 function dadosPctColor(pct) {
     return pct >= 70 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
 }
@@ -13048,18 +13238,9 @@ function renderPerformanceView() {
     // 6. BANNER MOTIVACIONAL
     renderDadosMotivation({ accuracy, totalReviews, studiedToday, streak: userData.streak || 0, studyMin });
 
-    // 7. CATEGORIAS (matéria) — período
-    const catMap = {};
-    periodData.forEach(p => {
-        const c = p.category || 'Geral';
-        if (!catMap[c]) catMap[c] = { name: c, total: 0, correct: 0 };
-        catMap[c].total++;
-        if (p.correct) catMap[c].correct++;
-    });
-    const catArr = Object.values(catMap).map(c => ({ ...c, pct: c.total ? Math.round(c.correct / c.total * 100) : 0 }));
-
-    renderDadosCategoryList(catArr);
+    // 7. MAPA DE DESEMPENHO (Gráfico de Teia / Radar) — período
     dadosPeriodDataCache = periodData;
+    renderDadosRadarChart();
     renderDadosStrengthsWeaknesses();
 
     // 8. DADOS CRUZADOS (independentes do período)
@@ -13201,25 +13382,377 @@ function renderDadosMotivation(o) {
         <div class="dm-text"><strong>${title}</strong><span>${sub}</span></div>`;
 }
 
-/* --- LISTA: DESEMPENHO POR MATÉRIA --- */
-function renderDadosCategoryList(catArr) {
-    const el = document.getElementById('category-stats-list');
-    if (!el) return;
-    if (!catArr.length) { el.innerHTML = dadosEmpty('fa-book', 'Nenhuma matéria estudada neste período.'); return; }
-    const sorted = [...catArr].sort((a, b) => b.total - a.total);
-    el.innerHTML = sorted.map(c => {
-        const color = dadosPctColor(c.pct);
-        return `<div class="category-stat-item" style="border-radius:10px; margin-bottom:2px;">
-            <div style="min-width:130px;">
-                <div class="cat-name">${c.name}</div>
-                <div class="dados-rank-meta">${c.correct}/${c.total} acertos</div>
-            </div>
-            <div style="flex:1;margin:0 14px;">
-                <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${c.pct}%; background:${color}"></div></div>
-            </div>
-            <div class="cat-percent" style="color:${color}; font-size:1.05rem;">${c.pct}%</div>
-        </div>`;
+/* --- MAPA DE DESEMPENHO: GRÁFICO DE TEIA (RADAR) + RANKING, SINCRONIZADOS --- */
+/* Toda a lógica abaixo é compartilhada entre o banner inline e o modal de detalhes,
+   usando um sufixo de contexto ('' para o banner, '-modal' para o popup) nos IDs. */
+
+const RADAR_LEVEL_LABELS = {
+    category: 'Matéria', subcategory: 'Tópico', subsubcategory: 'Detalhe'
+};
+const RADAR_RANK_ROWS = 7; // nº fixo de linhas no ranking, para os dois banners ficarem com a mesma altura
+
+// Troca a classificação do radar (matéria, tópico, detalhe) e re-renderiza (banner + modal, se aberto)
+function setDadosRadarLevel(level) {
+    dadosRadarLevel = level;
+    if (level === 'category') dadosRadarFilterCategory = null; // filtro de matéria só faz sentido em Tópico/Detalhe
+    renderDadosRadarChart('');
+    if (isRadarModalOpen()) renderDadosRadarChart('-modal');
+}
+
+// Troca a métrica exibida: 'pct' (taxa de acerto) ou 'total' (nº de questões resolvidas)
+function setDadosRadarMetric(metric) {
+    dadosRadarMetric = metric;
+    renderDadosRadarChart('');
+    if (isRadarModalOpen()) renderDadosRadarChart('-modal');
+}
+
+// Define em qual matéria filtrar os Tópicos/Detalhes (drill-down). '' = todas as matérias juntas.
+function setDadosRadarFilterCategory(cat) {
+    dadosRadarFilterCategory = cat || null;
+    closeAllRadarCatDropdowns();
+    renderDadosRadarChart('');
+    if (isRadarModalOpen()) renderDadosRadarChart('-modal');
+}
+
+function isRadarModalOpen() {
+    const overlay = document.getElementById('radar-modal-overlay');
+    return overlay && overlay.classList.contains('visible');
+}
+
+function openRadarModal() {
+    const overlay = document.getElementById('radar-modal-overlay');
+    if (!overlay) return;
+    overlay.classList.add('visible');
+    renderDadosRadarChart('-modal');
+    document.addEventListener('keydown', radarModalEscHandler);
+}
+
+function closeRadarModal() {
+    const overlay = document.getElementById('radar-modal-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('visible');
+    document.removeEventListener('keydown', radarModalEscHandler);
+}
+
+function radarModalEscHandler(e) {
+    if (e.key === 'Escape') closeRadarModal();
+}
+
+// Encurta nomes longos para não quebrar o layout da teia (mantém o nome completo no tooltip)
+function abbreviateRadarLabel(name) {
+    if (!name) return name;
+    // Remove conteúdo entre parênteses, ex: "Língua Portuguesa (Português)" -> "Língua Portuguesa"
+    let clean = name.replace(/\s*\([^)]*\)\s*/g, '').trim();
+    if (clean.length === 0) clean = name;
+    const MAX = 18;
+    if (clean.length <= MAX) return clean;
+    // Tenta cortar no último espaço antes do limite, para não partir uma palavra no meio
+    const slice = clean.slice(0, MAX);
+    const lastSpace = slice.lastIndexOf(' ');
+    const cut = lastSpace > 6 ? slice.slice(0, lastSpace) : slice;
+    return cut.trim() + '…';
+}
+
+// Agrupa os dados do período pelo critério escolhido, calculando % de acerto e total por eixo.
+// Quando level for 'subcategory'/'subsubcategory' e houver uma matéria selecionada (drill-down),
+// considera apenas os registros daquela matéria.
+function dadosGroupForRadar(data, level, filterCategory) {
+    const map = {};
+    data.forEach(p => {
+        if (filterCategory && level !== 'category' && (p.category || 'Geral') !== filterCategory) return;
+
+        let key;
+        if (level === 'category') key = p.category || 'Geral';
+        else if (level === 'subcategory') key = p.subcategory || 'Sem Subtópico';
+        else if (level === 'subsubcategory') { key = (p.subsubcategory || '').trim(); if (!key) return; }
+        else key = 'Geral';
+
+        if (!map[key]) map[key] = { name: key, total: 0, correct: 0 };
+        map[key].total++;
+        if (p.correct) map[key].correct++;
+    });
+    return Object.values(map)
+        .map(g => ({ ...g, pct: g.total ? Math.round(g.correct / g.total * 100) : 0 }))
+        .sort((a, b) => b.total - a.total);
+}
+
+// Lista as matérias com dados no período atual, para popular o dropdown de drill-down
+function dadosListCategoriesInPeriod() {
+    const set = new Set();
+    dadosPeriodDataCache.forEach(p => set.add(p.category || 'Geral'));
+    return Array.from(set).sort();
+}
+
+// Fecha qualquer dropdown de matéria aberto (banner ou modal)
+function closeAllRadarCatDropdowns() {
+    document.querySelectorAll('.radar-cat-dropdown-menu.visible').forEach(m => m.classList.remove('visible'));
+    document.querySelectorAll('.radar-cat-dropdown-btn.open').forEach(b => b.classList.remove('open'));
+}
+
+// Abre/fecha o dropdown customizado de matéria (substitui o <select> nativo p/ alinhar com as pills)
+function toggleRadarCatDropdown(suffix) {
+    const menu = document.getElementById('radar-cat-menu' + suffix);
+    const btn = document.getElementById('radar-cat-btn' + suffix);
+    if (!menu || !btn) return;
+    const willOpen = !menu.classList.contains('visible');
+    closeAllRadarCatDropdowns();
+    if (willOpen) {
+        menu.classList.add('visible');
+        btn.classList.add('open');
+    }
+}
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.radar-cat-dropdown')) closeAllRadarCatDropdowns();
+});
+
+// Monta os seletores (nível + filtro de matéria + métrica) de um contexto específico (banner ou modal)
+function renderRadarControls(suffix) {
+    const levelHtml = Object.keys(RADAR_LEVEL_LABELS).map(lvl =>
+        `<button class="${dadosRadarLevel === lvl ? 'active' : ''}" onclick="setDadosRadarLevel('${lvl}')">${RADAR_LEVEL_LABELS[lvl]}</button>`
+    ).join('');
+    const segLevel = document.getElementById('seg-radar-level' + suffix);
+    if (segLevel) segLevel.innerHTML = levelHtml;
+
+    // Dropdown de drill-down: só aparece quando o nível é Tópico ou Detalhe
+    const filterWrap = document.getElementById('radar-category-filter-wrap' + suffix);
+    if (filterWrap) {
+        if (dadosRadarLevel === 'category') {
+            filterWrap.style.display = 'none';
+            filterWrap.innerHTML = '';
+        } else {
+            filterWrap.style.display = '';
+            const cats = dadosListCategoriesInPeriod();
+            const current = dadosRadarFilterCategory || '';
+            const label = current || 'Todas as matérias';
+            filterWrap.innerHTML = `
+                <div class="radar-cat-dropdown">
+                    <button type="button" id="radar-cat-btn${suffix}" class="radar-cat-dropdown-btn" onclick="event.stopPropagation(); toggleRadarCatDropdown('${suffix}')">
+                        <span>${label}</span><i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="radar-cat-menu${suffix}" class="radar-cat-dropdown-menu">
+                        <button type="button" class="${!current ? 'active' : ''}" onclick="setDadosRadarFilterCategory('')">Todas as matérias</button>
+                        ${cats.map(c => `<button type="button" class="${c === current ? 'active' : ''}" onclick="setDadosRadarFilterCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`).join('')}
+                    </div>
+                </div>`;
+        }
+    }
+
+    const metricHtml = `
+        <button class="${dadosRadarMetric === 'pct' ? 'active' : ''}" onclick="setDadosRadarMetric('pct')"><i class="fas fa-percent"></i> Acerto</button>
+        <button class="${dadosRadarMetric === 'total' ? 'active' : ''}" onclick="setDadosRadarMetric('total')"><i class="fas fa-list-ol"></i> Questões</button>`;
+    const segMetric = document.getElementById('seg-radar-metric' + suffix);
+    if (segMetric) segMetric.innerHTML = metricHtml;
+
+    const levelLabel = RADAR_LEVEL_LABELS[dadosRadarLevel].toLowerCase();
+    const scopeLabel = dadosRadarFilterCategory ? ` em "${dadosRadarFilterCategory}"` : '';
+    const metricSubText = dadosRadarMetric === 'pct'
+        ? `Taxa de acerto por ${levelLabel}${scopeLabel} no período`
+        : `Nº de questões resolvidas por ${levelLabel}${scopeLabel} no período`;
+    const metricSub = document.getElementById('radar-metric-sub' + suffix);
+    if (metricSub) metricSub.textContent = metricSubText;
+
+    const rankSubText = dadosRadarMetric === 'pct' ? 'Ordenado pela maior taxa de acerto' : 'Ordenado pelo maior nº de questões';
+    const rankSub = document.getElementById('radar-rank-sub');
+    if (rankSub && suffix === '') rankSub.textContent = rankSubText;
+}
+
+// Desenha o gráfico de teia (radar) em SVG puro. suffix: '' para o banner, '-modal' para o popup.
+function renderDadosRadarChart(suffix) {
+    suffix = suffix || '';
+    const container = document.getElementById('dados-radar-chart' + suffix);
+    if (!container) return;
+
+    renderRadarControls(suffix);
+
+    const MAX_AXES = 8; // limite de eixos visíveis para não poluir a teia
+    const MIN_SAMPLE = dadosRadarLevel === 'category' ? 2 : 1;
+    const metric = dadosRadarMetric; // 'pct' | 'total'
+
+    let groups = dadosGroupForRadar(dadosPeriodDataCache, dadosRadarLevel, dadosRadarFilterCategory)
+        .filter(g => g.total >= MIN_SAMPLE);
+
+    // Para a métrica de questões, prioriza quem mais respondeu; para % prioriza quem tem mais amostra também (mais confiável)
+    groups = groups.sort((a, b) => b.total - a.total).slice(0, MAX_AXES);
+
+    if (groups.length < 3) {
+        const levelLabel = RADAR_LEVEL_LABELS[dadosRadarLevel].toLowerCase();
+        const scopeLabel = dadosRadarFilterCategory ? ` dentro de "${dadosRadarFilterCategory}"` : '';
+        container.innerHTML = dadosEmpty('fa-chart-area', `Dados insuficientes para montar a teia por ${levelLabel}${scopeLabel} (mínimo de 3 eixos com questões respondidas neste período).`);
+        if (suffix === '') renderDadosRadarRank([]);
+        return;
+    }
+
+    // Escala: % sempre vai de 0-100. Nº de questões usa o máximo do grupo (arredondado pra cima)
+    const maxValue = metric === 'pct' ? 100 : Math.max(...groups.map(g => g.total));
+    const niceMax = metric === 'pct' ? 100 : Math.ceil(maxValue / 4) * 4 || 4;
+
+    const n = groups.length;
+    const W = Math.max(container.clientWidth || 600, 340);
+    const H = suffix === '-modal' ? 480 : 430;
+    const cx = W / 2, cy = H / 2 + 6;
+    const levels = 4;
+
+    // Margem reservada para os rótulos (nome + valor) nas pontas dos eixos, para não serem cortados
+    // pela borda do container. Rótulos à esquerda/direita precisam de mais espaço horizontal.
+    const LABEL_OFFSET = 40;      // distância do rótulo até a borda externa da teia
+    const LABEL_TEXT_WIDTH = 126; // largura estimada do texto mais longo (nome abreviado de até 18 caracteres, bold 13px)
+    const vMargin = 50;           // margem vertical (rótulos acima/abaixo)
+
+    const radius = Math.max(
+        50,
+        Math.min(
+            cx - LABEL_OFFSET - LABEL_TEXT_WIDTH,            // não deixa o texto sair pela esquerda/direita
+            cy - LABEL_OFFSET - vMargin,                     // não deixa o texto sair por cima/baixo
+            (Math.min(W, H) / 2) - (suffix === '-modal' ? 70 : 66)
+        )
+    );
+
+    const valueOf = g => metric === 'pct' ? g.pct : g.total;
+
+    const angleFor = i => (Math.PI * 2 * i) / n - Math.PI / 2;
+    const pointFor = (i, value) => {
+        const r = Math.min(value / niceMax, 1) * radius;
+        const a = angleFor(i);
+        return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    };
+
+    // Anéis concêntricos (grade da teia)
+    let gridRings = '';
+    for (let lvl = 1; lvl <= levels; lvl++) {
+        const ringPts = groups.map((g, i) => {
+            const p = pointFor(i, (lvl / levels) * niceMax);
+            return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+        }).join(' ');
+        const opacity = lvl === levels ? 0.9 : 0.5;
+        gridRings += `<polygon points="${ringPts}" fill="none" stroke="var(--border)" stroke-width="1" opacity="${opacity}" />`;
+    }
+
+    // Rótulo de escala no anel (sobe verticalmente no eixo 0, que aponta para cima)
+    const ringLabels = [1, 2, 3, 4].map(lvl => {
+        const v = (lvl / levels) * niceMax;
+        const r = (lvl / levels) * radius;
+        const label = metric === 'pct' ? `${Math.round(v)}%` : `${Math.round(v)}`;
+        return `<text x="${cx + 6}" y="${(cy - r + 3).toFixed(1)}" font-size="10" font-weight="600" fill="var(--text-muted)">${label}</text>`;
     }).join('');
+
+    // Eixos (linhas do centro até cada vértice externo)
+    let axes = '';
+    groups.forEach((g, i) => {
+        const outer = pointFor(i, niceMax);
+        axes += `<line x1="${cx}" y1="${cy}" x2="${outer.x.toFixed(1)}" y2="${outer.y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`;
+    });
+
+    // Polígono de dados (a "teia" preenchida com os valores reais)
+    const dataPts = groups.map((g, i) => pointFor(i, valueOf(g)));
+    const dataPolygon = dataPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+    const dots = groups.map((g, i) => {
+        const p = dataPts[i];
+        return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2.5">
+            <title>${g.name}: ${g.pct}% de acerto (${g.correct}/${g.total} questões)</title>
+        </circle>`;
+    }).join('');
+
+    // Rótulos de cada eixo (nome abreviado + valor da métrica ativa em destaque)
+    const labels = groups.map((g, i) => {
+        const a = angleFor(i);
+        const lx = cx + (radius + LABEL_OFFSET) * Math.cos(a);
+        const ly = cy + (radius + LABEL_OFFSET) * Math.sin(a);
+        const anchor = Math.cos(a) > 0.25 ? 'start' : Math.cos(a) < -0.25 ? 'end' : 'middle';
+        const color = metric === 'pct' ? dadosPctColor(g.pct) : 'var(--primary)';
+        const shortName = abbreviateRadarLabel(g.name);
+        const metricText = metric === 'pct' ? `${g.pct}%` : `${g.total} quest.`;
+        return `
+            <text x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="${anchor}" font-size="13" font-weight="800" fill="var(--text-main)">${shortName}<title>${g.name}</title></text>
+            <text x="${lx.toFixed(1)}" y="${(ly + 11).toFixed(1)}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="${color}">${metricText}</text>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+    <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="overflow:visible;">
+        <defs>
+            <radialGradient id="radarGrad${suffix}" cx="50%" cy="50%" r="70%">
+                <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.38"/>
+                <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.08"/>
+            </radialGradient>
+        </defs>
+        ${gridRings}
+        ${axes}
+        ${ringLabels}
+        <polygon points="${dataPolygon}" fill="url(#radarGrad${suffix})" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round"/>
+        ${dots}
+        ${labels}
+    </svg>`;
+
+    if (suffix === '') renderDadosRadarRank(groups);
+    else renderDadosRadarRankModal(groups);
+}
+
+// Monta o HTML de uma linha do ranking (ou uma linha vazia "—" para preencher espaço)
+function radarRankRowHtml(g, rank, metric) {
+    if (!g) {
+        // Linha vazia: mantém a mesma altura/estrutura para os banners ficarem alinhados
+        return `<div class="dados-rank-item dados-rank-item-empty">
+            <div class="dados-rank-badge" style="background:var(--bg-body); color:var(--text-muted);">${rank}</div>
+            <div class="dados-rank-body">
+                <div class="dados-rank-name" style="color:var(--text-muted);">—</div>
+                <div class="dados-rank-bar"><div style="width:0%;"></div></div>
+                <div class="dados-rank-meta">Sem dados suficientes</div>
+            </div>
+            <div class="dados-rank-pct" style="color:var(--text-muted);">—</div>
+        </div>`;
+    }
+    const color = metric === 'pct' ? dadosPctColor(g.pct) : 'var(--primary)';
+    const maxTotalRef = g._maxTotal || g.total || 1;
+    const barPct = metric === 'pct' ? g.pct : Math.round((g.total / maxTotalRef) * 100);
+    const bigValue = metric === 'pct' ? `${g.pct}%` : `${g.total}`;
+    const meta = metric === 'pct' ? `${g.correct}/${g.total} questões` : `${g.pct}% de acerto`;
+    return `<div class="dados-rank-item">
+        <div class="dados-rank-badge" style="background:${color}22; color:${color};">${rank}</div>
+        <div class="dados-rank-body">
+            <div class="dados-rank-name" title="${g.name}">${g.name}</div>
+            <div class="dados-rank-bar"><div style="width:${barPct}%; background:${color};"></div></div>
+            <div class="dados-rank-meta">${meta}</div>
+        </div>
+        <div class="dados-rank-pct" style="color:${color};">${bigValue}</div>
+    </div>`;
+}
+
+// Tabela de ranking ao lado do radar (banner inline), sempre com RADAR_RANK_ROWS linhas para
+// alinhar a altura com o card do Mapa de Desempenho (linhas extras viram "—" em branco).
+function renderDadosRadarRank(groups) {
+    const el = document.getElementById('dados-radar-rank');
+    if (!el) return;
+    renderRadarRankInto(el, groups, RADAR_RANK_ROWS);
+}
+
+// Mesma lógica, usada dentro do modal (sem limite de linhas — mostra todo mundo)
+function renderDadosRadarRankModal(groups) {
+    const el = document.getElementById('dados-radar-rank-modal');
+    if (!el) return;
+    renderRadarRankInto(el, groups, null);
+}
+
+function renderRadarRankInto(el, groups, fixedRows) {
+    if (!groups || !groups.length) {
+        el.innerHTML = dadosEmpty('fa-table-list', 'Sem dados suficientes neste período para gerar o ranking.');
+        return;
+    }
+
+    const metric = dadosRadarMetric;
+    const sorted = [...groups].sort((a, b) => metric === 'pct'
+        ? (b.pct - a.pct) || (b.total - a.total)
+        : (b.total - a.total) || (b.pct - a.pct)
+    );
+    const maxTotal = Math.max(...sorted.map(g => g.total), 1);
+    sorted.forEach(g => g._maxTotal = maxTotal);
+
+    const rowsCount = fixedRows || sorted.length;
+    let html = '';
+    for (let i = 0; i < rowsCount; i++) {
+        html += radarRankRowHtml(sorted[i] || null, i + 1, metric);
+    }
+    el.innerHTML = html;
 }
 
 /* --- PONTOS FORTES E FRACOS (com nível: Matéria / Tópico / Detalhe) --- */
@@ -13582,6 +14115,9 @@ setTimeout(() => {
 <!-- BIBLIOTECA LOCALFORAGE -->
 <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
 
+<!-- GOOGLE IDENTITY SERVICES (login OAuth para sincronizar com o Google Drive) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <!-- NOSSAS NOVAS FUNÇÕES (COPIE E COLE ISSO EXATAMENTE ASSIM) -->
 <script>
     // Configura o banco de dados para aceitar arquivos grandes
@@ -13612,6 +14148,339 @@ setTimeout(() => {
             return valorPadrao;
         }
     }
+
+    /* ===========================================================================
+       SINCRONIZAÇÃO COM O GOOGLE DRIVE
+       - Cada usuário conecta a PRÓPRIA conta Google; o backup fica só no Drive dele.
+       - Usamos o escopo 'drive.file': o app só acessa o arquivo que ele mesmo criou,
+         nunca o resto do Drive da pessoa.
+       - Antes de subir ou baixar, comparamos o "_lastModified" local com o do Drive
+         para nunca sobrescrever uma versão mais nova sem avisar o usuário.
+    =========================================================================== */
+
+    const GDRIVE_CLIENT_ID = '850197478556-gd6epqpvncv3ctvscmqsh96jb33da2o5.apps.googleusercontent.com';
+    const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+    const GDRIVE_BACKUP_FILENAME = 'Teddy_Backup_Sync.json';
+    const GDRIVE_AUTO_SYNC_INTERVAL_MS = 5 * 60 * 1000; // sincroniza automaticamente a cada 5 minutos
+
+    let gdriveTokenClient = null;
+    let gdriveAccessToken = null;      // token de acesso atual (válido por ~1h)
+    let gdriveTokenExpiresAt = 0;
+    let gdriveFileId = null;           // id do arquivo de backup já criado no Drive do usuário (persistido)
+    let gdriveUserEmail = null;        // só para exibir "Conectado como ..." na UI
+    let gdriveAutoSyncTimer = null;
+    let gdriveSyncing = false;
+
+    // Persistimos só o fileId e o e-mail (não o token, que expira e é sensível manter salvo)
+    async function gdriveLoadPersistedState() {
+        const saved = await carregarDados('ted_gdrive_state', null);
+        if (saved) {
+            gdriveFileId = saved.fileId || null;
+            gdriveUserEmail = saved.email || null;
+        }
+        gdriveUpdateUI();
+    }
+    async function gdriveSavePersistedState() {
+        await salvarDados('ted_gdrive_state', { fileId: gdriveFileId, email: gdriveUserEmail });
+    }
+
+    function gdriveIsConnected() {
+        return !!gdriveAccessToken && Date.now() < gdriveTokenExpiresAt;
+    }
+
+    // Garante que temos um token válido; se não tiver (ou expirou), abre o popup de login do Google.
+    // interactive=false tenta renovar silenciosamente primeiro (sem popup), só pedindo popup se necessário.
+    function gdriveEnsureToken(interactive) {
+        return new Promise((resolve, reject) => {
+            if (gdriveIsConnected()) { resolve(gdriveAccessToken); return; }
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                reject(new Error('Biblioteca do Google ainda não carregou. Tente novamente em alguns segundos.'));
+                return;
+            }
+            if (!gdriveTokenClient) {
+                gdriveTokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GDRIVE_CLIENT_ID,
+                    scope: GDRIVE_SCOPE,
+                    callback: (resp) => {
+                        if (resp && resp.access_token) {
+                            gdriveAccessToken = resp.access_token;
+                            gdriveTokenExpiresAt = Date.now() + ((resp.expires_in || 3500) * 1000);
+                            resolve(gdriveAccessToken);
+                        } else {
+                            reject(new Error('Não foi possível autenticar com o Google.'));
+                        }
+                    },
+                    error_callback: (err) => reject(err),
+                });
+            }
+            gdriveTokenClient.requestAccessToken({ prompt: interactive ? 'consent' : '' });
+        });
+    }
+
+    // Busca o e-mail do usuário logado (só para exibir na interface)
+    async function gdriveFetchUserEmail() {
+        try {
+            const r = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                headers: { Authorization: 'Bearer ' + gdriveAccessToken }
+            });
+            if (!r.ok) return;
+            const info = await r.json();
+            gdriveUserEmail = info.email || null;
+        } catch (e) { /* não é crítico, ignora */ }
+    }
+
+    // Localiza o arquivo de backup já criado anteriormente no Drive do usuário, ou cria um novo se for a 1ª vez.
+    // Sempre confirma se o gdriveFileId salvo ainda existe (o usuário pode ter apagado manualmente no Drive).
+    async function gdriveFindOrCreateFile() {
+        const headers = { Authorization: 'Bearer ' + gdriveAccessToken };
+
+        if (gdriveFileId) {
+            const check = await fetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?fields=id,modifiedTime`, { headers });
+            if (check.ok) return gdriveFileId; // ainda existe, reaproveita
+            gdriveFileId = null; // foi apagado ou não pertence mais a esse usuário/token
+        }
+
+        // Procura por nome (caso o app tenha perdido o id salvo, ex: trocou de navegador)
+        const q = encodeURIComponent(`name='${GDRIVE_BACKUP_FILENAME}' and trashed=false`);
+        const search = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,modifiedTime)`, { headers });
+        if (search.ok) {
+            const data = await search.json();
+            if (data.files && data.files.length > 0) {
+                gdriveFileId = data.files[0].id;
+                await gdriveSavePersistedState();
+                return gdriveFileId;
+            }
+        }
+
+        // Não existe ainda: cria um arquivo vazio (drive.file só permite ver arquivos criados pelo próprio app,
+        // por isso a criação acontece sempre por aqui, nunca apontando para um arquivo já existente no Drive)
+        const metadata = { name: GDRIVE_BACKUP_FILENAME, mimeType: 'application/json' };
+        const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify(metadata)
+        });
+        if (!createRes.ok) throw new Error('Não foi possível criar o arquivo de backup no Drive.');
+        const created = await createRes.json();
+        gdriveFileId = created.id;
+        await gdriveSavePersistedState();
+        return gdriveFileId;
+    }
+
+    // Lê o conteúdo + a data de modificação do backup salvo no Drive (sem alterar nada localmente)
+    async function gdriveReadRemote() {
+        const headers = { Authorization: 'Bearer ' + gdriveAccessToken };
+        const fileId = await gdriveFindOrCreateFile();
+
+        const metaRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=modifiedTime,size`, { headers });
+        const meta = metaRes.ok ? await metaRes.json() : null;
+
+        // Arquivo recém-criado (size=0) ainda não tem conteúdo de backup nenhum
+        if (!meta || !meta.size || meta.size === '0') return { remoteData: null, remoteModifiedTime: null };
+
+        const contentRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, { headers });
+        if (!contentRes.ok) throw new Error('Não foi possível ler o backup salvo no Drive.');
+        const remoteData = await contentRes.json();
+        return { remoteData, remoteModifiedTime: meta.modifiedTime };
+    }
+
+    // Sobe o backup atual (local) para o Drive, sobrescrevendo o conteúdo do arquivo já existente
+    async function gdriveWriteRemote(dataObj) {
+        const fileId = await gdriveFindOrCreateFile();
+        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+            method: 'PATCH',
+            headers: { Authorization: 'Bearer ' + gdriveAccessToken, 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataObj)
+        });
+        if (!res.ok) throw new Error('Não foi possível salvar o backup no Drive.');
+    }
+
+    // Conecta a conta Google (botão "Conectar ao Google Drive"). Sempre interativo (mostra o popup).
+    async function gdriveConnect() {
+        try {
+            gdriveSetStatus('Conectando ao Google...', false);
+            await gdriveEnsureToken(true);
+            await gdriveFetchUserEmail();
+            await gdriveSavePersistedState();
+            gdriveUpdateUI();
+            await gdriveSyncNow(); // já sincroniza uma vez ao conectar
+            gdriveStartAutoSync();
+        } catch (err) {
+            console.error('Erro ao conectar ao Google Drive:', err);
+            gdriveSetStatus('Não foi possível conectar. Tente novamente.', true);
+        }
+    }
+
+    function gdriveDisconnect() {
+        if (gdriveAccessToken && google.accounts && google.accounts.oauth2) {
+            google.accounts.oauth2.revoke(gdriveAccessToken, () => {});
+        }
+        gdriveAccessToken = null;
+        gdriveTokenExpiresAt = 0;
+        gdriveFileId = null;
+        gdriveUserEmail = null;
+        gdriveSavePersistedState();
+        gdriveStopAutoSync();
+        gdriveUpdateUI();
+    }
+
+    // O coração da sincronização: compara local x remoto e decide a ação mais segura,
+    // nunca sobrescrevendo silenciosamente uma versão mais nova sem avisar o usuário.
+    async function gdriveSyncNow(opts) {
+        opts = opts || {};
+        if (gdriveSyncing) return;
+        if (typeof appDataReady !== 'undefined' && !appDataReady) {
+            // Os dados do app ainda não terminaram de carregar do localforage; espera um pouco e tenta de novo
+            setTimeout(() => gdriveSyncNow(opts), 1000);
+            return;
+        }
+        gdriveSyncing = true;
+        gdriveSetStatus('Sincronizando...', false);
+        try {
+            await gdriveEnsureToken(false);
+
+            const local = buildBackupObject();
+            const { remoteData, remoteModifiedTime } = await gdriveReadRemote();
+
+            if (!remoteData) {
+                // Primeira sincronização deste dispositivo/usuário: sobe o que já existe localmente
+                await gdriveWriteRemote(local);
+                gdriveSetStatus('Backup enviado ao Drive agora mesmo.', false);
+                return;
+            }
+
+            const remoteTime = remoteData._lastModified || (remoteModifiedTime ? new Date(remoteModifiedTime).getTime() : 0);
+            const localTime = local._lastModified;
+
+            // Versões praticamente iguais (diferença pequena) -> nada a fazer
+            if (Math.abs(remoteTime - localTime) < 2000) {
+                gdriveSetStatus('Já está tudo sincronizado.', false);
+                return;
+            }
+
+            if (remoteTime > localTime) {
+                // O Drive tem uma versão mais recente que a deste dispositivo.
+                if (opts.silent) {
+                    // Sincronização automática em segundo plano: não decide por conta própria, só avisa.
+                    gdriveSetStatus('Há uma versão mais recente no Drive. Restaure para atualizar este dispositivo.', true, true);
+                } else {
+                    gdriveShowConflictPrompt(remoteData, remoteTime);
+                }
+                return;
+            }
+
+            // Versão local é mais nova -> envia pro Drive
+            await gdriveWriteRemote(local);
+            gdriveSetStatus('Backup enviado ao Drive agora mesmo.', false);
+
+        } catch (err) {
+            console.error('Erro na sincronização com o Drive:', err);
+            gdriveSetStatus('Falha ao sincronizar. Verifique sua conexão.', true);
+        } finally {
+            gdriveSyncing = false;
+        }
+    }
+
+    // Mostra um aviso claro perguntando se o usuário quer baixar a versão mais nova do Drive,
+    // em vez de sobrescrever silenciosamente o que está no dispositivo atual.
+    function gdriveShowConflictPrompt(remoteData, remoteTime) {
+        const when = new Date(remoteTime).toLocaleString('pt-BR');
+        gdriveSetStatus(`Encontramos uma versão mais recente no Drive (${when}).`, true, true);
+        const modal = document.getElementById('gdrive-conflict-modal');
+        const desc = document.getElementById('gdrive-conflict-desc');
+        if (desc) desc.textContent = `O backup salvo no Google Drive é mais recente (${when}) do que os dados deste dispositivo. O que você deseja fazer?`;
+        if (modal) {
+            modal.classList.add('visible');
+            modal._pendingRemoteData = remoteData;
+        }
+    }
+
+    async function gdriveResolveConflictUseRemote() {
+        const modal = document.getElementById('gdrive-conflict-modal');
+        const remoteData = modal ? modal._pendingRemoteData : null;
+        if (modal) modal.classList.remove('visible');
+        if (!remoteData) return;
+        await applyBackupObject(remoteData);
+        gdriveSetStatus('Backup do Drive restaurado. Recarregando...', false);
+        setTimeout(() => location.reload(), 900);
+    }
+
+    async function gdriveResolveConflictKeepLocal() {
+        const modal = document.getElementById('gdrive-conflict-modal');
+        if (modal) modal.classList.remove('visible');
+        try {
+            await gdriveWriteRemote(buildBackupObject());
+            gdriveSetStatus('Seus dados locais foram enviados ao Drive.', false);
+        } catch (err) {
+            console.error(err);
+            gdriveSetStatus('Falha ao enviar para o Drive.', true);
+        }
+    }
+
+    // Sincronização automática em segundo plano, enquanto a aba estiver aberta.
+    function gdriveStartAutoSync() {
+        gdriveStopAutoSync();
+        gdriveAutoSyncTimer = setInterval(() => {
+            if (gdriveFileId || gdriveUserEmail) gdriveSyncNow({ silent: true });
+        }, GDRIVE_AUTO_SYNC_INTERVAL_MS);
+    }
+    function gdriveStopAutoSync() {
+        if (gdriveAutoSyncTimer) { clearInterval(gdriveAutoSyncTimer); gdriveAutoSyncTimer = null; }
+    }
+
+    // Atualiza o texto/status na tela de Configurações
+    function gdriveSetStatus(msg, isWarning, isConflict) {
+        const el = document.getElementById('gdrive-status-text');
+        if (el) {
+            el.textContent = msg;
+            el.style.color = isWarning ? 'var(--danger)' : 'var(--text-muted)';
+        }
+        const banner = document.getElementById('gdrive-conflict-banner');
+        if (banner) banner.style.display = isConflict ? 'flex' : 'none';
+    }
+
+    function gdriveUpdateUI() {
+        const connectBtn = document.getElementById('gdrive-connect-btn');
+        const connectedBox = document.getElementById('gdrive-connected-box');
+        const emailEl = document.getElementById('gdrive-email-text');
+        const connected = !!gdriveUserEmail;
+
+        if (connectBtn) connectBtn.style.display = connected ? 'none' : '';
+        if (connectedBox) connectedBox.style.display = connected ? '' : 'none';
+        if (emailEl) emailEl.textContent = gdriveUserEmail || '';
+    }
+
+    // Botão manual "Sincronizar agora" dentro da tela de Configurações
+    async function gdriveManualSyncClick() {
+        try {
+            await gdriveEnsureToken(false);
+        } catch (e) {
+            // token expirou e não renovou silenciosamente -> pede login de novo
+            await gdriveEnsureToken(true).catch(() => {});
+        }
+        gdriveSyncNow({ silent: false });
+    }
+
+    // Ao carregar o app, recupera o estado salvo (fileId/email) e, se já havia conectado antes,
+    // tenta renovar o token silenciosamente para já deixar a sincronização automática ativa.
+    (async function gdriveInit() {
+        await gdriveLoadPersistedState();
+        if (gdriveUserEmail) {
+            // Esperamos a lib do Google carregar antes de tentar renovar o token
+            const waitGoogle = setInterval(async () => {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                    clearInterval(waitGoogle);
+                    try {
+                        await gdriveEnsureToken(false);
+                        gdriveStartAutoSync();
+                        gdriveSetStatus('Conectado. Sincronizando em segundo plano.', false);
+                    } catch (e) {
+                        gdriveSetStatus('Faça login novamente para retomar a sincronização automática.', true);
+                    }
+                }
+            }, 300);
+        }
+    })();
 </script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
