@@ -7138,8 +7138,11 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                 </p>
 
                 <button id="gdrive-connect-btn" class="action-btn" onclick="gdriveConnect()">
-                    <i class="fab fa-google"></i> Conectar ao Google Drive
+                    <i class="fab fa-google"></i> <span id="gdrive-connect-btn-text">Conectar ao Google Drive</span>
                 </button>
+
+                <!-- Status sempre visível, mesmo antes de conectar (mostra erros, "conectando...", etc.) -->
+                <div id="gdrive-status-text" style="font-size:0.82rem; color:var(--text-muted); margin-top:10px; min-height:18px;"></div>
 
                 <div id="gdrive-connected-box" style="display:none;">
                     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:var(--bg-body); border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
@@ -7160,8 +7163,6 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                         <i class="fas fa-triangle-exclamation"></i>
                         <span>Toque em "Sincronizar agora" para revisar a versão mais recente encontrada no Drive.</span>
                     </div>
-
-                    <div id="gdrive-status-text" style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;"></div>
                 </div>
             </div>
 
@@ -14159,7 +14160,10 @@ setTimeout(() => {
     =========================================================================== */
 
     const GDRIVE_CLIENT_ID = '850197478556-gd6epqpvncv3ctvscmqsh96jb33da2o5.apps.googleusercontent.com';
-    const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+    // 'drive.file' garante que o app só vê o arquivo que ele mesmo criou.
+    // 'userinfo.email' é um escopo "não sensível" (baixo risco) usado só para exibir
+    // qual conta está conectada na tela — não dá acesso a nada além do e-mail público.
+    const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
     const GDRIVE_BACKUP_FILENAME = 'Teddy_Backup_Sync.json';
     const GDRIVE_AUTO_SYNC_INTERVAL_MS = 5 * 60 * 1000; // sincroniza automaticamente a cada 5 minutos
 
@@ -14190,6 +14194,9 @@ setTimeout(() => {
 
     // Garante que temos um token válido; se não tiver (ou expirou), abre o popup de login do Google.
     // interactive=false tenta renovar silenciosamente primeiro (sem popup), só pedindo popup se necessário.
+    let gdriveTokenResolve = null;
+    let gdriveTokenReject = null;
+
     function gdriveEnsureToken(interactive) {
         return new Promise((resolve, reject) => {
             if (gdriveIsConnected()) { resolve(gdriveAccessToken); return; }
@@ -14197,6 +14204,11 @@ setTimeout(() => {
                 reject(new Error('Biblioteca do Google ainda não carregou. Tente novamente em alguns segundos.'));
                 return;
             }
+            // Guarda o resolve/reject DESTA chamada específica — o callback abaixo é criado uma única vez
+            // pelo initTokenClient, mas sempre consulta estas variáveis para saber quem avisar.
+            gdriveTokenResolve = resolve;
+            gdriveTokenReject = reject;
+
             if (!gdriveTokenClient) {
                 gdriveTokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GDRIVE_CLIENT_ID,
@@ -14205,12 +14217,19 @@ setTimeout(() => {
                         if (resp && resp.access_token) {
                             gdriveAccessToken = resp.access_token;
                             gdriveTokenExpiresAt = Date.now() + ((resp.expires_in || 3500) * 1000);
-                            resolve(gdriveAccessToken);
+                            if (gdriveTokenResolve) gdriveTokenResolve(gdriveAccessToken);
                         } else {
-                            reject(new Error('Não foi possível autenticar com o Google.'));
+                            if (gdriveTokenReject) gdriveTokenReject(new Error('Não foi possível autenticar com o Google.'));
                         }
+                        gdriveTokenResolve = null;
+                        gdriveTokenReject = null;
                     },
-                    error_callback: (err) => reject(err),
+                    error_callback: (err) => {
+                        console.error('Google OAuth error_callback:', err);
+                        if (gdriveTokenReject) gdriveTokenReject(new Error((err && err.type) || 'Falha na autenticação com o Google.'));
+                        gdriveTokenResolve = null;
+                        gdriveTokenReject = null;
+                    },
                 });
             }
             gdriveTokenClient.requestAccessToken({ prompt: interactive ? 'consent' : '' });
@@ -14297,9 +14316,17 @@ setTimeout(() => {
 
     // Conecta a conta Google (botão "Conectar ao Google Drive"). Sempre interativo (mostra o popup).
     async function gdriveConnect() {
+        const btn = document.getElementById('gdrive-connect-btn');
+        const btnText = document.getElementById('gdrive-connect-btn-text');
+        const originalText = btnText ? btnText.textContent : '';
         try {
-            gdriveSetStatus('Conectando ao Google...', false);
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.textContent = 'Conectando...';
+            gdriveSetStatus('Abrindo a tela de login do Google...', false);
+
             await gdriveEnsureToken(true);
+            gdriveSetStatus('Autenticado! Buscando seus dados...', false);
+
             await gdriveFetchUserEmail();
             await gdriveSavePersistedState();
             gdriveUpdateUI();
@@ -14307,7 +14334,11 @@ setTimeout(() => {
             gdriveStartAutoSync();
         } catch (err) {
             console.error('Erro ao conectar ao Google Drive:', err);
-            gdriveSetStatus('Não foi possível conectar. Tente novamente.', true);
+            const msg = (err && err.message) ? err.message : 'Não foi possível conectar. Tente novamente.';
+            gdriveSetStatus(msg, true);
+        } finally {
+            if (btn) btn.disabled = false;
+            if (btnText) btnText.textContent = originalText || 'Conectar ao Google Drive';
         }
     }
 
@@ -14443,11 +14474,13 @@ setTimeout(() => {
         const connectBtn = document.getElementById('gdrive-connect-btn');
         const connectedBox = document.getElementById('gdrive-connected-box');
         const emailEl = document.getElementById('gdrive-email-text');
-        const connected = !!gdriveUserEmail;
+        // A conexão é definida pelo token válido ou por já termos um arquivo sincronizado antes
+        // (não pelo e-mail, que é só um dado cosmético e pode falhar sem afetar a sincronização real).
+        const connected = gdriveIsConnected() || !!gdriveFileId;
 
         if (connectBtn) connectBtn.style.display = connected ? 'none' : '';
         if (connectedBox) connectedBox.style.display = connected ? '' : 'none';
-        if (emailEl) emailEl.textContent = gdriveUserEmail || '';
+        if (emailEl) emailEl.textContent = gdriveUserEmail || 'Conta Google conectada';
     }
 
     // Botão manual "Sincronizar agora" dentro da tela de Configurações
