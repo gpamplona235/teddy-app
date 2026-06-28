@@ -54,6 +54,8 @@
             
 
             --app-font-scale: 1;
+            --app-font-family: 'Inter', sans-serif;
+            --app-content-max-width: none;
 
             --radius-lg: 20px;
             --radius-md: 12px;
@@ -84,7 +86,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--app-font-family);
             background-color: var(--bg-body);
             color: var(--text-main);
             height: 100vh;
@@ -1839,6 +1841,9 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
 #app-content { display: flex; width: 100%; height: 100vh; overflow: hidden; }
 .sidebar { height: 100vh; position: relative; z-index: 100; flex-shrink: 0; }
 .main-content { flex: 1; height: 100vh; overflow-y: auto; position: relative; padding: 24px 32px; }
+.main-content > * { max-width: var(--app-content-max-width); margin-left: auto; margin-right: auto; }
+.main-content > .page-header { max-width: var(--app-content-max-width); }
+body.full-width-mode .main-content > * { max-width: none; }
 
 
 
@@ -5199,7 +5204,7 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             <button class="nav-item" onclick="switchTab('notes')" title="Caderno"><i class="fas fa-sticky-note"></i> <span>Caderno</span></button>
             <button class="nav-item" onclick="switchTab('schedule')" title="Cronograma"><i class="fas fa-calendar-alt"></i> <span>Cronograma</span></button>
             <button class="nav-item" onclick="switchTab('performance')" title="Dados"><i class="fas fa-chart-pie"></i> <span>Dados</span></button>
-            <button class="nav-item" onclick="switchTab('settings')" title="Configurações"><i class="fas fa-cog"></i> <span>Configurações</span></button>
+            <button class="nav-item" onclick="openSettingsModal()" title="Configurações"><i class="fas fa-cog"></i> <span>Configurações</span></button>
            <div class="quick-access-wrapper" style="position: relative;">
                 <button class="nav-item" id="btn-quick-notes" onclick="toggleQuickNotes()" title="Histórico Recente">
     <i class="fas fa-history" style="color: var(--warning);"></i> 
@@ -5247,7 +5252,7 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             <div id="page-title-display">INÍCIO</div>
             <div class="header-actions">
     <!-- Botão Configurações -->
-    <button class="header-btn-icon" onclick="switchTab('settings')" title="Configurações">
+    <button class="header-btn-icon" onclick="openSettingsModal()" title="Configurações">
         <i class="fas fa-cog"></i>
     </button>
 
@@ -6642,6 +6647,117 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             .radar-modal-rank-col { padding-right: 14px; }
 
             #dados-radar-rank { max-height: 420px; overflow-y: auto; padding-right: 10px; }
+
+            /* ===========================================================================
+               POPUP DE CONFIGURAÇÕES (estilo "software" — sidebar de categorias + painel)
+            =========================================================================== */
+            .settings-modal-overlay {
+                position: fixed; inset: 0; background: rgba(10,12,16,0.65); z-index: 3000;
+                display: none; align-items: center; justify-content: center; padding: 28px;
+                backdrop-filter: blur(3px);
+            }
+            .settings-modal-overlay.visible { display: flex; }
+
+            .settings-modal-box {
+                width: min(980px, 100%); height: min(680px, 92vh);
+                background: var(--bg-card); border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+                display: flex; overflow: hidden;
+            }
+
+            /* Sidebar de categorias */
+            .settings-sidebar {
+                width: 240px; min-width: 240px; background: var(--bg-body);
+                border-right: 1px solid var(--border); padding: 22px 12px;
+                display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
+            }
+            .settings-sidebar-title {
+                font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+                color: var(--text-muted); padding: 14px 12px 6px;
+            }
+            .settings-sidebar-title:first-child { padding-top: 4px; }
+            .settings-nav-item {
+                display: flex; align-items: center; gap: 11px; padding: 9px 12px;
+                border-radius: 8px; border: none; background: transparent; width: 100%;
+                text-align: left; cursor: pointer; font-size: 0.88rem; font-weight: 600;
+                color: var(--text-muted); transition: background 0.12s, color 0.12s;
+            }
+            .settings-nav-item i { width: 18px; text-align: center; font-size: 0.95rem; opacity: 0.85; }
+            .settings-nav-item:hover { background: var(--border); color: var(--text-main); }
+            .settings-nav-item.active { background: var(--primary); color: #fff; }
+            .settings-nav-item.active i { opacity: 1; }
+            .settings-nav-item.danger { color: var(--danger); }
+            .settings-nav-item.danger:hover { background: rgba(239,68,68,0.12); }
+            .settings-nav-item.danger.active { background: var(--danger); color: #fff; }
+            .settings-sidebar-divider { height: 1px; background: var(--border); margin: 10px 12px; }
+
+            /* Painel de conteúdo */
+            .settings-panel-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+            .settings-panel-header {
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 20px 28px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+            }
+            .settings-panel-header h2 { font-size: 1.15rem; margin: 0; }
+            .settings-panel-header .settings-panel-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+            .settings-modal-close-btn {
+                width: 34px; height: 34px; min-width: 34px; border-radius: 50%; border: none;
+                background: var(--bg-body); color: var(--text-muted); font-size: 1rem; cursor: pointer;
+                display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s;
+            }
+            .settings-modal-close-btn:hover { background: var(--border); color: var(--text-main); }
+
+            .settings-panel-body { flex: 1; overflow-y: auto; padding: 24px 28px 36px; }
+            .settings-panel-section { display: none; }
+            .settings-panel-section.active { display: block; animation: settingsFadeIn 0.15s ease; }
+            @keyframes settingsFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+            /* Sub-cards dentro de cada painel, mais discretos que .card-box (já estamos dentro de um modal) */
+            .settings-block {
+                background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md);
+                padding: 18px 20px; margin-bottom: 16px;
+            }
+            .settings-block h4 { font-size: 0.95rem; margin: 0 0 4px; display:flex; align-items:center; gap:8px; }
+            .settings-block .settings-block-desc { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+            .settings-row {
+                display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                padding: 11px 0; border-bottom: 1px solid var(--border);
+            }
+            .settings-row:last-child { border-bottom: none; }
+            .settings-row-label { font-weight: 600; font-size: 0.88rem; }
+            .settings-row-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+            /* Opções de swatch (cor / fonte / largura) em grade de cartões selecionáveis */
+            .settings-swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 10px; }
+            .settings-swatch {
+                border: 2px solid var(--border); border-radius: 12px; padding: 10px 8px;
+                display: flex; flex-direction: column; align-items: center; gap: 8px;
+                cursor: pointer; background: var(--bg-card); transition: border-color 0.15s, transform 0.1s;
+            }
+            .settings-swatch:hover { border-color: var(--primary-dim); }
+            .settings-swatch.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+            .settings-swatch-color { width: 28px; height: 28px; border-radius: 50%; }
+            .settings-swatch-label { font-size: 0.74rem; font-weight: 700; text-align: center; line-height: 1.2; }
+
+            .settings-width-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .settings-width-option {
+                border: 2px solid var(--border); border-radius: 12px; padding: 14px 10px;
+                cursor: pointer; text-align: center; background: var(--bg-card); transition: border-color 0.15s;
+            }
+            .settings-width-option:hover { border-color: var(--primary-dim); }
+            .settings-width-option.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+            .settings-width-preview { height: 34px; border-radius: 6px; background: var(--border); margin: 0 auto 8px; display:flex; align-items:center; justify-content:center; }
+            .settings-width-preview-bar { height: 18px; border-radius: 4px; background: var(--primary); }
+            .settings-width-option-label { font-size: 0.78rem; font-weight: 700; }
+
+            @media (max-width: 720px) {
+                .settings-modal-box { flex-direction: column; height: min(720px, 94vh); }
+                .settings-sidebar { width: 100%; min-width: 0; flex-direction: row; overflow-x: auto; overflow-y: visible; border-right: none; border-bottom: 1px solid var(--border); padding: 10px 10px; }
+                .settings-sidebar-title, .settings-sidebar-divider { display: none; }
+                .settings-nav-item { white-space: nowrap; }
+                .settings-panel-header { padding: 16px 18px; }
+                .settings-panel-body { padding: 18px 18px 28px; }
+            }
+
             .dados-motivation .dm-icon {
                 width: 50px; height: 50px; min-width: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
                 font-size: 1.5rem; background: var(--primary-light); color: var(--primary);
@@ -6911,6 +7027,261 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
     </div>
 </div>
 
+<!-- ===========================================================================
+     POPUP DE CONFIGURAÇÕES (substitui a antiga página "settings-view")
+=========================================================================== -->
+<div class="settings-modal-overlay" id="settings-modal-overlay" onclick="if(event.target===this) closeSettingsModal()">
+    <div class="settings-modal-box">
+
+        <!-- SIDEBAR DE CATEGORIAS -->
+        <div class="settings-sidebar">
+            <div class="settings-sidebar-title">Preferências</div>
+            <button class="settings-nav-item active" data-settings-panel="geral" onclick="switchSettingsPanel('geral')">
+                <i class="fas fa-sliders"></i> Geral
+            </button>
+            <button class="settings-nav-item" data-settings-panel="aparencia" onclick="switchSettingsPanel('aparencia')">
+                <i class="fas fa-palette"></i> Aparência
+            </button>
+
+            <div class="settings-sidebar-title">Dados</div>
+            <button class="settings-nav-item" data-settings-panel="backup" onclick="switchSettingsPanel('backup')">
+                <i class="fas fa-cloud-arrow-up"></i> Backup &amp; Sincronização
+            </button>
+
+            <div class="settings-sidebar-title">Outros</div>
+            <button class="settings-nav-item" data-settings-panel="apoie" onclick="switchSettingsPanel('apoie')">
+                <i class="fas fa-hand-holding-heart"></i> Apoie o Projeto
+            </button>
+
+            <div class="settings-sidebar-divider"></div>
+            <button class="settings-nav-item danger" data-settings-panel="perigo" onclick="switchSettingsPanel('perigo')">
+                <i class="fas fa-triangle-exclamation"></i> Zona de Perigo
+            </button>
+        </div>
+
+        <!-- PAINEL DE CONTEÚDO -->
+        <div class="settings-panel-wrap">
+            <div class="settings-panel-header">
+                <div>
+                    <h2 id="settings-panel-title">Geral</h2>
+                    <div class="settings-panel-sub" id="settings-panel-subtitle">Pomodoro e intensidade de revisão</div>
+                </div>
+                <button class="settings-modal-close-btn" onclick="closeSettingsModal()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="settings-panel-body">
+
+                <!-- ===================== GERAL ===================== -->
+                <div class="settings-panel-section active" data-panel="geral">
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-stopwatch" style="color:var(--primary);"></i> Sistema Anti-Distração (Pomodoro)</h4>
+                        <p class="settings-block-desc">Configure o comportamento inteligente do pomodoro para manter seu foco.</p>
+
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-row-label">Ativar Sistema</div>
+                            </div>
+                            <label class="switch-container">
+                                <input type="checkbox" id="antiDistractionToggle" onchange="window.saveAntiDistractionConfig()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div id="antiDistractionOptions" style="display:none; margin-top: 6px;">
+                            <div class="settings-row">
+                                <div>
+                                    <div class="settings-row-label">Pausa por Foco</div>
+                                    <div class="settings-row-sub">Pausa o timer se o mouse sair da janela por mais de <b>segundos</b>.</div>
+                                </div>
+                                <input type="number" id="mouseOutTime" class="input-modern" style="width: 70px; text-align: center;" value="30">
+                            </div>
+                            <div class="settings-row">
+                                <div>
+                                    <div class="settings-row-label">Aviso de Inatividade</div>
+                                    <div class="settings-row-sub">Pergunta "Você ainda está aí?" após <b>minutos</b> sem mexer no PC.</div>
+                                </div>
+                                <input type="number" id="inactivityTime" class="input-modern" style="width: 70px; text-align: center;" value="5">
+                            </div>
+                            <div class="settings-row">
+                                <div>
+                                    <div class="settings-row-label">Retomada Automática</div>
+                                    <div class="settings-row-sub">Contagem de <b>segundos</b> para retomar ao voltar a atividade.</div>
+                                </div>
+                                <input type="number" id="resumeCountdown" class="input-modern" style="width: 70px; text-align: center;" value="10">
+                            </div>
+                        </div>
+
+                        <button onclick="saveAntiDistractionConfig()" class="action-btn" style="width: 100%; justify-content: center; margin-top: 14px;">
+                            Salvar Alterações
+                        </button>
+                        <div id="configStatus" style="text-align: center; margin-top: 8px; height: 15px; font-size: 0.9rem; font-weight: bold;"></div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-layer-group" style="color:var(--primary);"></i> Intensidade da Revisão</h4>
+                        <p class="settings-block-desc">Defina a frequência com que os cards reaparecerão para revisão.</p>
+
+                        <select id="revision-level-select" onchange="changeRevisionLevel(this.value)" style="width:100%; margin-bottom: 14px;">
+                            <option value="level_3_0">Leve (x3.0 - Menos Revisões)</option>
+                            <option value="level_2_0">Moderada (x2.0 - Normal)</option>
+                            <option value="level_1_5">Intensa (x1.5 - Mais Revisões)</option>
+                            <option value="level_1_2">Muito Intensa (x1.2 - Foco Total)</option>
+                        </select>
+
+                        <div style="background: var(--bg-card); padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
+                            <i class="fas fa-info-circle"></i> <strong>Nota:</strong> A nova intensidade será aplicada nas suas próximas revisões.
+                            <ul style="margin: 12px 0 0 20px; padding: 0; color: var(--text-main);">
+                                <li style="margin-bottom: 10px;"><strong>Leve (x3.0):</strong> Espaçamento longo. Menor volume de cards por dia, ideal para matérias que você já domina ou revisões de manutenção.</li>
+                                <li style="margin-bottom: 10px;"><strong>Moderada (x2.0):</strong> Ritmo equilibrado. O intervalo cresce de forma natural, garantindo a memorização a médio/longo prazo sem sobrecarregar a rotina.</li>
+                                <li style="margin-bottom: 10px;"><strong>Intensa (x1.5):</strong> Ritmo acelerado. Os cards voltam mais rápido, excelente para assuntos difíceis ou retas finais de estudo pré-edital.</li>
+                                <li style="margin-bottom: 0;"><strong>Muito Intensa (x1.2):</strong> Bombardeio e foco total. Pouco espaço entre as revisões, ideal para véspera de prova e decoreba de curto prazo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================== APARÊNCIA (NOVO) ===================== -->
+                <div class="settings-panel-section" data-panel="aparencia">
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-circle-half-stroke" style="color:var(--primary);"></i> Tema</h4>
+                        <p class="settings-block-desc">Escolha entre o modo claro ou escuro.</p>
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-row-label">Modo escuro</div>
+                                <div class="settings-row-sub">Reduz o brilho da tela, ideal para estudar à noite.</div>
+                            </div>
+                            <label class="switch-container">
+                                <input type="checkbox" id="settings-dark-mode-toggle" onchange="toggleTheme()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-droplet" style="color:var(--primary);"></i> Cor de Destaque</h4>
+                        <p class="settings-block-desc">Escolha a paleta de cor usada nos botões, ícones e destaques do app.</p>
+                        <div class="settings-swatch-grid" id="settings-color-swatches"></div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-font" style="color:var(--primary);"></i> Fonte</h4>
+                        <p class="settings-block-desc">Escolha a fonte usada em todo o aplicativo.</p>
+                        <div class="settings-swatch-grid" id="settings-font-swatches"></div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-text-height" style="color:var(--primary);"></i> Tamanho do Texto</h4>
+                        <p class="settings-block-desc">Ajusta o tamanho da fonte em todo o aplicativo.</p>
+                        <div class="settings-swatch-grid" id="settings-fontsize-swatches"></div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-arrows-left-right" style="color:var(--primary);"></i> Comprimento dos Banners</h4>
+                        <p class="settings-block-desc">Controla a largura máxima do conteúdo na tela (cards, banners e seções).</p>
+                        <div class="settings-width-grid" id="settings-width-options"></div>
+                    </div>
+                </div>
+
+                <!-- ===================== BACKUP & SINCRONIZAÇÃO ===================== -->
+                <div class="settings-panel-section" data-panel="backup">
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-download" style="color:var(--primary);"></i> Backup e Restauração</h4>
+                        <p class="settings-block-desc">Salve todo o seu progresso (cards, notas, cronograma e metas) em um arquivo ou restaure um backup anterior.</p>
+                        <button class="action-btn" onclick="exportAllData()"><i class="fas fa-download"></i> Baixar Backup Completo</button>
+                        <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
+                        <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fab fa-google-drive" style="color:var(--primary);"></i> Sincronização com o Google Drive</h4>
+                        <p class="settings-block-desc">Conecte sua conta Google para manter seu backup disponível em qualquer computador ou celular. O app salva apenas um arquivo próprio no seu Drive — nunca acessa o resto dos seus arquivos.</p>
+
+                        <button id="gdrive-connect-btn" class="action-btn" onclick="gdriveConnect()">
+                            <i class="fab fa-google"></i> <span id="gdrive-connect-btn-text">Conectar ao Google Drive</span>
+                        </button>
+
+                        <div id="gdrive-status-text" style="font-size:0.82rem; color:var(--text-muted); margin-top:10px; min-height:18px;"></div>
+
+                        <div id="gdrive-connected-box" style="display:none;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
+                                <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                                    <i class="fas fa-check-circle" style="color:var(--success); font-size:1.1rem;"></i>
+                                    <div style="min-width:0;">
+                                        <div style="font-weight:700; font-size:0.85rem;">Conectado</div>
+                                        <div id="gdrive-email-text" style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+                                    </div>
+                                </div>
+                                <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
+                            </div>
+
+                            <div id="gdrive-compare-info" style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; display:flex; align-items:center; gap:8px;">
+                                <i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...
+                            </div>
+
+                            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                                <button id="gdrive-upload-btn" class="action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualUpload()">
+                                    <i class="fas fa-cloud-arrow-up"></i> Enviar para o Drive
+                                </button>
+                                <button id="gdrive-download-btn" class="btn-outline action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualDownload()">
+                                    <i class="fas fa-cloud-arrow-down"></i> Baixar do Drive
+                                </button>
+                            </div>
+                            <div style="display:flex; gap:10px; margin-top:8px;">
+                                <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo()">
+                                    <i class="fas fa-rotate"></i> Verificar novamente
+                                </button>
+                                <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveManualMerge()" title="Combina os dois lados em vez de substituir um pelo outro">
+                                    <i class="fas fa-code-merge"></i> Combinar os dois
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================== APOIE O PROJETO ===================== -->
+                <div class="settings-panel-section" data-panel="apoie">
+                    <div class="settings-block" style="
+                        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                        color: white; border: none; display: flex; flex-wrap: wrap; gap: 24px;
+                        align-items: center; justify-content: space-between; position: relative; overflow: hidden;
+                    ">
+                        <div style="position: absolute; top: -50%; left: -10%; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+
+                        <div style="flex: 1; min-width: 220px; z-index: 1;">
+                            <h4 style="color:white; font-size: 1.1rem;"><i class="fas fa-hand-holding-heart"></i> Apoie o Projeto</h4>
+                            <p style="color: rgba(255,255,255,0.95); font-size: 0.9rem; line-height: 1.6; margin: 8px 0 0;">
+                                Gosta do app? Ajude a manter o desenvolvimento ativo e 100% grátis! Sua doação traz novas atualizações e melhorias.
+                            </p>
+                        </div>
+
+                        <div style="text-align: center; margin: 0 auto; z-index: 1;">
+                            <div style="background: white; padding: 8px; border-radius: var(--radius-md); box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: inline-block;">
+                                <img src="assets/qrcode.png" alt="Pix QR Code" style="width: 120px; height: 120px; display: block; border-radius: 4px;">
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0.9; color:white;">
+                                <i class="fas fa-qrcode"></i> Escaneie o Pix
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================== ZONA DE PERIGO ===================== -->
+                <div class="settings-panel-section" data-panel="perigo">
+                    <div class="settings-block" style="border-color: var(--danger);">
+                        <h4 style="color:var(--danger);"><i class="fas fa-trash"></i> Apagar Todos os Dados</h4>
+                        <p class="settings-block-desc">Esta ação apagará todos os seus dados do navegador. Certifique-se de ter um backup.</p>
+                        <button class="btn-outline action-btn" onclick="clearAllData()" style="color: var(--danger); border-color: var(--danger);"><i class="fas fa-trash"></i> Apagar Tudo</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
                 <!-- SRS + CRONOGRAMA DA SEMANA -->
                 <div class="dados-grid-2">
@@ -6960,231 +7331,8 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             </div>
         </section>
 
-        <section id="settings-view" class="view-section hidden">
-                                    <!-- BANNER DE DOAÇÕES (DESIGN MODERNO ORANGE) -->
-            <div class="card-box" style="
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-                color: white;
-                border: none;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 24px;
-                align-items: center;
-                justify-content: space-between;
-                position: relative;
-                overflow: hidden;
-            ">
-                <!-- Efeito de brilho sutil no fundo para modernidade -->
-                <div style="position: absolute; top: -50%; left: -10%; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                
-                <div style="flex: 1; min-width: 250px; z-index: 1;">
-                    <h3 style="margin-bottom: 12px; color: white; display: flex; align-items: center; gap: 10px; font-size: 1.3rem;">
-                        <i class="fas fa-hand-holding-heart"></i> Apoie o Projeto
-                    </h3>
-                    <p style="color: rgba(255,255,255,0.95); font-size: 0.95rem; line-height: 1.6; margin-bottom: 0;">
-                        Gosta do app? Ajude a manter o desenvolvimento ativo e 100% grátis! <br>
-                        Sua doação traz novas atualizações e melhorias.
-                    </p>
-                </div>
+        <!-- A antiga página de Configurações foi convertida em popup (ver #settings-modal-overlay, perto do final do body) -->
 
-                <div style="text-align: center; margin: 0 auto; z-index: 1;">
-                    <div style="
-                        background: white; 
-                        padding: 8px; 
-                        border-radius: var(--radius-md); 
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                        display: inline-block;
-                    ">
-                        <!-- Imagem do QR Code -->
-                        <img src="assets/qrcode.png" alt="Pix QR Code" style="width: 120px; height: 120px; display: block; border-radius: 4px;">
-                    </div>
-                    <div style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0.9;">
-                        <i class="fas fa-qrcode"></i> Escaneie o Pix
-                    </div>
-                </div>
-            </div>
-            <!-- FIM DO BANNER -->
-
-
- <!-- === SISTEMA ANTI-DISTRAÇÃO (CORRIGIDO) === -->
-<div class="card-box">
-    <!-- Título Principal -->
-    <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Sistema Anti-Distração (Pomodoro)</h3>
-    
-    <!-- Texto Base -->
-    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.95rem; line-height: 1.4;">
-        Configure o comportamento inteligente do pomodoro para manter seu foco.
-    </p>
-
-    <!-- Botão de Ativar/Desativar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
-        <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-            Ativar Sistema
-        </label>
-        <label class="switch-container">
-            <input type="checkbox" id="antiDistractionToggle" onchange="window.saveAntiDistractionConfig()">
-            <span class="slider round"></span>
-        </label>
-    </div>
-
-    <!-- CONTAINER QUE ESCONDE AS OPÇÕES (Início) -->
-    <div id="antiDistractionOptions" style="display: none;">
-        
-        <!-- ITEM 1: Pausa por Foco -->
-        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                    Pausa por Foco
-                </label>
-                <input type="number" id="mouseOutTime" class="input-modern" style="width: 70px; text-align: center;" value="30">
-            </div>
-            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-                Pausa o timer se o mouse sair da janela por mais de <b>segundos</b>.
-            </p>
-        </div>
-
-        <!-- ITEM 2: Aviso de Inatividade -->
-        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                    Aviso de Inatividade
-                </label>
-                <input type="number" id="inactivityTime" class="input-modern" style="width: 70px; text-align: center;" value="5">
-            </div>
-            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-                Pergunta "Você ainda está aí?" após <b>minutos</b> sem mexer no PC.
-            </p>
-        </div>
-
-        <!-- ITEM 3: Retomada Automática -->
-        <div style="margin-bottom: 25px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label style="font-weight: bold; color: var(--text-primary); font-size: 1.1rem;">
-                    Retomada Automática
-                </label>
-                <input type="number" id="resumeCountdown" class="input-modern" style="width: 70px; text-align: center;" value="10">
-            </div>
-            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-                Contagem de <b>segundos</b> para retomar ao voltar a atividade.
-            </p>
-        </div>
-
-    </div> <!-- FIM DO CONTAINER QUE ESCONDE AS OPÇÕES (Adicionei este fechamento aqui!) -->
-
-    <button onclick="saveAntiDistractionConfig()" class="action-btn" style="width: 100%; justify-content: center; font-size: 1rem; padding: 10px;">
-        Salvar Alterações
-    </button>
-    
-    <div id="configStatus" style="text-align: center; margin-top: 8px; height: 15px; font-size: 0.9rem; font-weight: bold;"></div>
-</div>
-
-
-
-
-
-
-
-            <!-- NEW: Revision Intensity Settings -->
-            <div class="card-box">
-                <h3>Intensidade da Revisão</h3>
-                <p style="color:var(--text-muted); margin-bottom:12px; font-size:0.95rem;">
-                    Defina a frequência com que os cards reaparecerão para revisão.
-                </p>
-                <div style="margin-bottom: 12px;">
-                                        <select id="revision-level-select" onchange="changeRevisionLevel(this.value)">
-            <option value="level_3_0">Leve (x3.0 - Menos Revisões)</option>
-            <option value="level_2_0">Moderada (x2.0 - Normal)</option>
-            <option value="level_1_5">Intensa (x1.5 - Mais Revisões)</option>
-            <option value="level_1_2">Muito Intensa (x1.2 - Foco Total)</option>
-          </select>
-        </div>
-        <div style="background: var(--bg-body); padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
-          <i class="fas fa-info-circle"></i> <strong>Nota:</strong> A nova intensidade será aplicada nas suas próximas revisões.
-          <ul style="margin: 12px 0 0 20px; padding: 0; color: var(--text-color);">
-            <li style="margin-bottom: 10px;">
-              <strong>Leve (x3.0):</strong> Espaçamento longo. Menor volume de cards por dia, ideal para matérias que você já domina ou revisões de manutenção.
-            </li>
-            <li style="margin-bottom: 10px;">
-              <strong>Moderada (x2.0):</strong> Ritmo equilibrado. O intervalo cresce de forma natural, garantindo a memorização a médio/longo prazo sem sobrecarregar a rotina.
-            </li>
-            <li style="margin-bottom: 10px;">
-              <strong>Intensa (x1.5):</strong> Ritmo acelerado. Os cards voltam mais rápido, excelente para assuntos difíceis ou retas finais de estudo pré-edital.
-            </li>
-            <li style="margin-bottom: 0;">
-              <strong>Muito Intensa (x1.2):</strong> Bombardeio e foco total. Pouco espaço entre as revisões, ideal para véspera de prova e decoreba de curto prazo.
-            </li>
-          </ul>
-        </div>
-
-            </div>
-
-            <div class="card-box">
-                <h3>Backup e Restauração</h3>
-                <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">
-                    Salve todo o seu progresso (cards, notas, cronograma e metas) em um arquivo ou restaure um backup anterior.
-                </p>
-                <button class="action-btn" onclick="exportAllData()"><i class="fas fa-download"></i> Baixar Backup Completo</button>
-                <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
-                <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
-            </div>
-
-            <div class="card-box" style="margin-top:20px;">
-                <h3><i class="fab fa-google-drive" style="color:var(--primary);"></i> Sincronização com o Google Drive</h3>
-                <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">
-                    Conecte sua conta Google para manter seu backup disponível em qualquer computador ou celular. O app salva apenas um arquivo próprio no seu Drive — nunca acessa o resto dos seus arquivos.
-                </p>
-
-                <button id="gdrive-connect-btn" class="action-btn" onclick="gdriveConnect()">
-                    <i class="fab fa-google"></i> <span id="gdrive-connect-btn-text">Conectar ao Google Drive</span>
-                </button>
-
-                <!-- Status sempre visível, mesmo antes de conectar (mostra erros, "conectando...", etc.) -->
-                <div id="gdrive-status-text" style="font-size:0.82rem; color:var(--text-muted); margin-top:10px; min-height:18px;"></div>
-
-                <div id="gdrive-connected-box" style="display:none;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:var(--bg-body); border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
-                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                            <i class="fas fa-check-circle" style="color:var(--success); font-size:1.1rem;"></i>
-                            <div style="min-width:0;">
-                                <div style="font-weight:700; font-size:0.85rem;">Conectado</div>
-                                <div id="gdrive-email-text" style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
-                            </div>
-                        </div>
-                        <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
-                    </div>
-
-                    <!-- Indica qual lado tem dados mais recentes, para ajudar a decidir a direção -->
-                    <div id="gdrive-compare-info" style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; display:flex; align-items:center; gap:8px;">
-                        <i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...
-                    </div>
-
-                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-                        <button id="gdrive-upload-btn" class="action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualUpload()">
-                            <i class="fas fa-cloud-arrow-up"></i> Enviar para o Drive
-                        </button>
-                        <button id="gdrive-download-btn" class="btn-outline action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualDownload()">
-                            <i class="fas fa-cloud-arrow-down"></i> Baixar do Drive
-                        </button>
-                    </div>
-                    <div style="display:flex; gap:10px; margin-top:8px;">
-                        <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo()">
-                            <i class="fas fa-rotate"></i> Verificar novamente
-                        </button>
-                        <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveManualMerge()" title="Combina os dois lados em vez de substituir um pelo outro">
-                            <i class="fas fa-code-merge"></i> Combinar os dois
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-box" style="margin-top:20px;">
-                <h3 style="color:var(--danger);">Zona de Perigo</h3>
-                <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">
-                    Esta ação apagará todos os seus dados do navegador. Certifique-se de ter um backup.
-                </p>
-                <button class="btn-outline action-btn" onclick="clearAllData()" style="color: var(--danger); border-color: var(--danger);"><i class="fas fa-trash"></i> Apagar Tudo</button>
-            </div>
-        </section>
 
     </main>
 
@@ -7890,6 +8038,9 @@ const libraryItemsPerPage = 10; // Quantidade de cards por página
                 console.log("Banco de dados carregado com sucesso!");
                 appDataReady = true;
                 
+                // Aplica tema, cor, fonte, tamanho e largura salvos pelo usuário (Aparência)
+                if (typeof applyAppearancePrefs === "function") applyAppearancePrefs();
+
                 // --- AQUI COMEÇA O RESTO DO SEU APP ---
                 // Se você tiver uma função que desenha a tela inicial (ex: renderDashboard ou updateUI),
                 // chame ela aqui dentro!
@@ -8224,6 +8375,200 @@ function toggleQuickNotes() {
     localforage.setItem('ted_userdata', userData).catch(function(err) {
         console.error('Erro ao salvar tema:', err);
     });
+
+    const darkToggle = document.getElementById('settings-dark-mode-toggle');
+    if (darkToggle) darkToggle.checked = document.body.classList.contains('dark-mode');
+}
+
+/* ===========================================================================
+   POPUP DE CONFIGURAÇÕES — abrir/fechar e navegação entre categorias
+=========================================================================== */
+
+function openSettingsModal() {
+    const overlay = document.getElementById('settings-modal-overlay');
+    if (!overlay) return;
+    overlay.classList.add('visible');
+    document.addEventListener('keydown', settingsModalEscHandler);
+
+    // Sincroniza os controles com o estado atual ao abrir
+    const darkToggle = document.getElementById('settings-dark-mode-toggle');
+    if (darkToggle) darkToggle.checked = document.body.classList.contains('dark-mode');
+    renderSettingsAppearanceControls();
+
+    if (typeof gdriveRefreshCompareInfo === 'function' && (gdriveFileId || gdriveUserEmail)) {
+        gdriveRefreshCompareInfo();
+    }
+}
+
+function closeSettingsModal() {
+    const overlay = document.getElementById('settings-modal-overlay');
+    if (overlay) overlay.classList.remove('visible');
+    document.removeEventListener('keydown', settingsModalEscHandler);
+}
+
+function settingsModalEscHandler(e) {
+    if (e.key === 'Escape') closeSettingsModal();
+}
+
+const SETTINGS_PANEL_META = {
+    geral:    { title: 'Geral',                    sub: 'Pomodoro e intensidade de revisão' },
+    aparencia:{ title: 'Aparência',                 sub: 'Tema, cor, fonte e largura dos banners' },
+    backup:   { title: 'Backup & Sincronização',    sub: 'Backup local e sincronização com o Google Drive' },
+    apoie:    { title: 'Apoie o Projeto',           sub: 'Ajude a manter o desenvolvimento ativo' },
+    perigo:   { title: 'Zona de Perigo',            sub: 'Ações irreversíveis — use com cuidado' }
+};
+
+function switchSettingsPanel(panelKey) {
+    document.querySelectorAll('.settings-panel-section').forEach(el => {
+        el.classList.toggle('active', el.dataset.panel === panelKey);
+    });
+    document.querySelectorAll('.settings-nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.settingsPanel === panelKey);
+    });
+    const meta = SETTINGS_PANEL_META[panelKey];
+    if (meta) {
+        document.getElementById('settings-panel-title').textContent = meta.title;
+        document.getElementById('settings-panel-subtitle').textContent = meta.sub;
+    }
+    const body = document.querySelector('.settings-panel-body');
+    if (body) body.scrollTop = 0;
+}
+
+/* ===========================================================================
+   APARÊNCIA: paletas de cor, fontes, tamanho de texto e largura dos banners
+   Tudo é persistido em userData (mesmo objeto já sincronizado com o backup/Drive)
+=========================================================================== */
+
+const SETTINGS_COLOR_PALETTES = [
+    { id: 'orange',  name: 'Laranja',  primary: '#ed8432', primaryHover: '#d9772b', primaryLight: '#fff7ed', primaryDim: '#ffedd5', primaryDark: '#c2410c' },
+    { id: 'blue',    name: 'Azul',     primary: '#3b82f6', primaryHover: '#2563eb', primaryLight: '#eff6ff', primaryDim: '#dbeafe', primaryDark: '#1d4ed8' },
+    { id: 'green',   name: 'Verde',    primary: '#10b981', primaryHover: '#059669', primaryLight: '#ecfdf5', primaryDim: '#d1fae5', primaryDark: '#047857' },
+    { id: 'purple',  name: 'Roxo',     primary: '#8b5cf6', primaryHover: '#7c3aed', primaryLight: '#f5f3ff', primaryDim: '#ede9fe', primaryDark: '#6d28d9' },
+    { id: 'pink',    name: 'Rosa',     primary: '#ec4899', primaryHover: '#db2777', primaryLight: '#fdf2f8', primaryDim: '#fce7f3', primaryDark: '#be185d' },
+    { id: 'red',     name: 'Vermelho', primary: '#ef4444', primaryHover: '#dc2626', primaryLight: '#fef2f2', primaryDim: '#fee2e2', primaryDark: '#b91c1c' },
+    { id: 'teal',    name: 'Turquesa', primary: '#14b8a6', primaryHover: '#0d9488', primaryLight: '#f0fdfa', primaryDim: '#ccfbf1', primaryDark: '#0f766e' },
+    { id: 'slate',   name: 'Grafite',  primary: '#475569', primaryHover: '#334155', primaryLight: '#f8fafc', primaryDim: '#e2e8f0', primaryDark: '#1e293b' },
+];
+
+const SETTINGS_FONT_OPTIONS = [
+    { id: 'inter',     name: 'Inter (Padrão)', family: "'Inter', sans-serif" },
+    { id: 'system',    name: 'Sistema',        family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+    { id: 'georgia',   name: 'Georgia',        family: "Georgia, serif" },
+    { id: 'mono',      name: 'Mono',           family: "'Courier New', monospace" },
+];
+
+const SETTINGS_FONTSIZE_OPTIONS = [
+    { id: 'sm', name: 'Pequeno', scale: 0.95 },
+    { id: 'md', name: 'Médio',   scale: 1 },
+    { id: 'lg', name: 'Grande',  scale: 1.08 },
+    { id: 'xl', name: 'Enorme',  scale: 1.16 },
+];
+
+const SETTINGS_WIDTH_OPTIONS = [
+    { id: 'compact',  name: 'Compacto',   maxWidth: '760px',  barWidth: '55%' },
+    { id: 'standard', name: 'Padrão',     maxWidth: '1100px', barWidth: '75%' },
+    { id: 'full',     name: 'Tela Cheia', maxWidth: 'none',   barWidth: '100%' },
+];
+
+function settingsGetPrefs() {
+    if (!userData.appearance) {
+        userData.appearance = { colorId: 'orange', fontId: 'inter', fontSizeId: 'md', widthId: 'standard' };
+    }
+    return userData.appearance;
+}
+
+function settingsSavePrefs() {
+    if (typeof salvarDados === 'function') {
+        salvarDados('ted_userdata', userData);
+    } else if (typeof localforage !== 'undefined') {
+        localforage.setItem('ted_userdata', userData).catch(() => {});
+    }
+}
+
+function applyAppearancePrefs() {
+    const prefs = settingsGetPrefs();
+
+    const palette = SETTINGS_COLOR_PALETTES.find(p => p.id === prefs.colorId) || SETTINGS_COLOR_PALETTES[0];
+    const root = document.documentElement.style;
+    root.setProperty('--primary', palette.primary);
+    root.setProperty('--primary-hover', palette.primaryHover);
+    root.setProperty('--primary-light', palette.primaryLight);
+    root.setProperty('--primary-dim', palette.primaryDim);
+    root.setProperty('--primary-dark', palette.primaryDark);
+
+    const font = SETTINGS_FONT_OPTIONS.find(f => f.id === prefs.fontId) || SETTINGS_FONT_OPTIONS[0];
+    root.setProperty('--app-font-family', font.family);
+
+    const fontSize = SETTINGS_FONTSIZE_OPTIONS.find(s => s.id === prefs.fontSizeId) || SETTINGS_FONTSIZE_OPTIONS[1];
+    root.setProperty('--app-font-scale', fontSize.scale);
+
+    const width = SETTINGS_WIDTH_OPTIONS.find(w => w.id === prefs.widthId) || SETTINGS_WIDTH_OPTIONS[1];
+    root.setProperty('--app-content-max-width', width.maxWidth);
+}
+
+function settingsSetColor(colorId) {
+    settingsGetPrefs().colorId = colorId;
+    settingsSavePrefs();
+    applyAppearancePrefs();
+    renderSettingsAppearanceControls();
+}
+function settingsSetFont(fontId) {
+    settingsGetPrefs().fontId = fontId;
+    settingsSavePrefs();
+    applyAppearancePrefs();
+    renderSettingsAppearanceControls();
+}
+function settingsSetFontSize(sizeId) {
+    settingsGetPrefs().fontSizeId = sizeId;
+    settingsSavePrefs();
+    applyAppearancePrefs();
+    renderSettingsAppearanceControls();
+}
+function settingsSetWidth(widthId) {
+    settingsGetPrefs().widthId = widthId;
+    settingsSavePrefs();
+    applyAppearancePrefs();
+    renderSettingsAppearanceControls();
+}
+
+function renderSettingsAppearanceControls() {
+    const prefs = settingsGetPrefs();
+
+    const colorWrap = document.getElementById('settings-color-swatches');
+    if (colorWrap) {
+        colorWrap.innerHTML = SETTINGS_COLOR_PALETTES.map(p => `
+            <div class="settings-swatch ${prefs.colorId === p.id ? 'active' : ''}" onclick="settingsSetColor('${p.id}')">
+                <div class="settings-swatch-color" style="background:${p.primary};"></div>
+                <div class="settings-swatch-label">${p.name}</div>
+            </div>`).join('');
+    }
+
+    const fontWrap = document.getElementById('settings-font-swatches');
+    if (fontWrap) {
+        fontWrap.innerHTML = SETTINGS_FONT_OPTIONS.map(f => `
+            <div class="settings-swatch ${prefs.fontId === f.id ? 'active' : ''}" onclick="settingsSetFont('${f.id}')">
+                <div style="font-family:${f.family}; font-size:1.2rem; font-weight:700;">Aa</div>
+                <div class="settings-swatch-label">${f.name}</div>
+            </div>`).join('');
+    }
+
+    const sizeWrap = document.getElementById('settings-fontsize-swatches');
+    if (sizeWrap) {
+        sizeWrap.innerHTML = SETTINGS_FONTSIZE_OPTIONS.map(s => `
+            <div class="settings-swatch ${prefs.fontSizeId === s.id ? 'active' : ''}" onclick="settingsSetFontSize('${s.id}')">
+                <div style="font-size:${1.2 * s.scale}rem; font-weight:700;">Aa</div>
+                <div class="settings-swatch-label">${s.name}</div>
+            </div>`).join('');
+    }
+
+    const widthWrap = document.getElementById('settings-width-options');
+    if (widthWrap) {
+        widthWrap.innerHTML = SETTINGS_WIDTH_OPTIONS.map(w => `
+            <div class="settings-width-option ${prefs.widthId === w.id ? 'active' : ''}" onclick="settingsSetWidth('${w.id}')">
+                <div class="settings-width-preview"><div class="settings-width-preview-bar" style="width:${w.barWidth};"></div></div>
+                <div class="settings-width-option-label">${w.name}</div>
+            </div>`).join('');
+    }
 }
 
         function checkStreakIntegrity() {
