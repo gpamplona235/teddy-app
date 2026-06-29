@@ -55,7 +55,7 @@
 
             --app-font-scale: 1;
             --app-font-family: 'Inter', sans-serif;
-            --app-content-max-width: none;
+            --app-content-max-width: 1100px;
 
             --radius-lg: 20px;
             --radius-md: 12px;
@@ -1841,9 +1841,9 @@ body { margin: 0; padding: 0; overflow-x: hidden; }
 #app-content { display: flex; width: 100%; height: 100vh; overflow: hidden; }
 .sidebar { height: 100vh; position: relative; z-index: 100; flex-shrink: 0; }
 .main-content { flex: 1; height: 100vh; overflow-y: auto; position: relative; padding: 24px 32px; }
-.main-content > * { max-width: var(--app-content-max-width); margin-left: auto; margin-right: auto; }
-.main-content > .page-header { max-width: var(--app-content-max-width); }
-body.full-width-mode .main-content > * { max-width: none; }
+.main-content > .page-header { max-width: var(--app-content-max-width); margin-left: auto; margin-right: auto; }
+body.full-width-mode .view-section,
+body.full-width-mode .main-content > .page-header { max-width: none; }
 
 
 
@@ -1949,7 +1949,7 @@ body.full-width-mode .main-content > * { max-width: none; }
             background: var(--primary-light);
         }
 
-        .view-section { max-width: 1100px; margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
+        .view-section { max-width: var(--app-content-max-width); margin: 0 auto; padding-bottom: 100px; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 
@@ -6749,6 +6749,72 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
             .settings-width-preview-bar { height: 18px; border-radius: 4px; background: var(--primary); }
             .settings-width-option-label { font-size: 0.78rem; font-weight: 700; }
 
+            /* ===========================================================================
+               CARD DE DESTAQUE: GOOGLE DRIVE (estilo "cartão de integração")
+            =========================================================================== */
+            .gdrive-feature-card {
+                background: linear-gradient(160deg, var(--bg-card) 0%, var(--primary-light) 130%);
+                border: 1px solid var(--primary-dim); border-radius: var(--radius-md);
+                padding: 20px 22px; margin-bottom: 16px; position: relative; overflow: hidden;
+            }
+            body.dark-mode .gdrive-feature-card { background: linear-gradient(160deg, var(--bg-card) 0%, rgba(237,132,50,0.08) 130%); }
+
+            .gdrive-feature-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+            .gdrive-feature-icon {
+                width: 46px; height: 46px; min-width: 46px; border-radius: 12px;
+                background: var(--bg-card); border: 1px solid var(--primary-dim);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.4rem; color: #1a73e8;
+            }
+            .gdrive-feature-text { flex: 1; min-width: 0; }
+            .gdrive-feature-text h4 { margin: 0 0 4px; font-size: 1rem; }
+            .gdrive-feature-text p { margin: 0; font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
+
+            .gdrive-status-pill {
+                display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+                background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+                font-size: 0.72rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+            }
+            .gdrive-status-pill.connected { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: var(--success); }
+            .gdrive-status-pill.connected i { color: var(--success); }
+
+            .gdrive-benefits-grid { display: flex; flex-direction: column; gap: 8px; }
+            .gdrive-benefit {
+                display: flex; align-items: center; gap: 10px; font-size: 0.83rem; color: var(--text-main);
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; padding: 9px 12px;
+            }
+            .gdrive-benefit i { color: var(--primary); width: 16px; text-align: center; flex-shrink: 0; }
+
+            .gdrive-account-row {
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px;
+            }
+            .gdrive-account-avatar {
+                width: 34px; height: 34px; min-width: 34px; border-radius: 50%;
+                background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center;
+            }
+
+            .gdrive-compare-banner {
+                font-size: 0.8rem; color: var(--text-muted); margin-top: 12px; padding: 9px 12px;
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px;
+                display: flex; align-items: center; gap: 8px;
+            }
+
+            .gdrive-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+            .gdrive-action-card {
+                background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+                padding: 14px; text-align: left; cursor: pointer; transition: border-color 0.15s, transform 0.1s;
+            }
+            .gdrive-action-card:hover { border-color: var(--primary); transform: translateY(-1px); }
+            .gdrive-action-icon {
+                width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+                font-size: 0.95rem; margin-bottom: 8px;
+            }
+            .gdrive-action-icon.up { background: var(--primary-light); color: var(--primary); }
+            .gdrive-action-icon.down { background: rgba(59,130,246,0.12); color: #2563eb; }
+            .gdrive-action-title { font-weight: 700; font-size: 0.86rem; margin-bottom: 2px; }
+            .gdrive-action-sub { font-size: 0.74rem; color: var(--text-muted); line-height: 1.4; }
+
             @media (max-width: 720px) {
                 .settings-modal-box { flex-direction: column; height: min(720px, 94vh); }
                 .settings-sidebar { width: 100%; min-width: 0; flex-direction: row; overflow-x: auto; overflow-y: visible; border-right: none; border-bottom: 1px solid var(--border); padding: 10px 10px; }
@@ -6756,6 +6822,8 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                 .settings-nav-item { white-space: nowrap; }
                 .settings-panel-header { padding: 16px 18px; }
                 .settings-panel-body { padding: 18px 18px 28px; }
+                .gdrive-feature-top { flex-wrap: wrap; }
+                .gdrive-action-grid { grid-template-columns: 1fr; }
             }
 
             .dados-motivation .dm-icon {
@@ -6984,6 +7052,62 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
     </div>
 </div>
 
+
+
+
+                <!-- SRS + CRONOGRAMA DA SEMANA -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Saúde da Revisão</h3>
+                            <span class="dch-sub">Sua coleção de cards</span>
+                        </div>
+                        <div id="dados-srs"></div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Cronograma da Semana</h3>
+                            <span class="dch-sub">Cumprimento do plano</span>
+                        </div>
+                        <div id="dados-schedule"></div>
+                    </div>
+                </div>
+
+                <!-- EDITAIS + SIMULADOS -->
+                <div class="dados-grid-2">
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Progresso dos Editais</h3>
+                            <span class="dch-sub">Tópicos concluídos</span>
+                        </div>
+                        <div id="dados-editais"></div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="dados-card-head">
+                            <h3>Simulados Recentes</h3>
+                            <span class="dch-sub">Histórico de provas</span>
+                        </div>
+                        <div id="dados-simulados"></div>
+                    </div>
+                </div>
+
+                <!-- PLANO DE AÇÃO (largura total) -->
+                <div class="performance-card">
+                    <div class="dados-card-head">
+                        <h3>Plano de Ação Sugerido</h3>
+                        <span class="dch-sub">O que fazer agora para melhorar</span>
+                    </div>
+                    <div id="dados-actions"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- A antiga página de Configurações foi convertida em popup (ver #settings-modal-overlay, perto do final do body) -->
+
+
+    </main>
+
 <!-- MODAL DE DETALHES DO MAPA DE DESEMPENHO -->
 <div class="radar-modal-overlay" id="radar-modal-overlay" onclick="if(event.target===this) closeRadarModal()">
     <div class="radar-modal-box">
@@ -7035,10 +7159,15 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
 
         <!-- SIDEBAR DE CATEGORIAS -->
         <div class="settings-sidebar">
-            <div class="settings-sidebar-title">Preferências</div>
+            <div class="settings-sidebar-title">Estudo</div>
             <button class="settings-nav-item active" data-settings-panel="geral" onclick="switchSettingsPanel('geral')">
-                <i class="fas fa-sliders"></i> Geral
+                <i class="fas fa-stopwatch"></i> Pomodoro
             </button>
+            <button class="settings-nav-item" data-settings-panel="revisao" onclick="switchSettingsPanel('revisao')">
+                <i class="fas fa-layer-group"></i> Intensidade da Revisão
+            </button>
+
+            <div class="settings-sidebar-title">Preferências</div>
             <button class="settings-nav-item" data-settings-panel="aparencia" onclick="switchSettingsPanel('aparencia')">
                 <i class="fas fa-palette"></i> Aparência
             </button>
@@ -7117,7 +7246,10 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                         </button>
                         <div id="configStatus" style="text-align: center; margin-top: 8px; height: 15px; font-size: 0.9rem; font-weight: bold;"></div>
                     </div>
+                </div>
 
+                <!-- ===================== INTENSIDADE DA REVISÃO (separado do Pomodoro) ===================== -->
+                <div class="settings-panel-section" data-panel="revisao">
                     <div class="settings-block">
                         <h4><i class="fas fa-layer-group" style="color:var(--primary);"></i> Intensidade da Revisão</h4>
                         <p class="settings-block-desc">Defina a frequência com que os cards reaparecerão para revisão.</p>
@@ -7138,6 +7270,36 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                                 <li style="margin-bottom: 0;"><strong>Muito Intensa (x1.2):</strong> Bombardeio e foco total. Pouco espaço entre as revisões, ideal para véspera de prova e decoreba de curto prazo.</li>
                             </ul>
                         </div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-gauge-high" style="color:var(--primary);"></i> Limite Diário de Cards Novos</h4>
+                        <p class="settings-block-desc">Trava quantos cards <b>nunca estudados</b> entram na sua fila por dia, para não acumular uma avalanche de revisões futuras. Revisões já agendadas nunca são cortadas por este limite.</p>
+
+                        <div class="settings-row">
+                            <div>
+                                <div class="settings-row-label">Ativar limite</div>
+                                <div class="settings-row-sub" id="daily-limit-status-sub">Desativado — todos os cards novos disponíveis entram na fila</div>
+                            </div>
+                            <label class="switch-container">
+                                <input type="checkbox" id="daily-limit-toggle" onchange="settingsToggleDailyLimit(this.checked)">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div id="daily-limit-input-row" style="display:none; margin-top:10px;">
+                            <div class="settings-row" style="border-bottom:none;">
+                                <div class="settings-row-label">Cards novos por dia</div>
+                                <input type="number" id="daily-limit-input" class="input-modern" min="1" max="200" style="width: 80px; text-align: center;" onchange="settingsSetDailyLimit(this.value)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-block">
+                        <h4><i class="fas fa-calendar-week" style="color:var(--primary);"></i> Carga de Revisão Futura</h4>
+                        <p class="settings-block-desc">Pré-visualize quantos cards vão vencer nos próximos dias, e quais matérias pesam mais — útil para ver se está acumulando revisão antes que aconteça.</p>
+                        <div id="future-load-chart"></div>
+                        <div id="future-load-breakdown" style="margin-top:14px;"></div>
                     </div>
                 </div>
 
@@ -7187,49 +7349,66 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                 <!-- ===================== BACKUP & SINCRONIZAÇÃO ===================== -->
                 <div class="settings-panel-section" data-panel="backup">
 
-                    <div class="settings-block">
-                        <h4><i class="fas fa-download" style="color:var(--primary);"></i> Backup e Restauração</h4>
-                        <p class="settings-block-desc">Salve todo o seu progresso (cards, notas, cronograma e metas) em um arquivo ou restaure um backup anterior.</p>
-                        <button class="action-btn" onclick="exportAllData()"><i class="fas fa-download"></i> Baixar Backup Completo</button>
-                        <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
-                        <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
-                    </div>
+                    <!-- CARD DE DESTAQUE: GOOGLE DRIVE (visual de "integração", estilo cartão de app) -->
+                    <div class="gdrive-feature-card">
+                        <div class="gdrive-feature-top">
+                            <div class="gdrive-feature-icon">
+                                <i class="fab fa-google-drive"></i>
+                            </div>
+                            <div class="gdrive-feature-text">
+                                <h4>Google Drive</h4>
+                                <p>Estude no computador, continue no celular. Seu progresso te acompanha para onde você for.</p>
+                            </div>
+                            <span class="gdrive-status-pill" id="gdrive-status-pill">
+                                <i class="fas fa-circle" style="font-size:0.5rem;"></i> Desconectado
+                            </span>
+                        </div>
 
-                    <div class="settings-block">
-                        <h4><i class="fab fa-google-drive" style="color:var(--primary);"></i> Sincronização com o Google Drive</h4>
-                        <p class="settings-block-desc">Conecte sua conta Google para manter seu backup disponível em qualquer computador ou celular. O app salva apenas um arquivo próprio no seu Drive — nunca acessa o resto dos seus arquivos.</p>
-
-                        <button id="gdrive-connect-btn" class="action-btn" onclick="gdriveConnect()">
-                            <i class="fab fa-google"></i> <span id="gdrive-connect-btn-text">Conectar ao Google Drive</span>
-                        </button>
+                        <!-- Estado: NÃO conectado -->
+                        <div id="gdrive-feature-disconnected">
+                            <div class="gdrive-benefits-grid">
+                                <div class="gdrive-benefit"><i class="fas fa-shield-halved"></i> Acessa só o arquivo que ele mesmo cria — nunca o resto do seu Drive</div>
+                                <div class="gdrive-benefit"><i class="fas fa-laptop-mobile"></i> Funciona entre PC, notebook e celular</div>
+                                <div class="gdrive-benefit"><i class="fas fa-hand-pointer"></i> Você decide quando enviar ou baixar</div>
+                            </div>
+                            <button id="gdrive-connect-btn" class="action-btn" style="width:100%; justify-content:center; margin-top:16px;" onclick="gdriveConnect()">
+                                <i class="fab fa-google"></i> <span id="gdrive-connect-btn-text">Conectar ao Google Drive</span>
+                            </button>
+                        </div>
 
                         <div id="gdrive-status-text" style="font-size:0.82rem; color:var(--text-muted); margin-top:10px; min-height:18px;"></div>
 
+                        <!-- Estado: conectado -->
                         <div id="gdrive-connected-box" style="display:none;">
-                            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
+                            <div class="gdrive-account-row">
                                 <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                                    <i class="fas fa-check-circle" style="color:var(--success); font-size:1.1rem;"></i>
+                                    <div class="gdrive-account-avatar"><i class="fas fa-user"></i></div>
                                     <div style="min-width:0;">
-                                        <div style="font-weight:700; font-size:0.85rem;">Conectado</div>
+                                        <div style="font-weight:700; font-size:0.85rem;">Conta conectada</div>
                                         <div id="gdrive-email-text" style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
                                     </div>
                                 </div>
-                                <button class="btn-outline" style="padding:8px 14px; font-size:0.8rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
+                                <button class="btn-outline" style="padding:7px 12px; font-size:0.78rem; color:var(--danger); border-color:var(--danger);" onclick="gdriveDisconnect()"><i class="fas fa-unlink"></i> Desconectar</button>
                             </div>
 
-                            <div id="gdrive-compare-info" style="font-size:0.8rem; color:var(--text-muted); margin-top:12px; display:flex; align-items:center; gap:8px;">
+                            <div id="gdrive-compare-info" class="gdrive-compare-banner">
                                 <i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...
                             </div>
 
-                            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-                                <button id="gdrive-upload-btn" class="action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualUpload()">
-                                    <i class="fas fa-cloud-arrow-up"></i> Enviar para o Drive
+                            <div class="gdrive-action-grid">
+                                <button id="gdrive-upload-btn" class="gdrive-action-card" onclick="gdriveManualUpload()">
+                                    <div class="gdrive-action-icon up"><i class="fas fa-cloud-arrow-up"></i></div>
+                                    <div class="gdrive-action-title">Enviar para o Drive</div>
+                                    <div class="gdrive-action-sub">Salva o progresso deste dispositivo na nuvem</div>
                                 </button>
-                                <button id="gdrive-download-btn" class="btn-outline action-btn" style="flex:1; min-width:200px;" onclick="gdriveManualDownload()">
-                                    <i class="fas fa-cloud-arrow-down"></i> Baixar do Drive
+                                <button id="gdrive-download-btn" class="gdrive-action-card" onclick="gdriveManualDownload()">
+                                    <div class="gdrive-action-icon down"><i class="fas fa-cloud-arrow-down"></i></div>
+                                    <div class="gdrive-action-title">Baixar do Drive</div>
+                                    <div class="gdrive-action-sub">Traz o progresso salvo para este dispositivo</div>
                                 </button>
                             </div>
-                            <div style="display:flex; gap:10px; margin-top:8px;">
+
+                            <div style="display:flex; gap:10px; margin-top:10px;">
                                 <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo()">
                                     <i class="fas fa-rotate"></i> Verificar novamente
                                 </button>
@@ -7238,6 +7417,15 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                                 </button>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- BACKUP LOCAL (manual, em arquivo) -->
+                    <div class="settings-block">
+                        <h4><i class="fas fa-file-arrow-down" style="color:var(--primary);"></i> Backup Local em Arquivo</h4>
+                        <p class="settings-block-desc">Prefere guardar você mesmo? Salve um arquivo .json com tudo (cards, notas, cronograma e metas) ou restaure um backup anterior.</p>
+                        <button class="action-btn" onclick="exportAllData()"><i class="fas fa-download"></i> Baixar Backup Completo</button>
+                        <button class="btn-outline action-btn" onclick="document.getElementById('import-file').click()" style="margin-top: 10px;"><i class="fas fa-upload"></i> Restaurar Backup</button>
+                        <input type="file" id="import-file" style="display: none;" onchange="importAllData(this)" accept=".json">
                     </div>
                 </div>
 
@@ -7283,86 +7471,13 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
 </div>
 
 
-                <!-- SRS + CRONOGRAMA DA SEMANA -->
-                <div class="dados-grid-2">
-                    <div class="performance-card">
-                        <div class="dados-card-head">
-                            <h3>Saúde da Revisão</h3>
-                            <span class="dch-sub">Sua coleção de cards</span>
-                        </div>
-                        <div id="dados-srs"></div>
-                    </div>
-                    <div class="performance-card">
-                        <div class="dados-card-head">
-                            <h3>Cronograma da Semana</h3>
-                            <span class="dch-sub">Cumprimento do plano</span>
-                        </div>
-                        <div id="dados-schedule"></div>
-                    </div>
-                </div>
-
-                <!-- EDITAIS + SIMULADOS -->
-                <div class="dados-grid-2">
-                    <div class="performance-card">
-                        <div class="dados-card-head">
-                            <h3>Progresso dos Editais</h3>
-                            <span class="dch-sub">Tópicos concluídos</span>
-                        </div>
-                        <div id="dados-editais"></div>
-                    </div>
-                    <div class="performance-card">
-                        <div class="dados-card-head">
-                            <h3>Simulados Recentes</h3>
-                            <span class="dch-sub">Histórico de provas</span>
-                        </div>
-                        <div id="dados-simulados"></div>
-                    </div>
-                </div>
-
-                <!-- PLANO DE AÇÃO (largura total) -->
-                <div class="performance-card">
-                    <div class="dados-card-head">
-                        <h3>Plano de Ação Sugerido</h3>
-                        <span class="dch-sub">O que fazer agora para melhorar</span>
-                    </div>
-                    <div id="dados-actions"></div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- A antiga página de Configurações foi convertida em popup (ver #settings-modal-overlay, perto do final do body) -->
-
-
-    </main>
-
     <nav class="bottom-nav">
         <button class="bottom-nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-home"></i>Início</button>
         <button class="bottom-nav-item" onclick="switchTab('study')"><i class="fas fa-book-open"></i>Estudar</button>
         <button class="bottom-nav-item" onclick="switchTab('pomodoro')"><i class="fas fa-stopwatch"></i>Pomodoro</button> 
         <button class="bottom-nav-item" onclick="switchTab('notes')"><i class="fas fa-sticky-note"></i>Caderno</button>
     </nav>
-<div class="zoom-fab-container" id="zoom-fab-container">
-  <div class="zoom-fab-menu">
-
-    <button class="zoom-fab-item" onclick="setAppZoom(0.8)" title="Zoom 80">80</button>
-    <button class="zoom-fab-item" onclick="setAppZoom(0.9)" title="Zoom 90">90</button>
-    <button class="zoom-fab-item" onclick="setAppZoom(1)" title="Zoom 100">100</button>
-    <button class="zoom-fab-item" onclick="setAppZoom(1.1)" title="Zoom 110">110</button>
-    <button class="zoom-fab-item" onclick="setAppZoom(1.2)" title="Zoom 120">120</button>
-    <button class="zoom-fab-item" onclick="setAppZoom(1.3)" title="Zoom 130">130</button>
-
-    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(0.95)" title="Fonte 95">A-</button>
-    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1)" title="Fonte 100">A</button>
-    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1.08)" title="Fonte 108">A+</button>
-    <button class="zoom-fab-item zoom-fab-item--font" onclick="setFontScale(1.16)" title="Fonte 116">A++</button>
-
-  </div>
-
-  <button class="zoom-fab-button" id="zoom-fab-button" onclick="toggleZoomFabMenu()">
-    <i class="fas fa-text-height"></i>
-  </button>
-</div>
+<!-- O antigo botão flutuante de Zoom/Fonte foi removido — essas opções agora vivem em Configurações > Aparência -->
     <!-- MODIFIED: FAB Container with upward expansion -->
     <div class="fab-container" id="fab-container">
         <div class="fab-menu" id="fab-menu">
@@ -8411,7 +8526,8 @@ function settingsModalEscHandler(e) {
 }
 
 const SETTINGS_PANEL_META = {
-    geral:    { title: 'Geral',                    sub: 'Pomodoro e intensidade de revisão' },
+    geral:    { title: 'Pomodoro',                  sub: 'Sistema anti-distração para manter o foco' },
+    revisao:  { title: 'Intensidade da Revisão',    sub: 'Frequência com que os cards reaparecem' },
     aparencia:{ title: 'Aparência',                 sub: 'Tema, cor, fonte e largura dos banners' },
     backup:   { title: 'Backup & Sincronização',    sub: 'Backup local e sincronização com o Google Drive' },
     apoie:    { title: 'Apoie o Projeto',           sub: 'Ajude a manter o desenvolvimento ativo' },
@@ -8432,6 +8548,11 @@ function switchSettingsPanel(panelKey) {
     }
     const body = document.querySelector('.settings-panel-body');
     if (body) body.scrollTop = 0;
+
+    if (panelKey === 'revisao') {
+        if (typeof renderDailyLimitControls === 'function') renderDailyLimitControls();
+        if (typeof renderFutureLoadChart === 'function') renderFutureLoadChart();
+    }
 }
 
 /* ===========================================================================
@@ -8440,14 +8561,14 @@ function switchSettingsPanel(panelKey) {
 =========================================================================== */
 
 const SETTINGS_COLOR_PALETTES = [
-    { id: 'orange',  name: 'Laranja',  primary: '#ed8432', primaryHover: '#d9772b', primaryLight: '#fff7ed', primaryDim: '#ffedd5', primaryDark: '#c2410c' },
-    { id: 'blue',    name: 'Azul',     primary: '#3b82f6', primaryHover: '#2563eb', primaryLight: '#eff6ff', primaryDim: '#dbeafe', primaryDark: '#1d4ed8' },
-    { id: 'green',   name: 'Verde',    primary: '#10b981', primaryHover: '#059669', primaryLight: '#ecfdf5', primaryDim: '#d1fae5', primaryDark: '#047857' },
-    { id: 'purple',  name: 'Roxo',     primary: '#8b5cf6', primaryHover: '#7c3aed', primaryLight: '#f5f3ff', primaryDim: '#ede9fe', primaryDark: '#6d28d9' },
-    { id: 'pink',    name: 'Rosa',     primary: '#ec4899', primaryHover: '#db2777', primaryLight: '#fdf2f8', primaryDim: '#fce7f3', primaryDark: '#be185d' },
-    { id: 'red',     name: 'Vermelho', primary: '#ef4444', primaryHover: '#dc2626', primaryLight: '#fef2f2', primaryDim: '#fee2e2', primaryDark: '#b91c1c' },
-    { id: 'teal',    name: 'Turquesa', primary: '#14b8a6', primaryHover: '#0d9488', primaryLight: '#f0fdfa', primaryDim: '#ccfbf1', primaryDark: '#0f766e' },
-    { id: 'slate',   name: 'Grafite',  primary: '#475569', primaryHover: '#334155', primaryLight: '#f8fafc', primaryDim: '#e2e8f0', primaryDark: '#1e293b' },
+    { id: 'orange',  name: 'Laranja',  primary: '#ed8432', secondary: '#fb923c', primaryHover: '#d9772b', primaryLight: '#fff7ed', primaryDim: '#ffedd5', primaryDark: '#c2410c' },
+    { id: 'blue',    name: 'Azul',     primary: '#3b82f6', secondary: '#60a5fa', primaryHover: '#2563eb', primaryLight: '#eff6ff', primaryDim: '#dbeafe', primaryDark: '#1d4ed8' },
+    { id: 'green',   name: 'Verde',    primary: '#10b981', secondary: '#34d399', primaryHover: '#059669', primaryLight: '#ecfdf5', primaryDim: '#d1fae5', primaryDark: '#047857' },
+    { id: 'purple',  name: 'Roxo',     primary: '#8b5cf6', secondary: '#a78bfa', primaryHover: '#7c3aed', primaryLight: '#f5f3ff', primaryDim: '#ede9fe', primaryDark: '#6d28d9' },
+    { id: 'pink',    name: 'Rosa',     primary: '#ec4899', secondary: '#f472b6', primaryHover: '#db2777', primaryLight: '#fdf2f8', primaryDim: '#fce7f3', primaryDark: '#be185d' },
+    { id: 'red',     name: 'Vermelho', primary: '#ef4444', secondary: '#f87171', primaryHover: '#dc2626', primaryLight: '#fef2f2', primaryDim: '#fee2e2', primaryDark: '#b91c1c' },
+    { id: 'teal',    name: 'Turquesa', primary: '#14b8a6', secondary: '#2dd4bf', primaryHover: '#0d9488', primaryLight: '#f0fdfa', primaryDim: '#ccfbf1', primaryDark: '#0f766e' },
+    { id: 'slate',   name: 'Grafite',  primary: '#475569', secondary: '#64748b', primaryHover: '#334155', primaryLight: '#f8fafc', primaryDim: '#e2e8f0', primaryDark: '#1e293b' },
 ];
 
 const SETTINGS_FONT_OPTIONS = [
@@ -8491,6 +8612,7 @@ function applyAppearancePrefs() {
     const palette = SETTINGS_COLOR_PALETTES.find(p => p.id === prefs.colorId) || SETTINGS_COLOR_PALETTES[0];
     const root = document.documentElement.style;
     root.setProperty('--primary', palette.primary);
+    root.setProperty('--secondary', palette.secondary);
     root.setProperty('--primary-hover', palette.primaryHover);
     root.setProperty('--primary-light', palette.primaryLight);
     root.setProperty('--primary-dim', palette.primaryDim);
@@ -8568,6 +8690,148 @@ function renderSettingsAppearanceControls() {
                 <div class="settings-width-preview"><div class="settings-width-preview-bar" style="width:${w.barWidth};"></div></div>
                 <div class="settings-width-option-label">${w.name}</div>
             </div>`).join('');
+    }
+}
+
+/* ===========================================================================
+   LIMITE DIÁRIO DE CARDS NOVOS — controles na aba Intensidade da Revisão
+=========================================================================== */
+
+function renderDailyLimitControls() {
+    const toggle = document.getElementById('daily-limit-toggle');
+    const inputRow = document.getElementById('daily-limit-input-row');
+    const input = document.getElementById('daily-limit-input');
+    const sub = document.getElementById('daily-limit-status-sub');
+    if (!toggle) return;
+
+    const limit = (userData && userData.dailyNewCardLimit) || null;
+    toggle.checked = !!limit;
+    if (inputRow) inputRow.style.display = limit ? '' : 'none';
+    if (input) input.value = limit || 15;
+    if (sub) {
+        sub.textContent = limit
+            ? `Ativado — no máximo ${limit} cards novos entram na fila por dia`
+            : 'Desativado — todos os cards novos disponíveis entram na fila';
+    }
+}
+
+function settingsToggleDailyLimit(enabled) {
+    if (!userData) return;
+    if (enabled) {
+        const input = document.getElementById('daily-limit-input');
+        userData.dailyNewCardLimit = parseInt(input && input.value, 10) || 15;
+    } else {
+        userData.dailyNewCardLimit = null;
+    }
+    settingsSavePrefs();
+    renderDailyLimitControls();
+    renderFutureLoadChart();
+}
+
+function settingsSetDailyLimit(value) {
+    if (!userData) return;
+    let n = parseInt(value, 10);
+    if (isNaN(n) || n < 1) n = 1;
+    if (n > 200) n = 200;
+    userData.dailyNewCardLimit = n;
+    settingsSavePrefs();
+    renderDailyLimitControls();
+    renderFutureLoadChart();
+}
+
+/* ===========================================================================
+   CARGA DE REVISÃO FUTURA — calendário de barras dos próximos dias + breakdown por matéria
+=========================================================================== */
+
+function renderFutureLoadChart() {
+    const chartEl = document.getElementById('future-load-chart');
+    const breakdownEl = document.getElementById('future-load-breakdown');
+    if (!chartEl || typeof cards === 'undefined') return;
+
+    const DAYS = 7;
+    const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+    const dayBuckets = []; // [{label, date, total, byCategory: {}}]
+
+    for (let i = 0; i < DAYS; i++) {
+        const d = new Date(startOfToday.getTime() + i * 86400000);
+        dayBuckets.push({
+            label: i === 0 ? 'Hoje' : d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', ''),
+            dateLabel: d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+            start: d.getTime(),
+            end: d.getTime() + 86400000,
+            total: 0,
+            byCategory: {}
+        });
+    }
+
+    const activeCards = cards.filter(c => typeof isCardActive !== 'function' || isCardActive(c));
+    activeCards.forEach(c => {
+        const nr = c.nextReview || 0;
+        if (nr < startOfToday.getTime() ) {
+            // já atrasado: conta dentro do bucket de "Hoje" para refletir o que vai aparecer na próxima sessão
+            dayBuckets[0].total++;
+            const cat = c.category || 'Geral';
+            dayBuckets[0].byCategory[cat] = (dayBuckets[0].byCategory[cat] || 0) + 1;
+            return;
+        }
+        const bucket = dayBuckets.find(b => nr >= b.start && nr < b.end);
+        if (bucket) {
+            bucket.total++;
+            const cat = c.category || 'Geral';
+            bucket.byCategory[cat] = (bucket.byCategory[cat] || 0) + 1;
+        }
+    });
+
+    const maxTotal = Math.max(...dayBuckets.map(b => b.total), 1);
+
+    chartEl.innerHTML = `
+        <div style="display:flex; align-items:flex-end; gap:8px; height:120px; padding-top:10px;">
+            ${dayBuckets.map(b => {
+                const heightPct = Math.max(4, Math.round((b.total / maxTotal) * 100));
+                const color = b.total > (userData?.dailyNewCardLimit ? userData.dailyNewCardLimit * 1.5 : 30) ? 'var(--danger)' : 'var(--primary)';
+                return `
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                    <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted);">${b.total}</div>
+                    <div style="width:100%; height:80px; display:flex; align-items:flex-end;">
+                        <div style="width:100%; height:${heightPct}%; background:${color}; border-radius:5px 5px 2px 2px; transition: height 0.3s;" title="${b.total} cards"></div>
+                    </div>
+                    <div style="font-size:0.68rem; color:var(--text-muted); text-transform:capitalize;">${b.label}</div>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+
+    // Breakdown por matéria, somando os 7 dias
+    const totalsByCategory = {};
+    dayBuckets.forEach(b => {
+        Object.entries(b.byCategory).forEach(([cat, n]) => {
+            totalsByCategory[cat] = (totalsByCategory[cat] || 0) + n;
+        });
+    });
+    const sortedCats = Object.entries(totalsByCategory).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+    if (breakdownEl) {
+        if (sortedCats.length === 0) {
+            breakdownEl.innerHTML = (typeof dadosEmpty === 'function')
+                ? dadosEmpty('fa-circle-check', 'Nenhuma revisão prevista para os próximos 7 dias.')
+                : '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhuma revisão prevista para os próximos 7 dias.</p>';
+        } else {
+            const maxCat = sortedCats[0][1];
+            breakdownEl.innerHTML = `
+                <div style="font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">Por matéria (próximos 7 dias)</div>
+                ${sortedCats.map(([cat, n]) => `
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:7px;">
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:0.82rem; font-weight:600; margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${cat}</div>
+                            <div style="height:6px; background:var(--bg-body); border-radius:3px; overflow:hidden;">
+                                <div style="height:100%; width:${Math.round(n / maxCat * 100)}%; background:var(--primary); border-radius:3px;"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.8rem; font-weight:700; color:var(--primary); min-width:28px; text-align:right;">${n}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
     }
 }
 
@@ -9483,84 +9747,9 @@ function limparBancasDuplicadas() {
             document.getElementById('fab-button').classList.toggle('active');
         }
 
-  function toggleZoomFabMenu() {
-  const fab = document.getElementById('zoom-fab-container');
-  const button = document.getElementById('zoom-fab-button');
+        // (O antigo botão flutuante de Zoom/Fonte e suas funções foram removidos —
+        //  fonte e tamanho agora são controlados em Configurações > Aparência)
 
-  if (!fab || !button) return;
-
-  fab.classList.toggle('open');
-  button.classList.toggle('active');
-}
-
-function setAppZoom(scale) {
-  document.body.classList.remove(
-    'zoom-80',
-    'zoom-90',
-    'zoom-100',
-    'zoom-110',
-    'zoom-120',
-    'zoom-130'
-  );
-
-  if (scale === 0.8) {
-    document.body.classList.add('zoom-80');
-  } else if (scale === 0.9) {
-    document.body.classList.add('zoom-90');
-  } else if (scale === 1.1) {
-    document.body.classList.add('zoom-110');
-  } else if (scale === 1.2) {
-    document.body.classList.add('zoom-120');
-  } else if (scale === 1.3) {
-    document.body.classList.add('zoom-130');
-  } else {
-    document.body.classList.add('zoom-100');
-  }
-
-  const fab = document.getElementById('zoom-fab-container');
-  const button = document.getElementById('zoom-fab-button');
-
-  if (fab) fab.classList.remove('open');
-  if (button) button.classList.remove('active');
-}
-
-
-function setFontScale(scale) {
-  document.body.classList.remove('font-95', 'font-100', 'font-108', 'font-116');
-
-  if (scale === 0.95) {
-    document.body.classList.add('font-95');
-    document.documentElement.style.setProperty('--app-font-scale', '0.95');
-  } else if (scale === 1.08) {
-    document.body.classList.add('font-108');
-    document.documentElement.style.setProperty('--app-font-scale', '1.08');
-  } else if (scale === 1.16) {
-    document.body.classList.add('font-116');
-    document.documentElement.style.setProperty('--app-font-scale', '1.16');
-  } else {
-    document.body.classList.add('font-100');
-    document.documentElement.style.setProperty('--app-font-scale', '1');
-  }
-
-  const fab = document.getElementById('zoom-fab-container');
-  const button = document.getElementById('zoom-fab-button');
-
-  if (fab) fab.classList.remove('open');
-  if (button) button.classList.remove('active');
-}
-
-document.addEventListener('click', function(e) {
-  const zoomFab = document.getElementById('zoom-fab-container');
-  const zoomButton = document.getElementById('zoom-fab-button');
-
-  if (!zoomFab || !zoomButton) return;
-
-  if (!zoomFab.contains(e.target)) {
-    zoomFab.classList.remove('open');
-    zoomButton.classList.remove('active');
-  }
-});
-        
         function quickCreate(type) {
             toggleFabMenu(); // close menu
             if (type === 'card') {
@@ -12541,6 +12730,35 @@ function deleteCard(id) {
     });
 }
 
+// Conta quantos cards NOVOS (primeira vez na vida) já foram estudados hoje.
+// Usa um contador dedicado em userData (resetado a cada novo dia), em vez de inferir
+// pelos campos do card — assim funciona mesmo com dados antigos que não tinham esse rastro.
+function studyCountNewCardsToday() {
+    const todayStr = getLocalDateString();
+    if (!userData) return 0;
+    if (userData.newCardsStudiedDate !== todayStr) return 0; // virou o dia, contador zera
+    return userData.newCardsStudiedToday || 0;
+}
+
+// Chamado sempre que um card com interval===0 (nunca estudado / resetado) é respondido
+// na sessão padrão de revisão. Incrementa o contador do dia, criando-o se necessário,
+// e salva imediatamente (diferente de updateStreakOnStudy, que só salva 1x por dia).
+function studyRegisterNewCardStudied() {
+    if (!userData) return;
+    const todayStr = getLocalDateString();
+    if (userData.newCardsStudiedDate !== todayStr) {
+        userData.newCardsStudiedDate = todayStr;
+        userData.newCardsStudiedToday = 0;
+    }
+    userData.newCardsStudiedToday = (userData.newCardsStudiedToday || 0) + 1;
+
+    if (typeof salvarDados === 'function') {
+        salvarDados('ted_userdata', userData);
+    } else if (typeof localforage !== 'undefined') {
+        localforage.setItem('ted_userdata', userData).catch(() => {});
+    }
+}
+
 function loadStudySession() { 
     studyMode = 'standard';
     
@@ -12550,9 +12768,27 @@ function loadStudySession() {
     
     // Filtra cards vencidos (nextReview <= agora) e que não estejam em categorias/subcategorias desativadas
     // Dica: Adicionei uma ordenação simples para priorizar os mais atrasados
-    sessionQueue = cards
+    let dueCards = cards
         .filter(c => c.nextReview <= Date.now() && isCardActive(c))
-        .sort((a, b) => a.nextReview - b.nextReview); 
+        .sort((a, b) => a.nextReview - b.nextReview);
+
+    // LIMITE DIÁRIO DE CARDS NOVOS: considera "novo" o card que nunca foi estudado (interval
+    // ainda no valor inicial 0 e sem nenhuma resposta registrada). O limite nunca corta
+    // revisões já agendadas (compromisso assumido) — só freia a entrada de cards novos.
+    const dailyLimit = (userData && userData.dailyNewCardLimit) || null;
+    if (dailyLimit) {
+        const isNew = c => !(c.interval > 0);
+        const reviewCards = dueCards.filter(c => !isNew(c));
+        let newCards = dueCards.filter(isNew);
+
+        const newToday = studyCountNewCardsToday();
+        const remainingSlots = Math.max(0, dailyLimit - newToday);
+        newCards = newCards.slice(0, remainingSlots);
+
+        dueCards = reviewCards.concat(newCards).sort((a, b) => a.nextReview - b.nextReview);
+    }
+
+    sessionQueue = dueCards;
 
     currentSessionTotal = sessionQueue.length;
     currentSessionDone = 0;
@@ -12880,6 +13116,13 @@ function saveCommentEdit() {
         
         if(studyMode === 'standard') { 
     const idx = cards.findIndex(x=>x.id===currentCard.id); 
+
+    // Registra para o Limite Diário de Cards Novos: card era "novo" se nunca teve um
+    // intervalo definido (interval 0/ausente) ANTES desta resposta.
+    const wasNewCard = !(cards[idx].interval > 0);
+    if (wasNewCard && typeof studyRegisterNewCardStudied === 'function') {
+        studyRegisterNewCardStudied();
+    }
     
     if(isCor) {
         // Apply intensity logic
@@ -13849,7 +14092,7 @@ function closeAllRadarCatDropdowns() {
     document.querySelectorAll('.radar-cat-dropdown-btn.open').forEach(b => b.classList.remove('open'));
 }
 
-// Abre/fecha o dropdown customizado de matéria (substitui o <select> nativo p/ alinhar com as pills)
+// Abre/fecha o dropdown customizado de matéria (substitui o "select" nativo p/ alinhar com as pills)
 function toggleRadarCatDropdown(suffix) {
     const menu = document.getElementById('radar-cat-menu' + suffix);
     const btn = document.getElementById('radar-cat-btn' + suffix);
@@ -15048,16 +15291,24 @@ setTimeout(() => {
     }
 
     function gdriveUpdateUI() {
-        const connectBtn = document.getElementById('gdrive-connect-btn');
+        const disconnectedBlock = document.getElementById('gdrive-feature-disconnected');
         const connectedBox = document.getElementById('gdrive-connected-box');
         const emailEl = document.getElementById('gdrive-email-text');
+        const statusPill = document.getElementById('gdrive-status-pill');
         // A conexão é definida pelo token válido ou por já termos um arquivo sincronizado antes
         // (não pelo e-mail, que é só um dado cosmético e pode falhar sem afetar a sincronização real).
         const connected = gdriveIsConnected() || !!gdriveFileId;
 
-        if (connectBtn) connectBtn.style.display = connected ? 'none' : '';
+        if (disconnectedBlock) disconnectedBlock.style.display = connected ? 'none' : '';
         if (connectedBox) connectedBox.style.display = connected ? '' : 'none';
         if (emailEl) emailEl.textContent = gdriveUserEmail || 'Conta Google conectada';
+
+        if (statusPill) {
+            statusPill.classList.toggle('connected', connected);
+            statusPill.innerHTML = connected
+                ? '<i class="fas fa-circle" style="font-size:0.5rem;"></i> Conectado'
+                : '<i class="fas fa-circle" style="font-size:0.5rem;"></i> Desconectado';
+        }
     }
 
     // Ao carregar o app, recupera o estado salvo (fileId/email) e, se já havia conectado antes,
