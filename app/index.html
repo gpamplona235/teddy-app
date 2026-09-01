@@ -4416,70 +4416,37 @@ select.lib-control {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 16px auto;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+  margin: 16px 0;
+  border-radius: 0;
+  cursor: default;
+  transition: outline-color 0.15s ease;
 }
 
 .ql-editor img.note-image-selected {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
-.note-image-toolbar {
+.note-image-resize-handle {
   position: fixed;
   z-index: 2600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 250px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 2px solid var(--primary);
+  border-radius: 0;
   background: var(--bg-card);
-  color: var(--text-main);
-  box-shadow: var(--shadow-lg);
+  box-shadow: none;
+  cursor: nwse-resize;
+  touch-action: none;
 }
 
-.note-image-toolbar input[type="range"] {
-  flex: 1;
-  width: 120px;
-  margin: 0;
-  padding: 0;
-  accent-color: var(--primary);
+body.note-image-is-resizing,
+body.note-image-is-resizing * {
+  cursor: nwse-resize !important;
+  user-select: none !important;
 }
-
-.note-image-size-label {
-  min-width: 36px;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-align: right;
-}
-
-.note-image-toolbar button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg-body);
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-.note-image-toolbar button:hover {
-  color: var(--primary);
-  border-color: var(--primary);
-}
-
-.note-image-toolbar .note-image-delete:hover {
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
 
 /* 3. BARRA SUPERIOR DO EDITOR (Voltar, Pasta, Revisão, Salvar) */
 .note-editor-topbar {
@@ -9099,8 +9066,17 @@ function renderFutureLoadChart() {
 });
 
     
-    // Atualiza visualmente na hora
-    updateDashboardStats();
+    // Atualiza o painel sem permitir que um erro visual interrompa
+    // o salvamento da primeira revisão do dia.
+    try {
+        if (typeof updateDashboardStats === 'function') {
+            updateDashboardStats();
+        } else if (typeof renderDashboard === 'function') {
+            renderDashboard();
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar o painel após o estudo:', error);
+    }
 }
 
         
@@ -16003,48 +15979,30 @@ var quill = new Quill('#editor-container', {
   bounds: '#editor-container'
 });
 
-// Controles discretos para redimensionar imagens já inseridas no Caderno.
+// Redimensionamento direto: clique na imagem e arraste o puxador do canto.
 (function setupNoteImageResizeControls() {
   var selectedImage = null;
-  var toolbar = document.createElement('div');
-  toolbar.id = 'note-image-toolbar';
-  toolbar.className = 'note-image-toolbar hidden';
-  toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', 'Tamanho da imagem');
-  toolbar.innerHTML = `
-    <i class="fas fa-expand-alt" aria-hidden="true"></i>
-    <input id="note-image-size" type="range" min="20" max="100" step="5" value="100" aria-label="Largura da imagem">
-    <span id="note-image-size-label" class="note-image-size-label">100%</span>
-    <button type="button" id="note-image-full" title="Usar largura total" aria-label="Usar largura total"><i class="fas fa-arrows-alt-h"></i></button>
-    <button type="button" id="note-image-delete" class="note-image-delete" title="Remover imagem" aria-label="Remover imagem"><i class="fas fa-trash"></i></button>
-  `;
-  document.body.appendChild(toolbar);
+  var resizeHandle = document.createElement('button');
+  resizeHandle.type = 'button';
+  resizeHandle.id = 'note-image-resize-handle';
+  resizeHandle.className = 'note-image-resize-handle hidden';
+  resizeHandle.setAttribute('aria-label', 'Arraste para redimensionar a imagem');
+  resizeHandle.title = 'Arraste para redimensionar';
+  document.body.appendChild(resizeHandle);
 
-  var slider = toolbar.querySelector('#note-image-size');
-  var label = toolbar.querySelector('#note-image-size-label');
-  var fullButton = toolbar.querySelector('#note-image-full');
-  var deleteButton = toolbar.querySelector('#note-image-delete');
-
-  function hideToolbar() {
+  function hideResizeHandle() {
     if (selectedImage) selectedImage.classList.remove('note-image-selected');
     selectedImage = null;
-    toolbar.classList.add('hidden');
+    resizeHandle.classList.add('hidden');
   }
 
-  function positionToolbar() {
-    if (!selectedImage || toolbar.classList.contains('hidden')) return;
-
+  function positionResizeHandle() {
+    if (!selectedImage || resizeHandle.classList.contains('hidden')) return;
     var rect = selectedImage.getBoundingClientRect();
-    var toolbarRect = toolbar.getBoundingClientRect();
-    var top = rect.bottom + 8;
-    if (top + toolbarRect.height > window.innerHeight - 8) {
-      top = Math.max(8, rect.top - toolbarRect.height - 8);
-    }
-
-    var left = rect.left + (rect.width - toolbarRect.width) / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - toolbarRect.width - 8));
-    toolbar.style.top = `${top}px`;
-    toolbar.style.left = `${left}px`;
+    var halfWidth = resizeHandle.offsetWidth / 2;
+    var halfHeight = resizeHandle.offsetHeight / 2;
+    resizeHandle.style.left = `${Math.max(0, Math.min(window.innerWidth - resizeHandle.offsetWidth, rect.right - halfWidth))}px`;
+    resizeHandle.style.top = `${Math.max(0, Math.min(window.innerHeight - resizeHandle.offsetHeight, rect.bottom - halfHeight))}px`;
   }
 
   function getCurrentPercent(image) {
@@ -16055,80 +16013,97 @@ var quill = new Quill('#editor-container', {
     return Math.round((image.getBoundingClientRect().width / editorWidth) * 100);
   }
 
-  function applyWidth(percent) {
+  function applyWidth(percent, updateEditor) {
     if (!selectedImage) return;
-    var safePercent = Math.max(20, Math.min(100, Number(percent) || 100));
+    var safePercent = Math.max(10, Math.min(100, Number(percent) || 100));
     selectedImage.setAttribute('width', `${safePercent}%`);
     selectedImage.style.width = `${safePercent}%`;
     selectedImage.style.height = 'auto';
     selectedImage.removeAttribute('height');
-    slider.value = safePercent;
-    label.textContent = `${safePercent}%`;
-    quill.update('user');
-    requestAnimationFrame(positionToolbar);
+    if (updateEditor) quill.update('user');
+    requestAnimationFrame(positionResizeHandle);
   }
 
-  function showToolbar(image) {
+  function showResizeHandle(image) {
     if (selectedImage && selectedImage !== image) {
       selectedImage.classList.remove('note-image-selected');
     }
 
     selectedImage = image;
     selectedImage.classList.add('note-image-selected');
-    var percent = Math.max(20, Math.min(100, getCurrentPercent(image)));
-    slider.value = percent;
-    label.textContent = `${percent}%`;
-    toolbar.classList.remove('hidden');
-    requestAnimationFrame(positionToolbar);
+    resizeHandle.classList.remove('hidden');
+    requestAnimationFrame(positionResizeHandle);
   }
 
   quill.root.addEventListener('click', function(event) {
     var image = event.target.closest('img');
     if (image && quill.root.contains(image)) {
       event.preventDefault();
-      showToolbar(image);
+      showResizeHandle(image);
     }
   });
 
-  slider.addEventListener('input', function() {
-    applyWidth(slider.value);
-  });
-
-  fullButton.addEventListener('click', function() {
-    applyWidth(100);
-  });
-
-  deleteButton.addEventListener('click', function() {
+  resizeHandle.addEventListener('pointerdown', function(event) {
     if (!selectedImage) return;
-    try {
-      var blot = Quill.find(selectedImage);
-      if (blot) {
-        quill.deleteText(quill.getIndex(blot), 1, 'user');
-      } else {
-        selectedImage.remove();
-        quill.update('user');
-      }
-    } catch (error) {
-      selectedImage.remove();
-      quill.update('user');
-    }
-    hideToolbar();
-  });
-
-  toolbar.addEventListener('click', function(event) {
+    event.preventDefault();
     event.stopPropagation();
+    var imageAtStart = selectedImage;
+    var startX = event.clientX;
+    var startWidth = imageAtStart.getBoundingClientRect().width;
+    var editorWidth = quill.root.clientWidth || startWidth;
+
+    document.body.classList.add('note-image-is-resizing');
+    resizeHandle.setPointerCapture(event.pointerId);
+
+    function resize(eventMove) {
+      if (selectedImage !== imageAtStart) return;
+      var nextWidth = Math.max(60, Math.min(editorWidth, startWidth + eventMove.clientX - startX));
+      applyWidth(Math.round((nextWidth / editorWidth) * 100), false);
+    }
+
+    function finishResize(eventEnd) {
+      resizeHandle.removeEventListener('pointermove', resize);
+      resizeHandle.removeEventListener('pointerup', finishResize);
+      resizeHandle.removeEventListener('pointercancel', finishResize);
+      if (resizeHandle.hasPointerCapture(eventEnd.pointerId)) {
+        resizeHandle.releasePointerCapture(eventEnd.pointerId);
+      }
+      document.body.classList.remove('note-image-is-resizing');
+      quill.update('user');
+      requestAnimationFrame(positionResizeHandle);
+    }
+
+    resizeHandle.addEventListener('pointermove', resize);
+    resizeHandle.addEventListener('pointerup', finishResize);
+    resizeHandle.addEventListener('pointercancel', finishResize);
   });
 
   document.addEventListener('click', function(event) {
-    if (!toolbar.contains(event.target) && !event.target.closest('.ql-editor img')) hideToolbar();
+    if (event.target !== resizeHandle && !event.target.closest('.ql-editor img')) hideResizeHandle();
   });
 
   document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') hideToolbar();
+    if (event.key === 'Escape') hideResizeHandle();
+    if ((event.key === 'Delete' || event.key === 'Backspace') && selectedImage) {
+      event.preventDefault();
+      try {
+        var blot = Quill.find(selectedImage);
+        if (blot) {
+          quill.deleteText(quill.getIndex(blot), 1, 'user');
+        } else {
+          selectedImage.remove();
+          quill.update('user');
+        }
+      } catch (error) {
+        selectedImage.remove();
+        quill.update('user');
+      }
+      hideResizeHandle();
+    }
   });
 
-  window.addEventListener('resize', positionToolbar);
-  document.addEventListener('scroll', positionToolbar, true);
+  window.addEventListener('resize', positionResizeHandle);
+  document.addEventListener('scroll', positionResizeHandle, true);
 })();
 
 // 2. Reorganiza a Toolbar: mantém os 5 primeiros blocos visíveis
