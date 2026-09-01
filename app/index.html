@@ -4411,6 +4411,75 @@ select.lib-control {
   display: none;
 }
 
+/* Imagens coladas no Caderno */
+.ql-editor img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 16px auto;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ql-editor img.note-image-selected {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.note-image-toolbar {
+  position: fixed;
+  z-index: 2600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 250px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-lg);
+}
+
+.note-image-toolbar input[type="range"] {
+  flex: 1;
+  width: 120px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--primary);
+}
+
+.note-image-size-label {
+  min-width: 36px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.note-image-toolbar button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-body);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.note-image-toolbar button:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.note-image-toolbar .note-image-delete:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 
 /* 3. BARRA SUPERIOR DO EDITOR (Voltar, Pasta, Revisão, Salvar) */
 .note-editor-topbar {
@@ -5957,6 +6026,99 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
 
             <div id="sub-view-creator" class="hidden">
     <div class="card-box create-container">
+
+        <style>
+            .question-import-box {
+                width: min(100%, 520px);
+                margin: 0 0 10px auto;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-sm);
+                animation: questionImportIn 0.16s ease-out;
+            }
+
+            .question-import-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            #tec-import-text {
+                flex: 1;
+                width: 100%;
+                min-height: 88px;
+                box-sizing: border-box;
+                resize: vertical;
+                margin: 0;
+                padding: 10px;
+                font-family: inherit;
+                font-size: 0.9rem;
+                line-height: 1.45;
+            }
+
+            #question-import-trigger.active {
+                color: var(--primary);
+                border-color: var(--primary);
+                background: var(--primary-light);
+            }
+
+            .tec-import-status {
+                display: block;
+                min-height: 0;
+                margin-top: 6px;
+                font-size: 0.84rem;
+                color: var(--text-muted);
+            }
+
+            .tec-import-status.success { color: var(--success); }
+            .tec-import-status.warning { color: var(--warning); }
+            .tec-import-status.error { color: var(--danger); }
+
+            .correct-option-toggle {
+                width: 34px;
+                height: 34px;
+                min-width: 34px;
+                padding: 0;
+                border-radius: 50%;
+                border: 1px solid var(--border);
+                background: var(--bg-body);
+                color: var(--text-muted);
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+            }
+
+            .correct-option-toggle:hover,
+            .correct-option-toggle:focus-visible {
+                border-color: var(--success);
+                color: var(--success);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
+            }
+
+            .answer-block.correct-answer .correct-option-toggle {
+                border-color: var(--success);
+                background: var(--success);
+                color: white;
+            }
+
+            .answer-block.correct-answer .correct-option-toggle i::before {
+                content: "\f00c";
+            }
+
+            .answer-block.needs-correct-answer {
+                border-left-color: var(--warning);
+            }
+
+            @keyframes questionImportIn {
+                from { opacity: 0; transform: translateY(-4px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
         
         <!-- GRID ALTERADO PARA 3 COLUNAS -->
         <div class="create-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
@@ -6063,8 +6225,27 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
     <button class="btn-outline btn-sm" onclick="clearQuestionFormat()" title="Limpar formatação">
       <i class="fas fa-eraser"></i>
     </button>
+    <button id="question-import-trigger" class="btn-outline btn-sm" type="button"
+            onclick="toggleQuestionImporter()" title="Colar questão completa"
+            aria-label="Abrir caixa para colar questão completa"
+            aria-expanded="false" aria-controls="question-import-box">
+      <i class="fas fa-paste"></i>
+    </button>
   </div>
 </div>
+            <div id="question-import-box" class="question-import-box hidden">
+                <div class="question-import-row">
+                    <textarea id="tec-import-text"
+                              placeholder="Cole a questão completa aqui (Ctrl+V)"
+                              aria-label="Texto completo da questão"
+                              onpaste="setTimeout(() => importTecQuestion(true), 0)"></textarea>
+                    <button type="button" class="btn-outline btn-sm" onclick="toggleQuestionImporter(false)"
+                            title="Fechar" aria-label="Fechar caixa de importação">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span id="tec-import-status" class="tec-import-status" role="status" aria-live="polite"></span>
+            </div>
             <div id="input-question" class="rich-editor" contenteditable="true" placeholder="Digite sua pergunta aqui..."></div>
         </div>
 
@@ -6075,34 +6256,44 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
   <div class="inline-info-tooltip">
     <i class="fas fa-exclamation-circle"></i>
     <span class="custom-tooltip-text" style="width: 280px;">
-      Mantenha a resposta correta sempre na primeira alternativa. Não precisa usar designação como A, B, C ou D. Exemplo: na primeira linha, digite a resposta certa; nas demais, apenas as incorretas. O aplicativo embaralha automaticamente as alternativas quando o card for exibido na aba de revisão.
+      Clique no círculo ao lado de qualquer alternativa para marcá-la como correta. A ordem original pode ser mantida; o aplicativo continua embaralhando as opções durante a revisão.
     </span>
   </div>
 </div>
 
-  <div class="answer-block correct-answer">
-    <i class="fas fa-check-circle answer-icon"></i>
-    <input type="text" id="input-opt-a" placeholder="Digite a resposta correta aqui">
+  <div class="answer-block correct-answer" data-option-key="a">
+    <button type="button" class="correct-option-toggle" role="radio" aria-checked="true"
+            aria-label="Marcar alternativa 1 como correta" title="Marcar como correta"
+            onclick="setCorrectOption('a')"><i class="fas fa-check"></i></button>
+    <input type="text" id="input-opt-a" placeholder="Alternativa 1">
   </div>
 
-  <div class="answer-block wrong-answer">
-    <i class="far fa-circle answer-icon"></i>
-    <input type="text" id="input-opt-b" placeholder="Alternativa incorreta 1">
+  <div class="answer-block wrong-answer" data-option-key="b">
+    <button type="button" class="correct-option-toggle" role="radio" aria-checked="false"
+            aria-label="Marcar alternativa 2 como correta" title="Marcar como correta"
+            onclick="setCorrectOption('b')"><i class="far fa-circle"></i></button>
+    <input type="text" id="input-opt-b" placeholder="Alternativa 2">
   </div>
 
-  <div class="answer-block wrong-answer">
-    <i class="far fa-circle answer-icon"></i>
-    <input type="text" id="input-opt-c" placeholder="Alternativa incorreta 2">
+  <div class="answer-block wrong-answer" data-option-key="c">
+    <button type="button" class="correct-option-toggle" role="radio" aria-checked="false"
+            aria-label="Marcar alternativa 3 como correta" title="Marcar como correta"
+            onclick="setCorrectOption('c')"><i class="far fa-circle"></i></button>
+    <input type="text" id="input-opt-c" placeholder="Alternativa 3">
   </div>
 
-  <div class="answer-block wrong-answer">
-    <i class="far fa-circle answer-icon"></i>
-    <input type="text" id="input-opt-d" placeholder="Alternativa incorreta 3">
+  <div class="answer-block wrong-answer" data-option-key="d">
+    <button type="button" class="correct-option-toggle" role="radio" aria-checked="false"
+            aria-label="Marcar alternativa 4 como correta" title="Marcar como correta"
+            onclick="setCorrectOption('d')"><i class="far fa-circle"></i></button>
+    <input type="text" id="input-opt-d" placeholder="Alternativa 4">
   </div>
 
-  <div class="answer-block wrong-answer">
-    <i class="far fa-circle answer-icon"></i>
-    <input type="text" id="input-opt-e" placeholder="Alternativa incorreta 4">
+  <div class="answer-block wrong-answer" data-option-key="e">
+    <button type="button" class="correct-option-toggle" role="radio" aria-checked="false"
+            aria-label="Marcar alternativa 5 como correta" title="Marcar como correta"
+            onclick="setCorrectOption('e')"><i class="far fa-circle"></i></button>
+    <input type="text" id="input-opt-e" placeholder="Alternativa 5">
   </div>
 </div>
 
@@ -7415,7 +7606,7 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                             </div>
 
                             <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo()">
+                                <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveRefreshCompareInfo(true)">
                                     <i class="fas fa-rotate"></i> Verificar novamente
                                 </button>
                                 <button class="btn-outline" style="flex:1; padding:8px; font-size:0.78rem;" onclick="gdriveManualMerge()" title="Combina os dois lados em vez de substituir um pelo outro">
@@ -8516,8 +8707,13 @@ function openSettingsModal() {
     if (darkToggle) darkToggle.checked = document.body.classList.contains('dark-mode');
     renderSettingsAppearanceControls();
 
-    if (typeof gdriveRefreshCompareInfo === 'function' && (gdriveFileId || gdriveUserEmail)) {
-        gdriveRefreshCompareInfo();
+    if (typeof gdriveRefreshCompareInfo === 'function' && (gdriveAccountLinked || gdriveFileId || gdriveUserEmail)) {
+        if (gdriveIsConnected()) {
+            gdriveRefreshCompareInfo(false);
+        } else {
+            gdriveUpdateUI();
+            gdriveShowLinkedIdleState();
+        }
     }
 }
 
@@ -12218,9 +12414,323 @@ function deleteScheduleBlock() {
             });
         }
 
+const TEC_OPTION_KEYS = ['a', 'b', 'c', 'd', 'e'];
+let selectedCorrectOption = 'a';
+
+function setTecImportStatus(message, type = '') {
+    const status = document.getElementById('tec-import-status');
+    if (!status) return;
+    status.textContent = message || '';
+    status.className = `tec-import-status${type ? ' ' + type : ''}`;
+}
+
+function toggleQuestionImporter(forceOpen) {
+    const box = document.getElementById('question-import-box');
+    const trigger = document.getElementById('question-import-trigger');
+    if (!box) return;
+
+    const shouldOpen = typeof forceOpen === 'boolean'
+        ? forceOpen
+        : box.classList.contains('hidden');
+
+    box.classList.toggle('hidden', !shouldOpen);
+    if (trigger) {
+        trigger.classList.toggle('active', shouldOpen);
+        trigger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
+    if (shouldOpen) {
+        const textarea = document.getElementById('tec-import-text');
+        if (textarea) requestAnimationFrame(() => textarea.focus());
+    }
+}
+
+function setCorrectOption(optionKey, announce = true) {
+    selectedCorrectOption = TEC_OPTION_KEYS.includes(optionKey) ? optionKey : null;
+
+    document.querySelectorAll('#sub-view-creator .answer-block[data-option-key]').forEach(block => {
+        const isCorrect = block.dataset.optionKey === selectedCorrectOption;
+        const toggle = block.querySelector('.correct-option-toggle');
+        const icon = toggle ? toggle.querySelector('i') : null;
+
+        block.classList.toggle('correct-answer', isCorrect);
+        block.classList.toggle('wrong-answer', !isCorrect);
+        block.classList.toggle('needs-correct-answer', selectedCorrectOption === null);
+
+        if (toggle) toggle.setAttribute('aria-checked', isCorrect ? 'true' : 'false');
+        if (icon) icon.className = isCorrect ? 'fas fa-check' : 'far fa-circle';
+    });
+
+    if (announce && selectedCorrectOption) {
+        const position = TEC_OPTION_KEYS.indexOf(selectedCorrectOption) + 1;
+        setTecImportStatus(`Alternativa ${position} marcada como correta.`, 'success');
+    }
+}
+
+function normalizeTecImportText(value) {
+    return (value || '')
+        .replace(/\u00a0/g, ' ')
+        .replace(/\r\n?/g, '\n')
+        .replace(/[ \t]*\\[ \t]*$/gm, '')
+        .replace(/[ \t]+$/gm, '')
+        .trim();
+}
+
+function cleanTecMarkdown(value) {
+    return (value || '')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '$1')
+        .replace(/\\([\\`*{}\[\]()#+\-.!_>])/g, '$1')
+        .replace(/\*\*/g, '')
+        .replace(/__/g, '')
+        .trim();
+}
+
+function tecQuestionToSafeHtml(value) {
+    const plainWithBold = (value || '')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '$1')
+        .replace(/\\([\\`*{}\[\]()#+\-.!_>])/g, '$1')
+        .trim();
+
+    const escaped = plainWithBold
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    return escaped
+        .replace(/\*\*([^\n]+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__([^\n]+?)__/g, '<strong>$1</strong>')
+        .replace(/\n{2,}/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+function getTecOptionStart(line) {
+    const bullet = (line || '').match(/^\s*[-*•]\s+(.+)$/);
+    if (bullet) return cleanTecMarkdown(bullet[1]);
+
+    const lettered = (line || '').match(/^\s*(?:alternativa\s+)?\(?[A-Ea-e]\)?\s*[\).:\-]\s+(.+)$/i);
+    if (lettered) return cleanTecMarkdown(lettered[1]);
+
+    const isolatedLetter = (line || '').match(/^\s*\(?[A-Ea-e]\)?\s*$/);
+    if (isolatedLetter) return '';
+
+    return null;
+}
+
+function parseTecQuestion(rawText) {
+    const normalized = normalizeTecImportText(rawText);
+    if (!normalized) throw new Error('Cole o texto completo da questão antes de preencher.');
+
+    const questionUrlMatch = normalized.match(/https?:\/\/(?:www\.)?tecconcursos\.com\.br\/questoes\/(\d+)/i);
+    const numberMatch = normalized.match(/#\s*(\d+)/);
+    const questionNumber = questionUrlMatch ? questionUrlMatch[1] : (numberMatch ? numberMatch[1] : '');
+    const source = questionNumber
+        ? `https://www.tecconcursos.com.br/questoes/${questionNumber}`
+        : '';
+
+    const bancaLinkMatch = normalized.match(/\[([^\]]+)\]\(https?:\/\/(?:www\.)?tecconcursos\.com\.br\/bancas\/[^)]+\)/i);
+    const contestLinkMatch = normalized.match(/\[([^\]]+)\]\(https?:\/\/(?:www\.)?tecconcursos\.com\.br\/concursos\/[^)]+\)/i);
+
+    const blocks = normalized.split(/\n\s*\n+/);
+    const firstBlockLines = (blocks[0] || '').split('\n').filter(line => line.trim());
+    const firstBlockLooksLikeHeader = firstBlockLines.length === 1
+        && /#\s*\d+|tecconcursos\.com\.br\/questoes\//i.test(firstBlockLines[0]);
+    let headerRaw = firstBlockLooksLikeHeader ? blocks.shift() : '';
+    let content = blocks.join('\n\n').trim();
+
+    if (!firstBlockLooksLikeHeader) {
+        const contentLines = normalized.split('\n');
+        const headerLineIndex = contentLines.findIndex(line => /#\s*\d+|tecconcursos\.com\.br\/questoes\//i.test(line));
+        if (headerLineIndex >= 0) {
+            headerRaw = contentLines[headerLineIndex];
+            contentLines.splice(headerLineIndex, 1);
+        }
+        content = contentLines.join('\n').trim();
+    }
+
+    const headerPlain = cleanTecMarkdown(headerRaw).replace(/\s+/g, ' ').trim();
+
+    let banca = bancaLinkMatch ? cleanTecMarkdown(bancaLinkMatch[1]) : '';
+    let ano = '';
+    let cargo = '';
+
+    if (contestLinkMatch) {
+        const contestParts = cleanTecMarkdown(contestLinkMatch[1]).match(/^((?:19|20)\d{2})\s*-\s*(.+)$/s);
+        if (contestParts) {
+            ano = contestParts[1];
+            cargo = contestParts[2].trim();
+        } else {
+            cargo = cleanTecMarkdown(contestLinkMatch[1]);
+        }
+    }
+
+    const headerParts = headerPlain.match(/#\s*\d+\s+(.+?)\s*-\s*((?:19|20)\d{2})\s*-\s*(.+)$/i);
+    if (headerParts) {
+        if (!banca) banca = headerParts[1].trim();
+        if (!ano) ano = headerParts[2];
+        if (!cargo) cargo = headerParts[3].trim();
+    } else if (!ano) {
+        const yearMatch = headerPlain.match(/\b((?:19|20)\d{2})\b/);
+        if (yearMatch) ano = yearMatch[1];
+    }
+
+    const lines = content.split('\n').map(line => line.replace(/[ \t]*\\[ \t]*$/g, '').replace(/[ \t]+$/g, ''));
+    let category = '';
+    let subcategory = '';
+
+    const contentOnlyLines = lines.filter(line => {
+        const materiaMatch = cleanTecMarkdown(line).match(/^Mat[eé]ria\s*:\s*(.+)$/i);
+        if (materiaMatch) {
+            category = materiaMatch[1].trim();
+            return false;
+        }
+
+        const assuntoMatch = cleanTecMarkdown(line).match(/^Assunto\s*:\s*(.+)$/i);
+        if (assuntoMatch) {
+            subcategory = assuntoMatch[1].trim();
+            return false;
+        }
+
+        return true;
+    });
+
+    const optionStarts = [];
+    contentOnlyLines.forEach((line, index) => {
+        if (getTecOptionStart(line) !== null) optionStarts.push(index);
+    });
+
+    let questionText = '';
+    let options = [];
+    let usedPlainTextFallback = false;
+
+    if (optionStarts.length >= 2) {
+        const selectedStarts = optionStarts.length > 5 ? optionStarts.slice(-5) : optionStarts;
+        const firstOptionIndex = selectedStarts[0];
+        questionText = contentOnlyLines.slice(0, firstOptionIndex).join('\n').trim();
+
+        options = selectedStarts.map((startIndex, optionIndex) => {
+            const endIndex = selectedStarts[optionIndex + 1] ?? contentOnlyLines.length;
+            const firstLine = getTecOptionStart(contentOnlyLines[startIndex]);
+            const continuation = contentOnlyLines
+                .slice(startIndex + 1, endIndex)
+                .map(cleanTecMarkdown)
+                .filter(Boolean);
+            return [firstLine, ...continuation].filter(Boolean).join(' ').trim();
+        }).filter(Boolean);
+    } else {
+        // Alguns navegadores copiam os itens visuais do TEC sem letras ou marcadores.
+        // Nesse caso, reconhece as 2 a 5 linhas finais após o enunciado como alternativas.
+        const nonEmptyLines = contentOnlyLines
+            .map((line, index) => ({ index, text: cleanTecMarkdown(line) }))
+            .filter(item => item.text);
+
+        let optionCount = 0;
+        for (let count = 5; count >= 2; count--) {
+            const prompt = nonEmptyLines[nonEmptyLines.length - count - 1];
+            if (prompt && /[:?]$/.test(prompt.text)) {
+                optionCount = count;
+                break;
+            }
+        }
+
+        if (!optionCount && nonEmptyLines.length >= 6) optionCount = 5;
+        if (!optionCount) {
+            throw new Error('Não encontrei as alternativas. Copie também as opções da questão.');
+        }
+
+        const optionItems = nonEmptyLines.slice(-optionCount);
+        questionText = contentOnlyLines.slice(0, optionItems[0].index).join('\n').trim();
+        options = optionItems.map(item => item.text);
+        usedPlainTextFallback = true;
+    }
+
+    if (!questionText) throw new Error('Não encontrei o enunciado da questão.');
+
+    if (options.length < 2) throw new Error('Não consegui separar as alternativas da questão.');
+
+    return {
+        questionNumber,
+        source,
+        banca,
+        ano,
+        cargo,
+        category,
+        subcategory,
+        questionHtml: tecQuestionToSafeHtml(questionText),
+        options: options.slice(0, 5),
+        usedLastFiveOptions: optionStarts.length > 5,
+        usedPlainTextFallback
+    };
+}
+
+function fillTecQuestionFields(parsed) {
+    document.getElementById('input-question').innerHTML = parsed.questionHtml;
+
+    TEC_OPTION_KEYS.forEach((key, index) => {
+        document.getElementById(`input-opt-${key}`).value = parsed.options[index] || '';
+    });
+
+    if (parsed.category) document.getElementById('input-category').value = parsed.category;
+    if (parsed.subcategory) document.getElementById('input-subcategory').value = parsed.subcategory;
+    if (parsed.cargo) document.getElementById('input-cargo').value = parsed.cargo;
+    if (parsed.banca) document.getElementById('input-banca').value = parsed.banca;
+    if (parsed.ano) document.getElementById('input-ano').value = parsed.ano;
+    if (parsed.source) document.getElementById('input-source').value = parsed.source;
+
+    if (parsed.cargo || parsed.banca || parsed.ano) {
+        const details = document.getElementById('extra-details-container');
+        const trigger = document.getElementById('details-trigger');
+        if (details) details.style.display = 'grid';
+        if (trigger) trigger.innerHTML = '<span>Menos Opções</span> <i class="fas fa-caret-up"></i>';
+    }
+
+    setCorrectOption(null, false);
+}
+
+function importTecQuestion(closeAfterSuccess = false) {
+    const textarea = document.getElementById('tec-import-text');
+
+    try {
+        const parsed = parseTecQuestion(textarea ? textarea.value : '');
+        fillTecQuestionFields(parsed);
+
+        const idLabel = parsed.questionNumber ? ` #${parsed.questionNumber}` : '';
+        const extraNotice = parsed.usedLastFiveOptions
+            ? ' Usei as cinco alternativas finais encontradas.'
+            : (parsed.usedPlainTextFallback ? ' Reconheci as opções pelas linhas finais do texto.' : '');
+        setTecImportStatus(
+            `Questão${idLabel} preenchida com ${parsed.options.length} alternativas.${extraNotice} Agora marque a correta.`,
+            'warning'
+        );
+        if (closeAfterSuccess) setTimeout(() => toggleQuestionImporter(false), 180);
+    } catch (error) {
+        setTecImportStatus(error.message || 'Não foi possível interpretar o texto copiado.', 'error');
+    }
+}
+
+async function pasteTecQuestion() {
+    const textarea = document.getElementById('tec-import-text');
+    if (!textarea) return;
+
+    try {
+        if (!navigator.clipboard || !navigator.clipboard.readText) throw new Error('clipboard-unavailable');
+        const clipboardText = await navigator.clipboard.readText();
+        if (!clipboardText.trim()) throw new Error('clipboard-empty');
+        textarea.value = clipboardText;
+        importTecQuestion();
+    } catch (error) {
+        textarea.focus();
+        setTecImportStatus('O navegador não liberou a área de transferência. Clique na caixa e pressione Ctrl+V.', 'warning');
+    }
+}
+
        function handleSave() {
     const q = document.getElementById('input-question').innerHTML; 
-    const a = document.getElementById('input-opt-a').value;
+    const correctInput = selectedCorrectOption
+        ? document.getElementById(`input-opt-${selectedCorrectOption}`)
+        : null;
+    const a = correctInput ? correctInput.value.trim() : '';
     const comment = document.getElementById('input-comment').innerHTML; 
     const cat = document.getElementById('input-category').value;
     const subcat = document.getElementById('input-subcategory').value;
@@ -12236,16 +12746,12 @@ function deleteScheduleBlock() {
     
     const sourceLink = document.getElementById('input-source') ? document.getElementById('input-source').value : '';
     
-    if(!q || !a) return alert('Preencha pergunta e resposta correta!');
+    if(!q.trim() || !selectedCorrectOption || !a) return alert('Preencha a pergunta e marque uma alternativa preenchida como correta!');
 
     // Coleta as opções
-    const opts = [
-        a, 
-        document.getElementById('input-opt-b').value, 
-        document.getElementById('input-opt-c').value, 
-        document.getElementById('input-opt-d').value,
-        document.getElementById('input-opt-e').value
-    ].filter(Boolean); // Remove vazios
+    const opts = TEC_OPTION_KEYS
+        .map(key => document.getElementById(`input-opt-${key}`).value.trim())
+        .filter(Boolean); // Remove vazios sem alterar a ordem original
 
     if (editingId) {
         // --- MODO EDIÇÃO ---
@@ -12368,6 +12874,9 @@ function deleteScheduleBlock() {
     document.getElementById('save-btn').innerHTML = '<i class="fas fa-save"></i> Salvar Card';
     document.getElementById('cancel-edit-btn').classList.add('hidden');
     editingId = null;
+    setCorrectOption('a', false);
+    setTecImportStatus('');
+    toggleQuestionImporter(false);
 
     // --- NOVO: Fecha a aba de "Mais Detalhes" automaticamente ---
     const detailsContainer = document.getElementById('extra-details-container');
@@ -12667,7 +13176,18 @@ function toggleDetails() {
     // -----------------------------------------------
 
     document.getElementById('input-question').innerHTML = c.question;
-    document.getElementById('input-opt-a').value = c.correctText;
+
+    // Mantém a ordem original das alternativas e marca visualmente a correta.
+    const savedOptions = Array.isArray(c.options) && c.options.length
+        ? c.options.slice(0, 5)
+        : [c.correctText].filter(Boolean);
+
+    TEC_OPTION_KEYS.forEach((key, index) => {
+        document.getElementById(`input-opt-${key}`).value = savedOptions[index] || '';
+    });
+
+    const correctIndex = savedOptions.findIndex(option => option === c.correctText);
+    setCorrectOption(TEC_OPTION_KEYS[correctIndex >= 0 ? correctIndex : 0], false);
     
     // --- ATUALIZAÇÃO: Comentário Rico (innerHTML) ---
     document.getElementById('input-comment').innerHTML = c.comment || '';
@@ -12675,21 +13195,6 @@ function toggleDetails() {
     // Carrega a Fonte
     const sourceInput = document.getElementById('input-source');
     if (sourceInput) sourceInput.value = c.source || '';
-
-    // Limpa campos de alternativas incorretas antes de preencher
-    document.getElementById('input-opt-b').value = '';
-    document.getElementById('input-opt-c').value = '';
-    document.getElementById('input-opt-d').value = '';
-    const optE = document.getElementById('input-opt-e');
-    if (optE) optE.value = '';
-
-    // Filtra e preenche as incorretas
-    const wrongs = c.options.filter(o => o !== c.correctText);
-    
-    if (wrongs[0]) document.getElementById('input-opt-b').value = wrongs[0];
-    if (wrongs[1]) document.getElementById('input-opt-c').value = wrongs[1];
-    if (wrongs[2]) document.getElementById('input-opt-d').value = wrongs[2];
-    if (wrongs[3] && optE) optE.value = wrongs[3]; // Suporte para 5ª opção
 
     // Ajusta visual dos botões
     document.getElementById('save-btn').innerHTML = '<i class="fas fa-pen"></i> Atualizar';
@@ -14810,6 +15315,7 @@ setTimeout(() => {
     let gdriveTokenExpiresAt = 0;
     let gdriveFileId = null;           // id do arquivo de backup já criado no Drive do usuário (persistido)
     let gdriveUserEmail = null;        // só para exibir "Conectado como ..." na UI
+    let gdriveAccountLinked = false;   // vínculo persistente; o token temporário não define se a conta está vinculada
     let gdriveAutoSyncTimer = null;
     let gdriveSyncing = false;
 
@@ -14819,31 +15325,53 @@ setTimeout(() => {
         if (saved) {
             gdriveFileId = saved.fileId || null;
             gdriveUserEmail = saved.email || null;
+            gdriveAccountLinked = !!saved.linked || !!gdriveFileId || !!gdriveUserEmail;
         }
         gdriveUpdateUI();
     }
     async function gdriveSavePersistedState() {
-        await salvarDados('ted_gdrive_state', { fileId: gdriveFileId, email: gdriveUserEmail });
+        await salvarDados('ted_gdrive_state', {
+            fileId: gdriveFileId,
+            email: gdriveUserEmail,
+            linked: gdriveAccountLinked
+        });
     }
 
     function gdriveIsConnected() {
-        return !!gdriveAccessToken && Date.now() < gdriveTokenExpiresAt;
+        // Margem de 60 s para não iniciar uma operação com um token prestes a expirar.
+        return !!gdriveAccessToken && Date.now() < (gdriveTokenExpiresAt - 60000);
     }
 
-    // Garante que temos um token válido; se não tiver (ou expirou), abre o popup de login do Google.
-    // interactive=false tenta renovar silenciosamente primeiro (sem popup), só pedindo popup se necessário.
+    // O Google Identity Services não renova tokens automaticamente. Um novo token precisa
+    // nascer de uma ação do usuário; o vínculo da conta, porém, continua persistido no app.
     let gdriveTokenResolve = null;
     let gdriveTokenReject = null;
+    let gdriveTokenRequestPromise = null;
 
-    function gdriveEnsureToken(interactive) {
-        return new Promise((resolve, reject) => {
-            if (gdriveIsConnected()) { resolve(gdriveAccessToken); return; }
-            if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-                reject(new Error('Biblioteca do Google ainda não carregou. Tente novamente em alguns segundos.'));
-                return;
-            }
-            // Guarda o resolve/reject DESTA chamada específica — o callback abaixo é criado uma única vez
-            // pelo initTokenClient, mas sempre consulta estas variáveis para saber quem avisar.
+    function gdriveInvalidateAccessToken() {
+        gdriveAccessToken = null;
+        gdriveTokenExpiresAt = 0;
+        gdriveStopAutoSync();
+        gdriveUpdateUI();
+    }
+
+    function gdriveAuthRequiredError() {
+        const err = new Error('A confirmação da conta Google é necessária.');
+        err.code = 'GDRIVE_AUTH_REQUIRED';
+        return err;
+    }
+
+    function gdriveEnsureToken(options) {
+        options = options || {};
+        if (gdriveIsConnected()) return Promise.resolve(gdriveAccessToken);
+        if (!options.userGesture) return Promise.reject(gdriveAuthRequiredError());
+        if (gdriveTokenRequestPromise) return gdriveTokenRequestPromise;
+
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+            return Promise.reject(new Error('Biblioteca do Google ainda não carregou. Tente novamente em alguns segundos.'));
+        }
+
+        gdriveTokenRequestPromise = new Promise((resolve, reject) => {
             gdriveTokenResolve = resolve;
             gdriveTokenReject = reject;
 
@@ -14851,70 +15379,105 @@ setTimeout(() => {
                 gdriveTokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GDRIVE_CLIENT_ID,
                     scope: GDRIVE_SCOPE,
+                    login_hint: gdriveUserEmail || undefined,
                     callback: (resp) => {
-                        if (resp && resp.access_token) {
-                            gdriveAccessToken = resp.access_token;
-                            gdriveTokenExpiresAt = Date.now() + ((resp.expires_in || 3500) * 1000);
-                            if (gdriveTokenResolve) gdriveTokenResolve(gdriveAccessToken);
-                        } else {
-                            if (gdriveTokenReject) gdriveTokenReject(new Error('Não foi possível autenticar com o Google.'));
-                        }
+                        const pendingResolve = gdriveTokenResolve;
+                        const pendingReject = gdriveTokenReject;
                         gdriveTokenResolve = null;
                         gdriveTokenReject = null;
+                        gdriveTokenRequestPromise = null;
+
+                        if (resp && resp.access_token) {
+                            gdriveAccessToken = resp.access_token;
+                            gdriveTokenExpiresAt = Date.now() + ((Number(resp.expires_in) || 3500) * 1000);
+                            gdriveAccountLinked = true;
+                            gdriveSavePersistedState().catch(() => {});
+                            gdriveUpdateUI();
+                            if (pendingResolve) pendingResolve(gdriveAccessToken);
+                        } else if (pendingReject) {
+                            pendingReject(new Error((resp && resp.error) || 'Não foi possível autenticar com o Google.'));
+                        }
                     },
                     error_callback: (err) => {
                         console.error('Google OAuth error_callback:', err);
-                        if (gdriveTokenReject) gdriveTokenReject(new Error((err && err.type) || 'Falha na autenticação com o Google.'));
+                        const pendingReject = gdriveTokenReject;
                         gdriveTokenResolve = null;
                         gdriveTokenReject = null;
+                        gdriveTokenRequestPromise = null;
+                        if (pendingReject) pendingReject(new Error((err && err.type) || 'Falha na autenticação com o Google.'));
                     },
                 });
             }
-            gdriveTokenClient.requestAccessToken({ prompt: interactive ? 'consent' : '' });
+
+            try {
+                // consent só na conexão inicial; renovações usam o consentimento já concedido.
+                gdriveTokenClient.requestAccessToken({ prompt: options.forceConsent ? 'consent' : '' });
+            } catch (error) {
+                gdriveTokenResolve = null;
+                gdriveTokenReject = null;
+                gdriveTokenRequestPromise = null;
+                reject(error);
+            }
         });
+
+        return gdriveTokenRequestPromise;
+    }
+
+    async function gdriveApiFetch(url, options) {
+        options = options || {};
+        const headers = new Headers(options.headers || {});
+        headers.set('Authorization', 'Bearer ' + gdriveAccessToken);
+        const response = await fetch(url, { ...options, headers });
+        if (response.status === 401) {
+            gdriveInvalidateAccessToken();
+            throw gdriveAuthRequiredError();
+        }
+        return response;
     }
 
     // Busca o e-mail do usuário logado (só para exibir na interface)
     async function gdriveFetchUserEmail() {
         try {
-            const r = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                headers: { Authorization: 'Bearer ' + gdriveAccessToken }
-            });
+            const r = await gdriveApiFetch('https://www.googleapis.com/oauth2/v2/userinfo');
             if (!r.ok) return;
             const info = await r.json();
             gdriveUserEmail = info.email || null;
-        } catch (e) { /* não é crítico, ignora */ }
+        } catch (e) {
+            if (e && e.code === 'GDRIVE_AUTH_REQUIRED') throw e;
+            // Falhar apenas ao obter o e-mail não impede o backup.
+        }
     }
 
     // Localiza o arquivo de backup já criado anteriormente no Drive do usuário, ou cria um novo se for a 1ª vez.
     // Sempre confirma se o gdriveFileId salvo ainda existe (o usuário pode ter apagado manualmente no Drive).
     async function gdriveFindOrCreateFile() {
-        const headers = { Authorization: 'Bearer ' + gdriveAccessToken };
-
         if (gdriveFileId) {
-            const check = await fetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?fields=id,modifiedTime`, { headers });
+            const check = await gdriveApiFetch(`https://www.googleapis.com/drive/v3/files/${gdriveFileId}?fields=id,modifiedTime`);
             if (check.ok) return gdriveFileId; // ainda existe, reaproveita
-            gdriveFileId = null; // foi apagado ou não pertence mais a esse usuário/token
+            if (check.status === 404) {
+                gdriveFileId = null; // foi apagado ou pertence a outra conta
+            } else {
+                throw new Error('Não foi possível verificar o arquivo de backup no Drive.');
+            }
         }
 
         // Procura por nome (caso o app tenha perdido o id salvo, ex: trocou de navegador)
         const q = encodeURIComponent(`name='${GDRIVE_BACKUP_FILENAME}' and trashed=false`);
-        const search = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,modifiedTime)`, { headers });
-        if (search.ok) {
-            const data = await search.json();
-            if (data.files && data.files.length > 0) {
-                gdriveFileId = data.files[0].id;
-                await gdriveSavePersistedState();
-                return gdriveFileId;
-            }
+        const search = await gdriveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,modifiedTime)`);
+        if (!search.ok) throw new Error('Não foi possível procurar o arquivo de backup no Drive.');
+        const data = await search.json();
+        if (data.files && data.files.length > 0) {
+            gdriveFileId = data.files[0].id;
+            await gdriveSavePersistedState();
+            return gdriveFileId;
         }
 
         // Não existe ainda: cria um arquivo vazio (drive.file só permite ver arquivos criados pelo próprio app,
         // por isso a criação acontece sempre por aqui, nunca apontando para um arquivo já existente no Drive)
         const metadata = { name: GDRIVE_BACKUP_FILENAME, mimeType: 'application/json' };
-        const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+        const createRes = await gdriveApiFetch('https://www.googleapis.com/drive/v3/files', {
             method: 'POST',
-            headers: { ...headers, 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(metadata)
         });
         if (!createRes.ok) throw new Error('Não foi possível criar o arquivo de backup no Drive.');
@@ -14926,16 +15489,16 @@ setTimeout(() => {
 
     // Lê o conteúdo + a data de modificação do backup salvo no Drive (sem alterar nada localmente)
     async function gdriveReadRemote() {
-        const headers = { Authorization: 'Bearer ' + gdriveAccessToken };
         const fileId = await gdriveFindOrCreateFile();
 
-        const metaRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=modifiedTime,size`, { headers });
-        const meta = metaRes.ok ? await metaRes.json() : null;
+        const metaRes = await gdriveApiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=modifiedTime,size`);
+        if (!metaRes.ok) throw new Error('Não foi possível verificar o backup salvo no Drive.');
+        const meta = await metaRes.json();
 
         // Arquivo recém-criado (size=0) ainda não tem conteúdo de backup nenhum
         if (!meta || !meta.size || meta.size === '0') return { remoteData: null, remoteModifiedTime: null };
 
-        const contentRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, { headers });
+        const contentRes = await gdriveApiFetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
         if (!contentRes.ok) throw new Error('Não foi possível ler o backup salvo no Drive.');
         const remoteData = await contentRes.json();
         return { remoteData, remoteModifiedTime: meta.modifiedTime };
@@ -14944,9 +15507,9 @@ setTimeout(() => {
     // Sobe o backup atual (local) para o Drive, sobrescrevendo o conteúdo do arquivo já existente
     async function gdriveWriteRemote(dataObj) {
         const fileId = await gdriveFindOrCreateFile();
-        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+        const res = await gdriveApiFetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
             method: 'PATCH',
-            headers: { Authorization: 'Bearer ' + gdriveAccessToken, 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataObj)
         });
         if (!res.ok) throw new Error('Não foi possível salvar o backup no Drive.');
@@ -14962,7 +15525,8 @@ setTimeout(() => {
             if (btnText) btnText.textContent = 'Conectando...';
             gdriveSetStatus('Abrindo a tela de login do Google...', false);
 
-            await gdriveEnsureToken(true);
+            await gdriveEnsureToken({ userGesture: true, forceConsent: true });
+            gdriveAccountLinked = true;
             gdriveSetStatus('Autenticado! Buscando seus dados...', false);
 
             await gdriveFetchUserEmail();
@@ -14981,30 +15545,51 @@ setTimeout(() => {
     }
 
     function gdriveDisconnect() {
-        if (gdriveAccessToken && google.accounts && google.accounts.oauth2) {
+        if (gdriveAccessToken && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
             google.accounts.oauth2.revoke(gdriveAccessToken, () => {});
         }
         gdriveAccessToken = null;
         gdriveTokenExpiresAt = 0;
         gdriveFileId = null;
         gdriveUserEmail = null;
+        gdriveAccountLinked = false;
+        gdriveTokenClient = null;
+        gdriveTokenRequestPromise = null;
         gdriveSavePersistedState();
         gdriveStopAutoSync();
         gdriveUpdateUI();
+    }
+
+    function gdriveShowLinkedIdleState() {
+        const infoEl = document.getElementById('gdrive-compare-info');
+        const uploadBtn = document.getElementById('gdrive-upload-btn');
+        const downloadBtn = document.getElementById('gdrive-download-btn');
+        if (infoEl) {
+            infoEl.innerHTML = '<i class="fas fa-link" style="color:var(--primary);"></i> Conta vinculada. Clique em <b>Verificar novamente</b>, <b>Enviar</b> ou <b>Baixar</b> quando quiser acessar o Drive.';
+        }
+        if (uploadBtn) uploadBtn.disabled = false;
+        if (downloadBtn) downloadBtn.disabled = false;
+        gdriveSetStatus('Sua conta continua vinculada; o Google pode pedir uma confirmação antes da próxima operação.', false);
     }
 
     // Consulta o Drive e mostra qual lado (local ou Drive) está mais atualizado,
     // SEM alterar nada em nenhum dos dois lados. É chamada automaticamente a cada
     // poucos minutos e sempre que a tela de Configurações é aberta, só para te
     // ajudar a decidir entre Enviar ou Baixar.
-    async function gdriveRefreshCompareInfo() {
+    async function gdriveRefreshCompareInfo(userInitiated) {
         const infoEl = document.getElementById('gdrive-compare-info');
         const uploadBtn = document.getElementById('gdrive-upload-btn');
         const downloadBtn = document.getElementById('gdrive-download-btn');
+
+        if (!gdriveIsConnected() && !userInitiated) {
+            gdriveShowLinkedIdleState();
+            return;
+        }
+
         if (infoEl) infoEl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verificando última atualização em cada lado...';
 
         try {
-            await gdriveEnsureToken(false);
+            if (!gdriveIsConnected()) await gdriveEnsureTokenWithFallback();
             const local = await buildBackupObject();
             const { remoteData, remoteModifiedTime } = await gdriveReadRemote();
 
@@ -15031,7 +15616,11 @@ setTimeout(() => {
 
         } catch (err) {
             console.error('Erro ao comparar com o Drive:', err);
-            if (infoEl) infoEl.innerHTML = '<i class="fas fa-clock" style="color:#f59e0b;"></i> Sua sessão do Google expirou. Toque em "Enviar" ou "Baixar" para entrar de novo.';
+            if (err && err.code === 'GDRIVE_AUTH_REQUIRED') {
+                gdriveShowLinkedIdleState();
+            } else if (infoEl) {
+                infoEl.innerHTML = '<i class="fas fa-triangle-exclamation" style="color:#f59e0b;"></i> Não foi possível verificar o Drive agora. Tente novamente.';
+            }
         }
     }
 
@@ -15068,23 +15657,27 @@ setTimeout(() => {
         }
     }
 
-    // Tenta renovar o token em silêncio; se a sessão expirou e isso falhar, abre o popup de
-    // login automaticamente (já que o usuário claramente quer agir agora, clicando num botão).
+    // Chamado somente por ações explícitas (Enviar/Baixar/Combinar/Verificar), pois o Google
+    // exige uma interação do usuário para emitir um novo token depois que o anterior expira.
     async function gdriveEnsureTokenWithFallback() {
-        try {
-            await gdriveEnsureToken(false);
-        } catch (e) {
-            gdriveSetStatus('Sua sessão do Google expirou — abrindo o login novamente...', false);
-            await gdriveEnsureToken(true);
-            await gdriveFetchUserEmail();
-            await gdriveSavePersistedState();
-            gdriveUpdateUI();
-        }
+        if (gdriveIsConnected()) return gdriveAccessToken;
+
+        gdriveSetStatus('Confirmando sua conta Google...', false);
+        const token = await gdriveEnsureToken({ userGesture: true, forceConsent: false });
+        gdriveAccountLinked = true;
+        await gdriveFetchUserEmail();
+        await gdriveSavePersistedState();
+        gdriveUpdateUI();
+        gdriveStartAutoSync();
+        return token;
     }
 
     // Traduz erros técnicos em mensagens que fazem sentido pra quem não programa
     function gdriveFriendlyErrorMessage(err) {
         const msg = ((err && err.message) || (err && err.type) || '').toString();
+        if (err && err.code === 'GDRIVE_AUTH_REQUIRED') {
+            return 'Sua conta continua vinculada. Clique novamente para confirmar o acesso ao Drive.';
+        }
         if (/login|consent|access_denied|popup/i.test(msg)) {
             return 'O login com o Google não foi concluído. Toque novamente para tentar de novo.';
         }
@@ -15303,7 +15896,13 @@ setTimeout(() => {
     function gdriveStartAutoSync() {
         gdriveStopAutoSync();
         gdriveAutoSyncTimer = setInterval(() => {
-            if (gdriveFileId || gdriveUserEmail) gdriveRefreshCompareInfo();
+            if (gdriveIsConnected()) {
+                gdriveRefreshCompareInfo(false);
+            } else {
+                gdriveStopAutoSync();
+                gdriveUpdateUI();
+                if (gdriveAccountLinked) gdriveShowLinkedIdleState();
+            }
         }, GDRIVE_AUTO_SYNC_INTERVAL_MS);
     }
     function gdriveStopAutoSync() {
@@ -15326,7 +15925,7 @@ setTimeout(() => {
         const statusPill = document.getElementById('gdrive-status-pill');
 
         const hasValidToken = gdriveIsConnected();
-        const everConnected = !!gdriveFileId || !!gdriveUserEmail;
+        const everConnected = gdriveAccountLinked || !!gdriveFileId || !!gdriveUserEmail;
         // "connected" pra fins de mostrar o painel completo: já conectou alguma vez.
         // O token em si pode estar expirado — nesse caso avisamos sem esconder o painel,
         // já que os botões (Enviar/Baixar) tentam renovar o token sozinhos antes de agir.
@@ -15338,43 +15937,22 @@ setTimeout(() => {
 
         if (statusPill) {
             statusPill.classList.toggle('connected', hasValidToken);
-            statusPill.classList.toggle('expired', !hasValidToken && everConnected);
+            statusPill.classList.remove('expired');
             if (hasValidToken) {
                 statusPill.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;"></i> Conectado';
             } else if (everConnected) {
-                statusPill.innerHTML = '<i class="fas fa-clock" style="font-size:0.6rem;"></i> Sessão expirada';
+                statusPill.innerHTML = '<i class="fas fa-link" style="font-size:0.65rem;"></i> Conta vinculada';
             } else {
                 statusPill.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;"></i> Desconectado';
             }
         }
     }
 
-    // Ao carregar o app, recupera o estado salvo (fileId/email) e, se já havia conectado antes,
-    // tenta renovar o token silenciosamente para já deixar a comparação automática ativa.
+    // Ao carregar, recupera apenas o vínculo persistente. Não tenta abrir/renovar OAuth em
+    // segundo plano: a confirmação ocorre na próxima ação explícita do usuário.
     (async function gdriveInit() {
         await gdriveLoadPersistedState();
-        if (gdriveUserEmail) {
-            // Esperamos a lib do Google carregar antes de tentar renovar o token
-            const waitGoogle = setInterval(async () => {
-                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-                    clearInterval(waitGoogle);
-                    try {
-                        await gdriveEnsureToken(false);
-                        gdriveStartAutoSync();
-                        await gdriveRefreshCompareInfo();
-                    } catch (e) {
-                        // A sessão do Google expira por segurança a cada ~1h. Isso é normal e não
-                        // é um erro do app — basta clicar em "Conectar ao Google Drive" de novo.
-                        // Como o popup pode estar fechado neste momento, atualizamos a UI agora
-                        // para já aparecer certo (botão de Conectar visível) na próxima vez que abrir.
-                        gdriveAccessToken = null;
-                        gdriveTokenExpiresAt = 0;
-                        gdriveUpdateUI();
-                        gdriveSetStatus('Sua sessão do Google expirou. Toque em "Conectar ao Google Drive" para continuar — isso acontece periodicamente por segurança, e não afeta seus dados já salvos.', false);
-                    }
-                }
-            }, 300);
-        }
+        if (gdriveAccountLinked || gdriveFileId || gdriveUserEmail) gdriveShowLinkedIdleState();
     })();
 </script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -15424,6 +16002,134 @@ var quill = new Quill('#editor-container', {
   scrollingContainer: '.main-content',
   bounds: '#editor-container'
 });
+
+// Controles discretos para redimensionar imagens já inseridas no Caderno.
+(function setupNoteImageResizeControls() {
+  var selectedImage = null;
+  var toolbar = document.createElement('div');
+  toolbar.id = 'note-image-toolbar';
+  toolbar.className = 'note-image-toolbar hidden';
+  toolbar.setAttribute('role', 'toolbar');
+  toolbar.setAttribute('aria-label', 'Tamanho da imagem');
+  toolbar.innerHTML = `
+    <i class="fas fa-expand-alt" aria-hidden="true"></i>
+    <input id="note-image-size" type="range" min="20" max="100" step="5" value="100" aria-label="Largura da imagem">
+    <span id="note-image-size-label" class="note-image-size-label">100%</span>
+    <button type="button" id="note-image-full" title="Usar largura total" aria-label="Usar largura total"><i class="fas fa-arrows-alt-h"></i></button>
+    <button type="button" id="note-image-delete" class="note-image-delete" title="Remover imagem" aria-label="Remover imagem"><i class="fas fa-trash"></i></button>
+  `;
+  document.body.appendChild(toolbar);
+
+  var slider = toolbar.querySelector('#note-image-size');
+  var label = toolbar.querySelector('#note-image-size-label');
+  var fullButton = toolbar.querySelector('#note-image-full');
+  var deleteButton = toolbar.querySelector('#note-image-delete');
+
+  function hideToolbar() {
+    if (selectedImage) selectedImage.classList.remove('note-image-selected');
+    selectedImage = null;
+    toolbar.classList.add('hidden');
+  }
+
+  function positionToolbar() {
+    if (!selectedImage || toolbar.classList.contains('hidden')) return;
+
+    var rect = selectedImage.getBoundingClientRect();
+    var toolbarRect = toolbar.getBoundingClientRect();
+    var top = rect.bottom + 8;
+    if (top + toolbarRect.height > window.innerHeight - 8) {
+      top = Math.max(8, rect.top - toolbarRect.height - 8);
+    }
+
+    var left = rect.left + (rect.width - toolbarRect.width) / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - toolbarRect.width - 8));
+    toolbar.style.top = `${top}px`;
+    toolbar.style.left = `${left}px`;
+  }
+
+  function getCurrentPercent(image) {
+    var savedWidth = image.getAttribute('width') || image.style.width || '';
+    if (savedWidth.endsWith('%')) return parseInt(savedWidth, 10) || 100;
+
+    var editorWidth = quill.root.clientWidth || 1;
+    return Math.round((image.getBoundingClientRect().width / editorWidth) * 100);
+  }
+
+  function applyWidth(percent) {
+    if (!selectedImage) return;
+    var safePercent = Math.max(20, Math.min(100, Number(percent) || 100));
+    selectedImage.setAttribute('width', `${safePercent}%`);
+    selectedImage.style.width = `${safePercent}%`;
+    selectedImage.style.height = 'auto';
+    selectedImage.removeAttribute('height');
+    slider.value = safePercent;
+    label.textContent = `${safePercent}%`;
+    quill.update('user');
+    requestAnimationFrame(positionToolbar);
+  }
+
+  function showToolbar(image) {
+    if (selectedImage && selectedImage !== image) {
+      selectedImage.classList.remove('note-image-selected');
+    }
+
+    selectedImage = image;
+    selectedImage.classList.add('note-image-selected');
+    var percent = Math.max(20, Math.min(100, getCurrentPercent(image)));
+    slider.value = percent;
+    label.textContent = `${percent}%`;
+    toolbar.classList.remove('hidden');
+    requestAnimationFrame(positionToolbar);
+  }
+
+  quill.root.addEventListener('click', function(event) {
+    var image = event.target.closest('img');
+    if (image && quill.root.contains(image)) {
+      event.preventDefault();
+      showToolbar(image);
+    }
+  });
+
+  slider.addEventListener('input', function() {
+    applyWidth(slider.value);
+  });
+
+  fullButton.addEventListener('click', function() {
+    applyWidth(100);
+  });
+
+  deleteButton.addEventListener('click', function() {
+    if (!selectedImage) return;
+    try {
+      var blot = Quill.find(selectedImage);
+      if (blot) {
+        quill.deleteText(quill.getIndex(blot), 1, 'user');
+      } else {
+        selectedImage.remove();
+        quill.update('user');
+      }
+    } catch (error) {
+      selectedImage.remove();
+      quill.update('user');
+    }
+    hideToolbar();
+  });
+
+  toolbar.addEventListener('click', function(event) {
+    event.stopPropagation();
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!toolbar.contains(event.target) && !event.target.closest('.ql-editor img')) hideToolbar();
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') hideToolbar();
+  });
+
+  window.addEventListener('resize', positionToolbar);
+  document.addEventListener('scroll', positionToolbar, true);
+})();
 
 // 2. Reorganiza a Toolbar: mantém os 5 primeiros blocos visíveis
 //    e move o restante para dentro de um menu "⋯" (3 pontos) com popover.
@@ -15497,6 +16203,68 @@ var quill = new Quill('#editor-container', {
   });
 })();
 
+function readNotebookImageFile(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function() { resolve(reader.result); };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function prepareNotebookImage(file) {
+  var originalDataUrl = await readNotebookImageFile(file);
+
+  // GIFs permanecem intactos para não perder a animação.
+  if (file.type === 'image/gif') return originalDataUrl;
+
+  return new Promise(function(resolve) {
+    var image = new Image();
+    image.onload = function() {
+      var maxDimension = 1600;
+      var scale = Math.min(1, maxDimension / image.naturalWidth, maxDimension / image.naturalHeight);
+      var shouldOptimize = scale < 1 || file.size > 1500000;
+      if (!shouldOptimize) {
+        resolve(originalDataUrl);
+        return;
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      var context = canvas.getContext('2d');
+      if (!context) {
+        resolve(originalDataUrl);
+        return;
+      }
+
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      var outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      resolve(canvas.toDataURL(outputType, 0.88));
+    };
+    image.onerror = function() { resolve(originalDataUrl); };
+    image.src = originalDataUrl;
+  });
+}
+
+async function insertPastedNotebookImages(files, initialRange) {
+  var imageSources = await Promise.all(files.map(prepareNotebookImage));
+  var range = initialRange || quill.getSelection(true) || { index: Math.max(0, quill.getLength() - 1), length: 0 };
+  var insertIndex = range.index;
+
+  if (range.length > 0) quill.deleteText(insertIndex, range.length, 'user');
+
+  imageSources.forEach(function(source) {
+    quill.insertEmbed(insertIndex, 'image', source, 'user');
+    insertIndex += 1;
+    quill.insertText(insertIndex, '\n', 'user');
+    insertIndex += 1;
+  });
+
+  quill.setSelection(insertIndex, 0, 'silent');
+  quill.focus();
+}
+
 // === CORREÇÃO DEFINITIVA DO SCROLL (SEM TREMIDINHA) ===
 quill.root.addEventListener('paste', function(e) {
   // 1. Cancela totalmente o comportamento padrão do navegador que gera o pulo
@@ -15506,6 +16274,23 @@ quill.root.addEventListener('paste', function(e) {
   // 2. Acessa os dados que estão na sua área de transferência (o que você deu Ctrl+C)
   const clipboardData = e.clipboardData || window.clipboardData;
   if (!clipboardData) return;
+
+  // Imagens copiadas da tela, de arquivos ou de outros aplicativos.
+  const imageFiles = Array.from(clipboardData.items || [])
+    .filter(item => item.kind === 'file' && item.type && item.type.indexOf('image/') === 0)
+    .map(item => item.getAsFile())
+    .filter(Boolean);
+
+  if (imageFiles.length > 0) {
+    const imageRange = quill.getSelection(true) || { index: Math.max(0, quill.getLength() - 1), length: 0 };
+    insertPastedNotebookImages(imageFiles, imageRange).catch(function(error) {
+      console.error('Não foi possível colar a imagem:', error);
+      if (typeof showAlert === 'function') {
+        showAlert('Imagem não inserida', 'Não foi possível ler essa imagem da área de transferência.');
+      }
+    });
+    return;
+  }
 
   // Pega a versão com formatação (HTML) e a versão em texto puro
   const html = clipboardData.getData('text/html');
