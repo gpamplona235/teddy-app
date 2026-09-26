@@ -6316,9 +6316,16 @@ body.font-116 .zoom-fab-item[title="Fonte 116"] {
                         <h3 style="color: white; margin: 0; font-size: 1.2rem;">Meus Editais</h3>
                         <p style="opacity: 0.9; margin-top: 4px; font-size: 0.9rem;">Crie seus editais e acompanhe seu desenvolvimento...</p>
                     </div>
-                    <div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                        <input type="file" id="import-edital-file" style="display:none;" accept=".json,application/json" onchange="importEditalFromFile(this)">
                         <button class="action-btn" onclick="createNewEdital()" style="background: rgba(255,255,255,0.25); width: auto; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.4);">
                             <i class="fas fa-plus"></i> Novo Edital
+                        </button>
+                        <button class="action-btn" onclick="abrirImportEdital()" title="Importar um edital pronto em JSON" style="background: rgba(255,255,255,0.25); width: auto; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.4);">
+                            <i class="fas fa-file-import"></i> Importar JSON
+                        </button>
+                        <button onclick="baixarModeloEdital()" title="Baixar um arquivo de exemplo para preencher" style="background:transparent; border:none; color:white; opacity:0.85; font-size:0.8rem; text-decoration:underline; cursor:pointer;">
+                            modelo
                         </button>
                     </div>
                 </div>
@@ -10706,6 +10713,103 @@ function openExternalLink(url) {
                     renderSyllabusList();
                 }
             });
+        }
+
+        // ===== IMPORTAR EDITAL DE UM ARQUIVO JSON =====
+        let _editalIdSeed = Date.now();
+        function _novoIdEdital() { return ++_editalIdSeed; }
+        function _txtNorm(t) { return String(t == null ? '' : t).replace(/\s+/g, ' ').trim().toLowerCase(); }
+
+        function abrirImportEdital() { document.getElementById('import-edital-file').click(); }
+
+        function importEditalFromFile(input) {
+            const file = input.files && input.files[0];
+            input.value = '';
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                let dados;
+                try { dados = JSON.parse(reader.result); }
+                catch (e) { alert('Arquivo invalido: nao e um JSON valido.\n\n' + e.message); return; }
+                try { aplicarEditalImportado(dados, file.name); }
+                catch (e) { alert('Nao consegui importar: ' + e.message); }
+            };
+            reader.onerror = () => alert('Nao consegui ler o arquivo.');
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function _lerMateriasEdital(dados) {
+            const lista = dados.materias || dados.subjects || dados.disciplinas || (Array.isArray(dados) ? dados : null);
+            if (!Array.isArray(lista)) throw new Error('nao encontrei a lista de materias (use "materias": [...]).');
+            return lista.map(m => {
+                const titulo = String(m.titulo || m.title || m.nome || '').trim();
+                if (!titulo) throw new Error('uma das materias esta sem "titulo".');
+                const brutos = m.topicos || m.topics || m.itens || [];
+                if (!Array.isArray(brutos)) throw new Error('a materia "' + titulo + '" esta sem a lista "topicos".');
+                const topics = brutos.map(t => {
+                    const obj = (t && typeof t === 'object') ? t : {};
+                    const text = String(typeof t === 'string' ? t : (obj.texto || obj.text || '')).trim();
+                    if (!text) return null;
+                    return {
+                        id: _novoIdEdital(), text: text, done: !!obj.done,
+                        linkedCategory: obj.linkedCategory || null,
+                        linkedSubcategory: obj.linkedSubcategory || null,
+                        linkedNoteId: obj.linkedNoteId || null
+                    };
+                }).filter(Boolean);
+                return { id: _novoIdEdital(), title: titulo, collapsed: true, topics: topics };
+            });
+        }
+
+        function aplicarEditalImportado(dados, nomeArquivo) {
+            const titulo = String(dados.titulo || dados.title || String(nomeArquivo || 'Edital importado').replace(/\.json$/i, '')).trim();
+            const subjects = _lerMateriasEdital(dados);
+            const totalTopicos = subjects.reduce((n, s) => n + s.topics.length, 0);
+            if (!subjects.length || !totalTopicos) throw new Error('o arquivo nao tem nenhum topico.');
+
+            const existente = editais.find(e => _txtNorm(e.title) === _txtNorm(titulo));
+            let alvo = null;
+            if (existente) {
+                const atualizar = confirm('Ja existe o edital "' + existente.title + '".\n\nOK = atualizar o conteudo mantendo seu progresso (topicos com o mesmo texto continuam marcados e vinculados).\nCancelar = criar um edital novo e separado.');
+                if (atualizar) {
+                    const antigos = new Map();
+                    existente.subjects.forEach(s => s.topics.forEach(t => antigos.set(_txtNorm(t.text), t)));
+                    subjects.forEach(s => s.topics.forEach(t => {
+                        const velho = antigos.get(_txtNorm(t.text));
+                        if (!velho) return;
+                        t.done = !!velho.done;
+                        t.linkedCategory = velho.linkedCategory || null;
+                        t.linkedSubcategory = velho.linkedSubcategory || null;
+                        t.linkedNoteId = velho.linkedNoteId || null;
+                        if (velho.linkedUrl) t.linkedUrl = velho.linkedUrl;
+                        if (velho.lastCardAdded) t.lastCardAdded = velho.lastCardAdded;
+                    }));
+                    existente.subjects = subjects;
+                    alvo = existente;
+                }
+            }
+            if (!alvo) { alvo = { id: _novoIdEdital(), title: titulo, subjects: subjects }; editais.push(alvo); }
+
+            saveEditais();
+            renderSyllabusList();
+            alert('Edital "' + alvo.title + '" importado: ' + subjects.length + ' materias e ' + totalTopicos + ' topicos.');
+            openEdital(alvo.id);
+        }
+
+        function baixarModeloEdital() {
+            const modelo = {
+                formato: 'edital-teddy-v1',
+                titulo: 'Nome do concurso',
+                materias: [
+                    { titulo: 'Portugues', topicos: ['Interpretacao de textos', 'Crase', 'Concordancia verbal e nominal'] },
+                    { titulo: 'Conhecimentos Especificos', topicos: ['Primeiro topico', 'Segundo topico'] }
+                ]
+            };
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(modelo, null, 2)], { type: 'application/json' }));
+            a.download = 'modelo-edital.json';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
         }
 
         function renderSyllabusList() {
